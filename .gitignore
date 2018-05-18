@@ -1,42 +1,54 @@
-# http://www.gnu.org/software/automake
-
-Makefile.in
-/ar-lib
-/mdate-sh
-/py-compile
-/test-driver
-/ylwrap
-
-# http://www.gnu.org/software/autoconf
-
-/autom4te.cache
-/autoscan.log
-/autoscan-*.log
-/aclocal.m4
-/compile
-/config.guess
-/config.h.in
-/config.sub
-/configure
-/configure.scan
-/depcomp
-/install-sh
-/missing
-/stamp-h1
-
-# https://www.gnu.org/software/libtool/
-
-/ltmain.sh
-
-# http://www.gnu.org/software/texinfo
-
-/texinfo.tex
-
-# http://www.gnu.org/software/m4/
-
-m4/libtool.m4
-m4/ltoptions.m4
-m4/ltsugar.m4
-m4/ltversion.m4
-m4/lt~obsolete.m4
-autom4te.cache
+mame.exe
+mame64.exe
+mamepgui.exe
+mameui64.exe
+*.png
+Multi/RetroArch/assets/
+Multi/RetroArch/autoconfig/
+Multi/RetroArch/cheats/
+Multi/RetroArch/config/
+Multi/RetroArch/cores/
+Multi/RetroArch/database/
+Multi/RetroArch/downloads/
+Multi/RetroArch/filters/
+Multi/RetroArch/info/
+Multi/RetroArch/overlays/
+Multi/RetroArch/playlists/
+Multi/RetroArch/recordings/
+Multi/RetroArch/saves/
+Multi/RetroArch/screenshots/
+Multi/RetroArch/shaders/
+Multi/RetroArch/states/
+Multi/RetroArch/system/
+Multi/RetroArch/thumbnails/
+Windows 95/WIN98/0/
+Windows 95/WIN98/SHADERS/
+Windows 95/WIN98/WIN_IMG/
+Multi/RetroArch/content_history.lpl
+Multi/Mednafen-0.9.48-win64/b
+Multi/Mednafen-0.9.48-win64/cheat
+Multi/Mednafen-0.9.48-win64/de
+Multi/Mednafen-0.9.48-win64/Documentation
+Multi/Mednafen-0.9.48-win64/mcm
+Multi/Mednafen-0.9.48-win64/palettes
+Multi/Mednafen-0.9.48-win64/pgconfig
+Multi/Mednafen-0.9.48-win64/ru
+Multi/Mednafen-0.9.48-win64/sav
+Multi/Mednafen-0.9.48-win64/snaps
+Multi/Mednafen-0.9.48-win64/stdout.txt
+Multi/Mednafen-0.9.48-win64/ChangeLog
+Multi/Mednafen-0.9.48-win64/COPYING
+Multi/Mednafen-0.9.48-win64/*.dll
+Multi/RetroArch/*.dll
+Windows 95/WIN98/*.dll
+Windows 95/WIN98/dosbox_debug.exe
+Windows 95/WIN98/dosbox.exe
+Windows 95/WIN98/glide.log
+Windows 95/WIN98/dosbox_x64.exe
+Multi/Mednafen-0.9.48-win64/mcs
+Multi/RetroArch/retroarch_debug.exe
+Multi/RetroArch/retroarch.exe
+Multi/Mednafen-0.9.48-win64/mednafen.exe
+PC8801/**/*.zip
+ZZ_Util/installLibrary
+Windows 95/WIN98/stderr.txt
