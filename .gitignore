@@ -49,6 +49,8 @@ Multi/Mednafen-0.9.48-win64/mcs
 Multi/RetroArch/retroarch_debug.exe
 Multi/RetroArch/retroarch.exe
 Multi/Mednafen-0.9.48-win64/mednafen.exe
-PC8801/**/*.zip
+PC88/**/*.zip
+PC98/**/*.zip
 ZZ_Util/installLibrary
 Windows 95/WIN98/stderr.txt
+Multi/RetroArch/content_image_history.lpl
