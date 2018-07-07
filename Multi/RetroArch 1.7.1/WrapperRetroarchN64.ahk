@@ -6,7 +6,7 @@ emulatorPid  := ""
 ; coreName     := "parallel_n64_libretro.dll"
 coreName     := "mupen64plus_libretro.dll"
 imageDirPath := %0%
-; imageDirPath := "\\NAS\emul\image\N64\Densha de Go! 64 (Japan)"
+imageDirPath := "\\NAS\emul\image\N64\Legend of Zelda - Ocarina of Time (T-ko)"
 
 imageFilePath := FileUtil.getFile( imageDirPath, "i).*\.(zip|z64|v64)$")
 

@@ -3,54 +3,71 @@ mame64.exe
 mamepgui.exe
 mameui64.exe
 *.png
-Multi/RetroArch/assets/
-Multi/RetroArch/autoconfig/
-Multi/RetroArch/cheats/
-Multi/RetroArch/config/
-Multi/RetroArch/cores/
-Multi/RetroArch/database/
-Multi/RetroArch/downloads/
-Multi/RetroArch/filters/
-Multi/RetroArch/info/
-Multi/RetroArch/overlays/
-Multi/RetroArch/playlists/
-Multi/RetroArch/recordings/
-Multi/RetroArch/saves/
-Multi/RetroArch/screenshots/
-Multi/RetroArch/shaders/
-Multi/RetroArch/states/
-Multi/RetroArch/system/
-Multi/RetroArch/thumbnails/
+Multi/_bios/
+Multi/RetroArch*/_system/
+Multi/RetroArch*/assets/
+Multi/RetroArch*/autoconfig/
+Multi/RetroArch*/cheats/
+Multi/RetroArch*/config/
+Multi/RetroArch*/cores/
+Multi/RetroArch*/database/
+Multi/RetroArch*/downloads/
+Multi/RetroArch*/filters/
+Multi/RetroArch*/info/
+Multi/RetroArch*/overlays/
+Multi/RetroArch*/playlists/
+Multi/RetroArch*/recordings/
+Multi/RetroArch*/saves/
+Multi/RetroArch*/screenshots/
+Multi/RetroArch*/shaders/
+Multi/RetroArch*/states/
+Multi/RetroArch*/system/
+Multi/RetroArch*/thumbnails/
+Multi/RetroArch*/retroarch_debug.exe
+Multi/RetroArch*/retroarch.exe
+Multi/RetroArch*/content_image_history.lpl
+Multi/RetroArch*/content_history.lpl
+Multi/RetroArch*/*.dll
+Multi/RetroArch*/**/*.dll
+Multi/Mednafen*/b
+Multi/Mednafen*/cheat
+Multi/Mednafen*/de
+Multi/Mednafen*/Documentation
+Multi/Mednafen*/firmware
+Multi/Mednafen*/mcm
+Multi/Mednafen*/palettes
+Multi/Mednafen*/pgconfig
+Multi/Mednafen*/ru
+Multi/Mednafen*/sav
+Multi/Mednafen*/snaps
+Multi/Mednafen*/stdout.txt
+Multi/Mednafen*/ChangeLog
+Multi/Mednafen*/COPYING
+Multi/Mednafen*/*.dll
+Multi/Mednafen*/mcs
+Multi/Mednafen*/mednafen.lck
+Multi/Mednafen*/stderr.txt
+Multi/Mednafen*/mednafen.exe
 Windows 95/WIN98/0/
 Windows 95/WIN98/SHADERS/
 Windows 95/WIN98/WIN_IMG/
-Multi/RetroArch/content_history.lpl
-Multi/Mednafen-0.9.48-win64/b
-Multi/Mednafen-0.9.48-win64/cheat
-Multi/Mednafen-0.9.48-win64/de
-Multi/Mednafen-0.9.48-win64/Documentation
-Multi/Mednafen-0.9.48-win64/mcm
-Multi/Mednafen-0.9.48-win64/palettes
-Multi/Mednafen-0.9.48-win64/pgconfig
-Multi/Mednafen-0.9.48-win64/ru
-Multi/Mednafen-0.9.48-win64/sav
-Multi/Mednafen-0.9.48-win64/snaps
-Multi/Mednafen-0.9.48-win64/stdout.txt
-Multi/Mednafen-0.9.48-win64/ChangeLog
-Multi/Mednafen-0.9.48-win64/COPYING
-Multi/Mednafen-0.9.48-win64/*.dll
-Multi/RetroArch/*.dll
 Windows 95/WIN98/*.dll
 Windows 95/WIN98/dosbox_debug.exe
 Windows 95/WIN98/dosbox.exe
 Windows 95/WIN98/glide.log
 Windows 95/WIN98/dosbox_x64.exe
-Multi/Mednafen-0.9.48-win64/mcs
-Multi/RetroArch/retroarch_debug.exe
-Multi/RetroArch/retroarch.exe
-Multi/Mednafen-0.9.48-win64/mednafen.exe
+Windows 95/WIN98/stderr.txt
 PC88/**/*.zip
 PC98/**/*.zip
+3DS/_tool/
+3DS/*/fix/
+3DS/*/*.dll
+3DS/*/**/*.dll
+3DS/*/citra.exe
+3DS/*/citra-qt.exe
+3DS/*/citra-room.exe
+3DS/*/license.txt
+3DS/*/README.md
+3DS/*/updater.cfg
+3DS/*/updater.ps1
 ZZ_Util/installLibrary
-Windows 95/WIN98/stderr.txt
-Multi/RetroArch/content_image_history.lpl
