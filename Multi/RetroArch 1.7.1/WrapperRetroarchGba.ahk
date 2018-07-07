@@ -5,7 +5,7 @@ SetKeyDelay, 10, 0
 emulatorPid  := ""
 coreName     := "mgba_libretro.dll"
 imageDirPath := %0%
-; imageDirPath := "\\NAS\emul\image\GameBoyAdvance\images\Super Mario Advance"
+imageDirPath := "\\NAS\emul\image\GameBoyAdvance\Aladdin"
 ; imageDirPath := "\\NAS\emul\image\GameBoy\Ant Hill (PD)"
 
 imageFilePath := FileUtil.getFile( imageDirPath, "i).*\.(zip|gba)$")
@@ -30,7 +30,7 @@ if ( imageFilePath != "" ) {
 ExitApp
 
 waitEmulator() {
-	WinWait, ahk_class RetroArch ahk_exe retroarch.exe,, 10
+	WinWait, ahk_class RetroArch ahk_exe retroarch.exe,, 20
 	IfWinExist
 	  activateEmulator()
 }
