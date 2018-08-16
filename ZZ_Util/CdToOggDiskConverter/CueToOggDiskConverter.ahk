@@ -2,12 +2,12 @@
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 ; pathWorkRoot := "f:\download\3do"
-pathWorkRoot := "f:\download\windows"
+pathWorkRoot := "f:\download\megaCd"
 ; pathWorkRoot := "f:\download\saturn"
 ; pathRoot     := "\\NAS\emul\image\PcFx"
 ; pathRoot     := "\\NAS\emul\image\PlayStation"
 ; pathRoot     := "\\NAS\emul\image\3DO\Games\Guardian War"
-pathRoot     := "f:\download\KICHIKU_WIN"
+pathRoot     := "\\NAS\emul\image\MegaCd\Fahrenheit (32X) (En)"
 ; pathRoot     := "\\NAS\emul\image\Saturn\RPG\Grandia (T-Kr)"
 ; pathRoot     := "\\NAS\emul\image\PcFx\Aa! Megami Sama"
 replaceFile  := false
@@ -15,7 +15,8 @@ replaceFile  := false
 debug( "start" )
 
 ; files := FileUtil.getFiles( pathRoot, "i).*\.(bin|cue|mdx|ccd)", false, true )
-files := FileUtil.getFiles( pathRoot, "i).*\.(ccd)", false, true )
+files := FileUtil.getFiles( pathRoot, "i).*\.(cue)", false, true )
+; files := FileUtil.getFiles( pathRoot, "i).*\.(ccd)", false, true )
 ; files := FileUtil.getFiles( pathRoot, "i).*\\_EL_CONFIG\\.*\.(bin|cue|iso|mdx|ccd)", false, true )
 ; files := FileUtil.getFiles( pathRoot, "i).*\\_EL_CONFIG\\.*\.(bin|cue|iso|mdx|ccd)", false, true )
 
@@ -75,10 +76,14 @@ for gameDir, files in cueFiles {
 			; PcEngine
 			; toCdImage( workDir, diskName, "", "2048" )
 			; toCdImageWithTurboRip( workDir, diskName, "2048" )
-			
+
+			; MegaCd
+			; toCdImage( workDir, diskName, "", "2352" )
+			toCdImageWithTurboRip( workDir, diskName, "2352" )
+
       ; DOS
       ; toCdImage( workDir, diskName, "", "2048" )
-      toCdImageWithTurboRip( workDir, diskName, "2048" )
+      ; toCdImageWithTurboRip( workDir, diskName, "2048" )
 
 			; Saturn
 			; toCdImageWithTurboRip( workDir, diskName )
@@ -185,9 +190,30 @@ toCdImageWithTurboRip( workDir, fileName, modeSize="" ) {
 	debug( "tmpDir : " tmpDir )
 	debug( "  - read to cd image" )
 	command := % """" A_ScriptDir "\util\TurboRip.exe"" /1 ""/NAME=" fileName """"
+	if ( modeSize != "" ) {
+		command := command " /RAW " modeSize
+	}
 	debug( command )
 	Run, % command, % tmpDir, Hide, pid
-  waitToCloseTurboRip( tmpDir, pid )
+
+	WinWait, ahk_exe TurboRip.exe,, 10
+	IfWinExist
+	{
+		
+	  while True
+	  {
+	      Sleep, 1000
+	      WinActivate, ahk_exe TurboRip.exe
+	      IfWinExist
+	      {
+	      	break
+	      }
+	      Send {Enter}
+	  }
+	}
+	Process, Close, % pid
+
+  ; waitToCloseTurboRip( tmpDir, pid )
 
 	tracks := FileUtil.getFiles( tmpDir, "i).*\.(iso|wav|cue)$", false, true )
 	Loop, % tracks.MaxIndex()

@@ -1,16 +1,14 @@
 #NoEnv
 
-; http://daemon-help.com/additionally/command/
+;; TestCode
 
 ; #include %A_ScriptDir%\Include.ahk
-; file := "\\NAS\emul\image\PlayStation\Yarudora Series Vol.2 - Kisetsu wo Dakishimete (T-ko)\Yarudora Series Vol.2 - Kisetsu wo Dakishimete (T-Kr) (Disc 1).mdx"
-; file := "\\NAS\emul\image\DOS\Lights out\_EL_CONFIG\cdrom\backup.cue"
+; file := "\\NAS\emul\image\MegaCd\Fahrenheit (32X) (En)\Fahrenheit_Disc-1.cue"
 ; ; file := "\\NAS\emul\image\PlayStation\Darius Gaiden (ja)\Darius Gaiden (Japan).mdx"
 ; if ( VirtualDisk.open( file ) == true ) {
 ;   MsgBox, % "Inserted ! (" file ")"
 ; }
 ; VirtualDisk.close()
-
 ; ExitApp
 
 ;
@@ -28,7 +26,8 @@ class VirtualDisk {
 
   _init() {
       ;this.daemonPath := "c:\Program Files (x86)\DAEMON Tools Lite\DTLite.exe"
-      this.daemonPath   := "c:\Program Files\DAEMON Tools Lite\DTAgent.exe"
+      ; this.daemonPath   := "c:\Program Files\DAEMON Tools Lite\DTAgent.exe"
+      this.daemonPath   := "c:\Program Files\DAEMON Tools Lite\DTCommandLine.exe"
       this.DRIVE_LETTER := "H"
   }
 
@@ -62,12 +61,16 @@ class VirtualDisk {
       return false
     }
 
-      result := this._run( """" this.daemonPath """ -mount scsi, 0, """ filePath """" )
+    ;   result := this._run( """" this.daemonPath """ -mount scsi, 0, """ filePath """" )
+    ; if ( result == false ) {
+    ;   result := this._run( """" this.daemonPath """ -mount scsi, " this.DRIVE_LETTER ", """ filePath """" )
+    ; }
+    ; if ( result == false ) {
+    ;   result := this._run( """" this.daemonPath """ -mount_to " this.DRIVE_LETTER ", """ filePath """" )
+    ; }
+      result := this._run( """" this.daemonPath """ --mount -t ""scsi"" -l """ this.DRIVE_LETTER """ --ro --path """ filePath """" )
     if ( result == false ) {
-      result := this._run( """" this.daemonPath """ -mount scsi, " this.DRIVE_LETTER ", """ filePath """" )
-    }
-    if ( result == false ) {
-      result := this._run( """" this.daemonPath """ -mount_to " this.DRIVE_LETTER ", """ filePath """" )
+      result := this._run( """" this.daemonPath """ --mount_to -l """ this.DRIVE_LETTER """ --ro --path """ filePath """" )
     }
 
     if ErrorLevel
@@ -83,10 +86,12 @@ class VirtualDisk {
   
   close() {
 
-      result := this._run( """" this.daemonPath """ -unmount scsi, 0" )
-    if ( result == false ) {
-      result := this._run( """" this.daemonPath """ -unmount " this.DRIVE_LETTER )
-    }
+      result := this._run( """" this.daemonPath """ --unmount -l """ this.DRIVE_LETTER """" )
+
+    ;   result := this._run( """" this.daemonPath """ -unmount scsi, 0" )
+    ; if ( result == false ) {
+    ;   result := this._run( """" this.daemonPath """ -unmount " this.DRIVE_LETTER )
+    ; }
 
     if ( result == false ) { 
       errorMsg := "VirtualDisk does not unmount (error level:" ErrorLevel ")"
