@@ -1,7 +1,6 @@
 #NoEnv
 
-; MouseCursor.show()
-; ExitApp
+global applicationPid := ""
 
 SplitPath, A_ScriptName, , , , NoextScriptFileName
 
@@ -25,6 +24,10 @@ runProgram( fileIni, prop )
 runSub( "post", fileIni, prop )
 
 ExitApp
+
+closeApplication() {
+	Process, Close, % applicationPid
+}
 
 runAsAdmin( fileIni ) {
 	IniRead, value, % fileIni, init, runAsAdmin, false
@@ -111,13 +114,14 @@ runProgram( fileIni, properties ) {
 	IniRead, resolution,               %fileIni%, init,   resolution,   _
 	IniRead, hideTaskbar,              %fileIni%, init,   hideTaskbar,  _
 	IniRead, hideMouse,                %fileIni%, init,   hideMouse,    _
-	IniRead, isRunWait,                %fileIni%, init,   runWait,      "true"
+	IniRead, isRunWait,                %fileIni%, init,   runWait,      true
+  IniRead, exitAltF4,                %fileIni%, init,   exitAltF4,    true
 
 	IniRead, windowTarget,             %fileIni%, window, target,       _
 	IniRead, windowSearchDelay,        %fileIni%, window, searchDelay,  0
 	IniRead, windowStart,              %fileIni%, window, start,        _
 	IniRead, windowSize,               %fileIni%, window, size,         _
-	IniRead, windowBorderless,         %fileIni%, window, borderless,   "true"
+	IniRead, windowBorderless,         %fileIni%, window, borderless,   true
 
 	; executor    := RegExReplace( executor,    "\\", "\\" )
 	; executorDir := RegExReplace( executorDir, "\\", "\\" )
@@ -129,6 +133,11 @@ runProgram( fileIni, properties ) {
 		    windowSize := resolution
 		}
 	}
+
+  if ( exitAltF4 == "true" ) {
+    isRunWait := "true"
+  	Hotkey, !F4, closeApplication
+  }
 
 	if ( windowStart == "_" ) {
 	  windowStart := "0,0"
@@ -202,7 +211,7 @@ runProgram( fileIni, properties ) {
 
 		} else if ( isRunWait == "true" ) {
 			SetTimer, runMidThread, 500
-			RunWait, %executor%, %executorDir%
+			RunWait, %executor%, %executorDir%,,applicationPid
 			ResolutionChanger.restore()
 			Taskbar.show()
 		} else {
@@ -663,5 +672,3 @@ debug( message ) {
   FileAppend %message%, * ; send message to stdout
     
 }
-
-
