@@ -31,7 +31,7 @@ closeApplication() {
 
 runAsAdmin( fileIni ) {
 	IniRead, value, % fileIni, init, runAsAdmin, false
-	if ( value == true ) {
+	if ( value == "true" ) {
 		restartAsAdmin()
 	}
 }
