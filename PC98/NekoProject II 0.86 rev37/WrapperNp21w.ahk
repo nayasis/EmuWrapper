@@ -3,25 +3,16 @@
 
 emulatorPid    := ""
 imageFilePath  := %0%
-;imageFilePath  := "\\NAS\emul\image\PC9801\0_imagesFdi\Ys 2 (1988)(Nihon Falcom)(T-Kr)\Disk 1.d88"
-; imageFilePath  := "\\NAS\emul\image\PC9801\OnWorking\0_imagesFdi\Ys 1"
-; imageFilePath  := "\\NAS\emul\image\PC9801\OnWorking\0_imagesFdi\Ys 2 (1988)(Nihon Falcom)(T-Kr)"
-; imageFilePath := "f:\download\pc98\Ultima IV (T-ko)"
-; imageFilePath := "f:\download\pc98\Ultima IV - The False Prophet (19xx)(Origin)"
 ; imageFilePath  := "\\NAS\emul\image\PC98\Ys 2 (T-ko)"
-; imageFilePath  := "\\NAS\emul\image\PC9801\Steam Heart's (T-en 0.99 by Psyklax)"
-; imageFilePath  := "\\NAS\emul\image\PC98\Ys 3 - Wanderers from Ys (ja)"
-; imageFilePath  := "\\NAS\emul\image\PC98\XZR II (en)"
 
-
-fddContainer := new DiskContainer( imageFilePath, "i).*\.(d88|fdi|fdd)" )
+fddContainer := new DiskContainer( imageFilePath, "i).*\.(d88|fdi|fdd|hdm)" )
 fddContainer.initSlot( 2 )
 
 if ( setConfig( imageFilePath ) == true ) {
 
 	; ResolutionChanger.change( 1366, 768 )
 	; ResolutionChanger.change( 1024, 768 )
-	ResolutionChanger.change( 1280, 720 )
+	; ResolutionChanger.change( 1280, 720 )
 	
 	Run, % "np21x64w.exe " fddContainer.toOption(),,,emulatorPid
 	
@@ -35,7 +26,7 @@ if ( setConfig( imageFilePath ) == true ) {
 	ResolutionChanger.restore()
 	
 } else {
-	Run, % "np21x64w.exe",,,emulatorPid
+	RunWait, % "np21x64w.exe",,,emulatorPid
 }
 
 ExitApp

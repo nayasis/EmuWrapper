@@ -4,7 +4,7 @@
 emulatorPid := ""
 
 imageFilePath := %0%
-; imageFilePath := "\\NAS\emul\image\PlayStation\어드벤쳐\Table of D\D의식탁 disk 1.mdx"
+; imageFilePath := "f:\download\Tokimeki Memorial 2 Substories - Dancing Summer Vacation (Japan) (Disc 1)\Tokimeki Memorial 2 Substories - Dancing Summer Vacation (Japan) (Disc 1).cue"
 
 cdContainer := new DiskContainer( imageFilePath, "i).*\.(cue|mdx)$" )
 if ( cdContainer.size() == 0 ) {
