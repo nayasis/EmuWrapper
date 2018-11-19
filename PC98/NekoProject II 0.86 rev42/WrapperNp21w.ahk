@@ -1,27 +1,18 @@
 #NoEnv
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
-emulatorPid    := ""
-imageFilePath  := %0%
-;imageFilePath  := "\\NAS\emul\image\PC9801\0_imagesFdi\Ys 2 (1988)(Nihon Falcom)(T-Kr)\Disk 1.d88"
-; imageFilePath  := "\\NAS\emul\image\PC9801\OnWorking\0_imagesFdi\Ys 1"
-; imageFilePath  := "\\NAS\emul\image\PC9801\OnWorking\0_imagesFdi\Ys 2 (1988)(Nihon Falcom)(T-Kr)"
-; imageFilePath := "f:\download\pc98\Ultima IV (T-ko)"
-; imageFilePath := "f:\download\pc98\Ultima IV - The False Prophet (19xx)(Origin)"
-imageFilePath  := "\\NAS\emul\image\PC98\Ys 2 (T-ko)"
-; imageFilePath  := "\\NAS\emul\image\PC9801\Steam Heart's (T-en 0.99 by Psyklax)"
-; imageFilePath  := "\\NAS\emul\image\PC98\Ys 3 - Wanderers from Ys (ja)"
-; imageFilePath  := "\\NAS\emul\image\PC98\XZR II (en)"
+emulatorPid  := ""
+imageDirPath := %0%
+; imageDirPath := "\\NAS\emul\image\PC98\Brandish 3 Renewal (ja)"
 
-
-fddContainer := new DiskContainer( imageFilePath, "i).*\.(d88|fdi|fdd)" )
+fddContainer := new DiskContainer( imageDirPath, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)" )
 fddContainer.initSlot( 2 )
 
-if ( setConfig( imageFilePath ) == true ) {
+if ( setConfig( imageDirPath ) == true ) {
 
 	; ResolutionChanger.change( 1366, 768 )
 	; ResolutionChanger.change( 1024, 768 )
-	ResolutionChanger.change( 1280, 720 )
+	; ResolutionChanger.change( 1280, 720 )
 	
 	Run, % "np21x64w.exe " fddContainer.toOption(),,,emulatorPid
 	
@@ -35,7 +26,7 @@ if ( setConfig( imageFilePath ) == true ) {
 	ResolutionChanger.restore()
 	
 } else {
-	Run, % "np21x64w.exe",,,emulatorPid
+	RunWait, % "np21x64w.exe",,,emulatorPid
 }
 
 ExitApp
@@ -65,6 +56,16 @@ ExitApp
 ^+Del:: ; Reset
     reset()
 	return
+
+getOption( imageDirPath ) {
+	dirConf := imageDirPath "\_EL_CONFIG"
+	IfExist %dirConf%\option\option.json
+	{
+		FileRead, jsonText, %dirConf%\option\option.json
+		return JSON.load( jsonText )
+	}
+	return {}
+}
 
 waitEmulator() {
 	WinWait, ahk_class NP2-MainWindow,,10
@@ -117,9 +118,19 @@ removeDisk( slotNo ) {
 	}
 }
 
-setConfig( imageFilePath ) {
+getCdRom( imageDirPath ) {
+	dirCdrom := imageDirpath "\_EL_CONFIG\cdrom"
+	cdRom := FileUtil.getFile( dirCdrom, "i).*\.(cue)$" )
+	if( cdRom == "" )
+		cdRom := FileUtil.getFile( dirCdrom, "i).*\.(ccd)$" )
+	if( cdRom == "" )
+		cdRom := FileUtil.getFile( dirCdrom, "i).*\.(iso|bin|img)$" )
+	return cdRom
+}
 
-	currDir := FileUtil.getDir( imageFilepath )
+setConfig( imageDirPath ) {
+
+	currDir := FileUtil.getDir( imageDirpath )
 	confDir := currDir . "\_EL_CONFIG"
 	
 	NekoIniFile := % A_ScriptDir "\np21x64w.ini"
@@ -156,17 +167,15 @@ setConfig( imageFilePath ) {
 	IniWrite, %currDir%, %NekoIniFile%, NekoProject21, FDfolder
 	IniWrite, %currDir%, %NekoIniFile%, NekoProject21, HDfolder
 	
-	Loop, 8
+  ; Init Hdd. Fdd, CdRom
+	Loop, 4
 	{
-		fdIndex := A_Index - 1
-		IniDelete, %NekoIniFile%, NP2 tool, FD1NAME%fdIndex%
-		IniDelete, %NekoIniFile%, NP2 tool, FD2NAME%fdIndex%		
+		IniWrite, % "", %NekoIniFile%, NekoProject21, HDD%a_index%FILE
+		IniWrite, % "", %NekoIniFile%, NekoProject21, FDD%a_index%FILE
+		IniWrite, % "", %NekoIniFile%, NekoProject21, CD%a_index%_FILE
 	}
-	
-	IniDelete, %NekoIniFile%, NekoProject21, HDD1FILE
-	IniDelete, %NekoIniFile%, NekoProject21, HDD2FILE
 
-	; Set Hdd & Fdd
+	; Set Hdd, Fdd, CdRom
 	files := FileUtil.getFiles( currDir, "i).*\.(hdi|hdd)$" )
 	Loop, % files.MaxIndex()
 	{
@@ -175,19 +184,24 @@ setConfig( imageFilePath ) {
 		IniWrite, % files[a_index], %NekoIniFile%, NekoProject21, HDD%a_index%FILE
 	}
 
-	Loop, 4
-	{
-		IniWrite, % "", %NekoIniFile%, NekoProject21, FDD%a_index%FILE
-	}
-
-	files := FileUtil.getFiles( currDir, "i).*\.(d88|fdi|fdd)$" )
+	files := FileUtil.getFiles( currDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
 	Loop, % files.MaxIndex()
 	{
-		if( A_Index > 4 )
+		if( A_Index > 2 )
 			break
 		IniWrite, % files[a_index], %NekoIniFile%, NekoProject21, FDD%a_index%FILE
 	}
 
+	cdRom := getCdRom( imageDirPath )
+	if( cdRom != "" )
+		IniWrite, % cdRom, %NekoIniFile%, NekoProject21, CD3_FILE
+
+	if( option.config.clk_multi != "" )
+		IniWrite, % option.config.clk_multi, %NekoIniFile%, NekoProject21, clk_multi
+	if( option.config.ExMemory != "" )
+		IniWrite, % option.config.ExMemory, %NekoIniFile%, NekoProject21, ExMemory
+
 	return true
 
 }
+

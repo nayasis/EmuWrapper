@@ -6,8 +6,8 @@ global emulatorPid  := ""
 ; global coreName     := "genesis_plus_gx_libretro.dll"
 coreName     := "picodrive_libretro.dll"
 imageDirPath := %0%
-; imageDirPath := "f:\download\megaCd\Fahrenheit (32X) CHD (En)"
-; imageDirPath := "\\NAS\emul\image\MegaCd\Shining Force CD (en)"
+; imageDirPath := "\\NAS\emul\image\MegaCd\Night Trap (32X) (en)"
+; imageDirPath := "\\NAS\emul\image\MegaCd\Night Striker (en)"
 
 cdContainer := new DiskContainer( imageDirPath, "i).*\.(cue|chd)$" )
 cdContainer.initSlot( 1 )

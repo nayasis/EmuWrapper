@@ -210,10 +210,14 @@ runProgram( fileIni, properties ) {
 			MouseCursor.show()
 
 		} else if ( isRunWait == "true" ) {
+
 			SetTimer, runMidThread, 500
 			RunWait, %executor%, %executorDir%,,applicationPid
+
 			ResolutionChanger.restore()
 			Taskbar.show()
+			MouseCursor.show()
+
 		} else {
 			SetTimer, runMidThread, 500
 			debug( "executor    : " executor    )
@@ -222,7 +226,6 @@ runProgram( fileIni, properties ) {
 		}
 
 	}
-
 
 }
 
@@ -633,31 +636,31 @@ class MouseCursor {
     }
 
     show() {
-        SetTimer, MouseCursor.no_move_check, off
+        ; SetTimer, MouseCursor.no_move_check, off
         MouseCursor._setSystemCursor( "On" )
     }
 
     hide( duration=500 ) {
 
-        SetTimer, MouseCursor.no_move_check, %duration%
+        ; SetTimer, MouseCursor.no_move_check, %duration%
         MouseCursor._setSystemCursor( "Off" )
-        return
+        ; return
 
-        MouseCursor.no_move_check:
+        ; MouseCursor.no_move_check:
 
-            MouseGetPos, prevX, prevY
+        ;     MouseGetPos, prevX, prevY
             
-            Sleep 100
+        ;     Sleep 100
 
-            MouseGetPos, x, y
+        ;     MouseGetPos, x, y
 
-            if ( prevX != x or prevY != y ) {
-                MouseCursor._setSystemCursor( "On" )
-            } else {
-                MouseCursor._setSystemCursor( "Off" )
-            }
+        ;     if ( prevX != x or prevY != y ) {
+        ;         MouseCursor._setSystemCursor( "On" )
+        ;     } else {
+        ;         MouseCursor._setSystemCursor( "Off" )
+        ;     }
 
-            return
+        ;     return
 
     }
 

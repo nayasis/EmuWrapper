@@ -3,21 +3,16 @@
 
 emulatorPid    := ""
 imageFilePath  := %0%
-;imageFilePath  := "\\NAS\emul\image\PC9801\0_imagesFdi\Ys 2 (1988)(Nihon Falcom)(T-Kr)\Disk 1.d88"
-; imageFilePath  := "\\NAS\emul\image\PC9801\0_imagesFdi\Ys 1\Ys 1 (Falcom).D88"
-imageFilePath  := "\\NAS\emul\image\PC9801\Ys 2 (T-ko)"
-; imageFilePath := "f:\download\pc98\Ultima IV (T-kr)"
-; imageFilePath := "\\NAS\emul\image\PC9801\OnWorking\0_imagesFdi\Ultima 1 (T-Ko)"
-; imageFilePath := "f:\download\pc98\Ultima IV - The False Prophet (19xx)(Origin)"
-; imageFilePath  := "\\NAS\emul\image\PC9801\OnWorking\0_imagesFdi\Ys 2 (1988)(Nihon Falcom)(T-Kr)"
+; imageFilePath  := "\\NAS\emul\image\PC98\Rance 2 (ja)"
 
-fddContainer := new DiskContainer( imageFilePath, "i).*\.(d88|fdi|fdd)" )
+fddContainer := new DiskContainer( imageFilePath, "i).*\.(d88|fdi|fdd|hdm)" )
 fddContainer.initSlot( 2 )
 
-if( setConfig( imageFilePath ) == true )
-{
+if ( setConfig( imageFilePath ) == true ) {
 
-	ResolutionChanger.change( 1280, 720 )
+	; ResolutionChanger.change( 1366, 768 )
+	; ResolutionChanger.change( 1024, 768 )
+	; ResolutionChanger.change( 1280, 720 )
 	
 	Run, % "np2nt.exe " fddContainer.toOption(),,,emulatorPid
 	
@@ -31,10 +26,14 @@ if( setConfig( imageFilePath ) == true )
 	ResolutionChanger.restore()
 	
 } else {
-	Run, % "np2nt.exe",,,emulatorPid
+	RunWait, % "np2nt.exe",,,emulatorPid
 }
 
 ExitApp
+
+!F4:: ; ALT + F4
+	Process, Close, %emulatorPid%
+	return
 
 ^+PGUP::
 
@@ -42,7 +41,6 @@ ExitApp
 		fddContainer.removeDisk( "1", "removeDisk" )
 	else ; Ctrl + Shift + PgUp :: Insert Disk in Drive#1
 		fddContainer.insertDisk( "1", "insertDisk" )
-	
 	return
 
 ^+PGDN:: ; Insert Disk in Drive#2
@@ -51,7 +49,6 @@ ExitApp
 		fddContainer.removeDisk( "2", "removeDisk" )
 	else ; Ctrl + Shift + PgDn :: Insert Disk in Drive#2
 		fddContainer.insertDisk( "2", "insertDisk" )
-	
 	return
 
 ^+End:: ; Cancel Disk Change	
@@ -59,7 +56,7 @@ ExitApp
 	return
 
 ^+Del:: ; Reset
-    reset()
+  reset()
 	return
 
 waitEmulator() {
@@ -104,9 +101,7 @@ insertDisk( slotNo, file ) {
 }
 
 removeDisk( slotNo ) {
-
   activateEmulator()
-
 	if( slotNo == "1" ) {
 		Send {F11}{1}{E}  ;FDD1
 	} else if( slotNo == "2" ) {
@@ -114,7 +109,6 @@ removeDisk( slotNo ) {
 	} else {
 		return
 	}
-    
 }
 
 

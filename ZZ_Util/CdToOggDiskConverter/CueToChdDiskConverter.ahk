@@ -2,15 +2,15 @@
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 ; pathWorkRoot := "f:\download\3do"
-pathWorkRoot := "f:\download\saturn"
+pathWorkRoot := "f:\download\3do"
 ; pathWorkRoot := "f:\download\saturn"
 ; pathRoot     := "\\NAS\emul\image\PcFx"
 ; pathRoot     := "\\NAS\emul\image\PlayStation"
 ; pathRoot     := "\\NAS\emul\image\3DO\Games\Guardian War"
-pathRoot     := "f:\download\saturnKor\Dynamite Deka"
+pathRoot     := "\\NAS\emul\image\3DO"
 ; pathRoot     := "\\NAS\emul\image\Saturn\RPG\Grandia (T-Kr)"
 ; pathRoot     := "\\NAS\emul\image\PcFx\Aa! Megami Sama"
-replaceFile  := false
+replaceFile  := true
 
 debug( "start" )
 
