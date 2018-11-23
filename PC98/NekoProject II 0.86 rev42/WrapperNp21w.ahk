@@ -4,6 +4,8 @@
 emulatorPid  := ""
 imageDirPath := %0%
 ; imageDirPath := "\\NAS\emul\image\PC98\Brandish 3 Renewal (ja)"
+; imageDirPath  := "\\NAS\emul\image\PC98\Ys 2 (T-ko)"
+; imageDirPath  := "\\NAS\emul\image\PC98\Carmine (ja)"
 
 fddContainer := new DiskContainer( imageDirPath, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)" )
 fddContainer.initSlot( 2 )
@@ -119,7 +121,7 @@ removeDisk( slotNo ) {
 }
 
 getCdRom( imageDirPath ) {
-	dirCdrom := imageDirpath "\_EL_CONFIG\cdrom"
+	dirCdrom := imageDirPath "\_EL_CONFIG\cdrom"
 	cdRom := FileUtil.getFile( dirCdrom, "i).*\.(cue)$" )
 	if( cdRom == "" )
 		cdRom := FileUtil.getFile( dirCdrom, "i).*\.(ccd)$" )
@@ -130,7 +132,7 @@ getCdRom( imageDirPath ) {
 
 setConfig( imageDirPath ) {
 
-	currDir := FileUtil.getDir( imageDirpath )
+	currDir := FileUtil.getDir( imageDirPath )
 	confDir := currDir . "\_EL_CONFIG"
 	
 	NekoIniFile := % A_ScriptDir "\np21x64w.ini"
@@ -196,10 +198,18 @@ setConfig( imageDirPath ) {
 	if( cdRom != "" )
 		IniWrite, % cdRom, %NekoIniFile%, NekoProject21, CD3_FILE
 
-	if( option.config.clk_multi != "" )
-		IniWrite, % option.config.clk_multi, %NekoIniFile%, NekoProject21, clk_multi
+	; Set option
+	option := getOption( imageDirPath )
+	if( option.config.clk_mult != "" )
+		IniWrite, % option.config.clk_mult, %NekoIniFile%, NekoProject21, clk_mult
 	if( option.config.ExMemory != "" )
 		IniWrite, % option.config.ExMemory, %NekoIniFile%, NekoProject21, ExMemory
+
+	debug( "option.config.clk_multi : " option.config.clk_multi )
+	debug( "option.config.ExMemory  : " option.config.ExMemory )
+
+	IniWrite, % "3e 63 7b", %NekoIniFile%, NekoProject21, DIPswtch
+	IniWrite, % "48 05 04 08 0b 20 00 6e", %NekoIniFile%, NekoProject21, MEMswtch
 
 	return true
 

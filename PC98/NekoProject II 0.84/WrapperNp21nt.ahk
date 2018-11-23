@@ -1,14 +1,14 @@
 #NoEnv
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
-emulatorPid    := ""
-imageFilePath  := %0%
-; imageFilePath  := "\\NAS\emul\image\PC98\Rance 2 (ja)"
+emulatorPid   := ""
+imageDirPath  := %0%
+; imageDirPath  := "\\NAS\emul\image\PC98\Ys 2 (T-ko)"
 
-fddContainer := new DiskContainer( imageFilePath, "i).*\.(d88|fdi|fdd|hdm)" )
+fddContainer := new DiskContainer( imageDirPath, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)" )
 fddContainer.initSlot( 2 )
 
-if ( setConfig( imageFilePath ) == true ) {
+if ( setConfig( imageDirPath ) == true ) {
 
 	; ResolutionChanger.change( 1366, 768 )
 	; ResolutionChanger.change( 1024, 768 )
@@ -58,6 +58,16 @@ ExitApp
 ^+Del:: ; Reset
   reset()
 	return
+
+getOption( imageDirPath ) {
+	dirConf := imageDirPath "\_EL_CONFIG"
+	IfExist %dirConf%\option\option.json
+	{
+		FileRead, jsonText, %dirConf%\option\option.json
+		return JSON.load( jsonText )
+	}
+	return {}
+}
 
 waitEmulator() {
 	WinWait, ahk_class NP2-MainWindow,,10
@@ -111,10 +121,19 @@ removeDisk( slotNo ) {
 	}
 }
 
+getCdRom( imageDirPath ) {
+	dirCdrom := imageDirPath "\_EL_CONFIG\cdrom"
+	cdRom := FileUtil.getFile( dirCdrom, "i).*\.(cue)$" )
+	if( cdRom == "" )
+		cdRom := FileUtil.getFile( dirCdrom, "i).*\.(ccd)$" )
+	if( cdRom == "" )
+		cdRom := FileUtil.getFile( dirCdrom, "i).*\.(iso|bin|img)$" )
+	return cdRom
+}
 
-setConfig( imageFilePath ) {
+setConfig( imageDirPath ) {
 
-	currDir := FileUtil.getDir( imageFilepath )
+	currDir := FileUtil.getDir( imageDirpath )
 	confDir := currDir . "\_EL_CONFIG"
 	
 	NekoIniFile := % A_ScriptDir "\np2nt.ini"
@@ -155,17 +174,25 @@ setConfig( imageFilePath ) {
 	IniWrite, %currDir%, %NekoIniFile%, NekoProjectII, FDfolder
 	IniWrite, %currDir%, %NekoIniFile%, NekoProjectII, HDfolder
 	
-	Loop, 8
-	{
-		fdIndex := A_Index - 1
-		IniDelete, %NekoIniFile%, NP2 tool, FD1NAME%fdIndex%
-		IniDelete, %NekoIniFile%, NP2 tool, FD2NAME%fdIndex%		
-	}
+	; Loop, 8
+	; {
+	; 	fdIndex := A_Index - 1
+	; 	IniDelete, %NekoIniFile%, NP2 tool, FD1NAME%fdIndex%
+	; 	IniDelete, %NekoIniFile%, NP2 tool, FD2NAME%fdIndex%		
+	; }
 	
-	IniDelete, %NekoIniFile%, NekoProjectII, HDD1FILE
-	IniDelete, %NekoIniFile%, NekoProjectII, HDD2FILE
+	; IniDelete, %NekoIniFile%, NekoProjectII, HDD1FILE
+	; IniDelete, %NekoIniFile%, NekoProjectII, HDD2FILE
 
-	; Set Hdd & Fdd
+	; Init Hdd. Fdd, CdRom
+	Loop, 4
+	{
+		IniWrite, % "", %NekoIniFile%, NekoProjectII, HDD%a_index%FILE
+		IniWrite, % "", %NekoIniFile%, NekoProjectII, FD%a_index%NAME0
+		IniWrite, % "", %NekoIniFile%, NekoProjectII, CD%a_index%_FILE
+	}
+
+	; Set Hdd, Fdd, CdRom
 	files := FileUtil.getFiles( currDir, "i).*\.(hdi|hdd)" )
 	Loop, % files.MaxIndex()
 	{
@@ -174,20 +201,24 @@ setConfig( imageFilePath ) {
 		IniWrite, % files[a_index], %NekoIniFile%, NekoProjectII, HDD%a_index%FILE
 	}
 
-		files := FileUtil.getFiles( currDir, "i).*\.(d88|fdi|fdd)" )
+	files := FileUtil.getFiles( currDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
 	Loop, % files.MaxIndex()
 	{
-		if( A_Index > 4 )
+		if( A_Index > 2 )
 			break
-		IniWrite, % files[a_index], %NekoIniFile%, NekoProjectII, FDD%a_index%FILE
+		IniWrite, % files[a_index], %NekoIniFile%, NP2 tool, FD%a_index%NAME0
 	}
 
-	files := FileUtil.getFiles( currDir, "i).*\.(d88|fdi|fdd)" )
-	Loop, % files.MaxIndex()
-	{
-		IniWrite, % files[a_index], %NekoIniFile%, NP2 tool, FD2NAME%a_index%
-		IniWrite, % files[a_index], %NekoIniFile%, NP2 tool, FD1NAME%a_index%
-	}
+	cdRom := getCdRom( imageDirPath )
+	if( cdRom != "" )
+		IniWrite, % cdRom, %NekoIniFile%, NekoProjectII, CD3_FILE
+
+	; Set option
+	option := getOption( imageDirPath )
+	if( option.config.clk_mult != "" )
+		IniWrite, % option.config.clk_mult, %NekoIniFile%, NekoProjectII, clk_mult
+	if( option.config.ExMemory != "" )
+		IniWrite, % option.config.ExMemory, %NekoIniFile%, NekoProjectII, ExMemory
 
 	return true
 
