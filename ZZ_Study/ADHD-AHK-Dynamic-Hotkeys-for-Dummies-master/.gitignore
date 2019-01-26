@@ -1,0 +1,10 @@
+*.ini
+*.exe
+*.zip
+*.lnk
+*.scc
+*.png
+*.gif
+*.tmp.*
+Setup.ahk
+!Setup*.exe

@@ -26,8 +26,13 @@
  */
 class Tray {
 
+  static void := Tray._init()
+
 	__New() {
 	    throw Exception( "Tray is a static class, don't instant it!", -1 )
+	}
+
+	_init() {
 	}
 
   /**
@@ -40,12 +45,15 @@ class Tray {
 	showMessage( title, message:="", duration=2000 ) {
 
 		this.hideMessage()
+		debug( message )
 
+		; gui -Caption +ToolWindow +AlwaysOnTop +LastFound
+		; gui -Caption +E0x80000 +ToolWindow +AlwaysOnTop
 		gui -Caption +ToolWindow +AlwaysOnTop
 
 		; rather than transperency, below setting shows notification in FullScreen Mode
-		Gui +LastFound
-		WinSet, TransColor, White 250
+		; WinSet, TransColor, White 250
+		Gui, Color, ffffff
 
 		gui, font, s10 bold
 		gui, add, text, cblue w200, %title%

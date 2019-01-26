@@ -3,15 +3,11 @@
 
 imageDirPath := %0%
 ; imageDirPath := "\\NAS\emul\image\SuperFamicom\Excitebike - Bunbun Mario Battle - Stadium 1 (ja)"
-; imageDirPath := "\\NAS\emul\image\MSX\Ancient Ys Vanished - Omen (T-ko)"
-; imageDirPath := "\\NAS\emul\image\GameBoy\Baby Felix - Halloween (en)"
-
+; imageDirPath := "\\NAS\emul\image\GameGear\Moldorian - Hikari to Yami no Sister (Japan)"
 
 option := getOption( imageDirPath )
-; core   := getCore( option, "gambatte_libretro" )
-; core   := getCore( option, "mednafen_gba_libretro" )
-core   := getCore( option, "mgba_libretro" )
-filter := getFilter( option, "zip|7z" )
+core   := getCore( option, "genesis_plus_gx_libretro" )
+filter := getFilter( option, "zip|7z|gg" )
 
 imageFilePath := getRomPath( imageDirPath, option, filter )
 

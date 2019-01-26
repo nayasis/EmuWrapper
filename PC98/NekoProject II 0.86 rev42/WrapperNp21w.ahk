@@ -3,7 +3,7 @@
 
 emulatorPid  := ""
 imageDirPath := %0%
-; imageDirPath := "\\NAS\emul\image\PC98\Brandish 3 Renewal (ja)"
+; imageDirPath := "\\NAS\emul\image\PC98\Tamashii no Mon (ja)"
 ; imageDirPath  := "\\NAS\emul\image\PC98\Ys 2 (T-ko)"
 ; imageDirPath  := "\\NAS\emul\image\PC98\Carmine (ja)"
 
@@ -205,11 +205,14 @@ setConfig( imageDirPath ) {
 	if( option.config.ExMemory != "" )
 		IniWrite, % option.config.ExMemory, %NekoIniFile%, NekoProject21, ExMemory
 
-	debug( "option.config.clk_multi : " option.config.clk_multi )
-	debug( "option.config.ExMemory  : " option.config.ExMemory )
+	if( option.config.GdcBlock == "2.5" )
+		IniWrite, % "3e e3 7b", %NekoIniFile%, NekoProject21, DIPswtch
+	Else
+		IniWrite, % "3e 63 7b", %NekoIniFile%, NekoProject21, DIPswtch
 
-	IniWrite, % "3e 63 7b", %NekoIniFile%, NekoProject21, DIPswtch
-	IniWrite, % "48 05 04 08 0b 20 00 6e", %NekoIniFile%, NekoProject21, MEMswtch
+	; IniWrite, % "48 05 04 08 0b 20 00 6e", %NekoIniFile%, NekoProject21, MEMswtch
+	IniWrite, % "48 05 04 08 ab 20 00 6e", %NekoIniFile%, NekoProject21, MEMswtch
+	; HDD -> FDD
 
 	return true
 

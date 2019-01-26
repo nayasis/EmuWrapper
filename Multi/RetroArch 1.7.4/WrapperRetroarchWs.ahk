@@ -6,8 +6,8 @@ imageDirPath := %0%
 ; imageDirPath := "\\NAS\emul\image\SuperFamicom\Far East Of Eden Zero (T-en 30 by Tom)"
 
 option := getOption( imageDirPath )
-core   := getCore( option, "nestopia_libretro" )
-filter := getFilter( option, "zip|nes" )
+core   := getCore( option, "mednafen_wswan_libretro" )
+filter := getFilter( option, "ws|wsc|7z|zip" )
 
 imageFilePath := getRomPath( imageDirPath, option, filter )
 

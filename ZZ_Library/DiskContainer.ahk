@@ -53,7 +53,10 @@ class DiskContainer {
     container   := []
    
     __New( path, pattern=".*" ) {
-        this.container := FileUtil.getFiles( path, pattern )
+        if ( path != "" ) {
+            this.container := FileUtil.getFiles( path, pattern )
+        }
+        
     }
 
     size() {
