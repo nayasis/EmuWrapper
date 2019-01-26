@@ -110,6 +110,7 @@ _runSub( executor, executorDir, executorDelay, executorWait, properties ) {
 runProgram( fileIni, properties ) {
 
 	IniRead, executor,                 %fileIni%, init,   executor,     _
+	IniRead, unblockPath,              %fileIni%, init,   unblockPath,  _
 	IniRead, executorDir,              %fileIni%, init,   executorDir,  _
 	IniRead, resolution,               %fileIni%, init,   resolution,   _
 	IniRead, hideTaskbar,              %fileIni%, init,   hideTaskbar,  _
@@ -125,6 +126,13 @@ runProgram( fileIni, properties ) {
 
 	; executor    := RegExReplace( executor,    "\\", "\\" )
 	; executorDir := RegExReplace( executorDir, "\\", "\\" )
+
+  if ( unblockPath != "_" ) {
+  	unblockPath := bindValue( unblockPath, properties )
+  	command := "powershell unblock-file ""-path \""" unblockPath "\"""""
+  	debug( command )
+  	Run, % command
+  }
 
 	if ( resolution != "_" ) {
 		changeResolution( resolution )

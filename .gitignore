@@ -71,3 +71,26 @@ PC98/**/*.zip
 3DS/*/updater.cfg
 3DS/*/updater.ps1
 ZZ_Util/installLibrary
+PlayStation2/PCSX2 1.5.0/Bios/
+PlayStation2/PCSX2 1.5.0/cheats/
+PlayStation2/PCSX2 1.5.0/docs/
+PlayStation2/PCSX2 1.5.0/Langs/
+PlayStation2/PCSX2 1.5.0/logs/
+PlayStation2/PCSX2 1.5.0/plugins/
+PlayStation2/PCSX2 1.5.0/inis/
+PlayStation2/PCSX2 1.5.0/shaders/
+PlayStation2/PCSX2 1.5.0/memcards/
+PC88/M88 2.19a/2608_
+*.wav
+PC88/M88 2.19a/readme.txt
+*.rom
+PlayStation2/PCSX2 1.5.0/run_spu2_replay.cmd
+PlayStation2/PCSX2 1.5.0/pcsx2.exe
+PlayStation2/PCSX2 1.5.0/cheats_ws/8897c208.pnach
+PlayStation2/PCSX2 1.5.0/cheats_ws.zip
+PlayStation2/PCSX2 1.5.0/GameIndex.dbf
+PC88/M88 2.19a/M88.exe
+PC88/M88 2.19a/KANJI1.ROM.src
+PC88/M88 2.19a/INI.txt
+PC88/M88 2.19a/ENHANCED.txt
+PC88/M88 2.19a/faq.txt

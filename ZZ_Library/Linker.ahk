@@ -50,11 +50,11 @@ class Linker {
     * Get Symbolic Link Information
     *
     * @param  filePath   path to check if it is symbolic link
-    * @param  targetPath path to linked by filePath
+    * @param  srcPath    path to linked by filePath
     * @param  linkType   link type ( file or directory )
     * @return true if filepath is symbolic link
     */
-	isSymlink( filePath, ByRef targetPath="", ByRef linkType="" ) {
+	isSymlink( filePath, ByRef srcPath="", ByRef linkType="" ) {
 
 		if RegExMatch(filePath,"^\w:\\?$") ; false if it is a root directory
 			return false
@@ -64,7 +64,7 @@ class Linker {
 		cmdResult := Linker._runCommand( "/c dir /al """ (InStr(FileExist(filePath),"D") ? parentDir "\" : filePath) """" )
 
 		if RegExMatch(cmdResult,"<(.+?)>.*?\b" fn "\b.*?\[(.+?)\]",m) {
-			linkType:= m1, targetPath:= m2
+			linkType:= m1, srcPath := m2
 			if ( linkType == "SYMLINK" )
   				linkType := "file"
 			else if ( linkType == "SYMLINKD" )

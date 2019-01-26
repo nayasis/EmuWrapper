@@ -3,11 +3,10 @@
 
 emulatorPid   := ""
 imageFilePath := %0%
-; imageFilePath := "d:\_backup\download\NDS_Korean\Final Fantasy 4"
+; imageFilePath := "\\NAS\emul\image\NDS\Pokemon - SoulSilver (ko)"
 
 romFile := FileUtil.getFile( imageFilePath, "i).*\.(zip|nds)" )
 
-debug( "??" )
 debug( romFile )
 
 if ( romFile != "" ) {
@@ -45,5 +44,6 @@ activateEmulator() {
 ^+Insert:: ; Toggle Speed
 	Tray.showMessage( "Toggle speed" )
 	activateEmulator()
-	Send {Space down}{Space up}
+	Send !C{enter}L
+	Send !C{enter}A
 	return

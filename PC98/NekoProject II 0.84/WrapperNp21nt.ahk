@@ -4,6 +4,7 @@
 emulatorPid   := ""
 imageDirPath  := %0%
 ; imageDirPath  := "\\NAS\emul\image\PC98\Ys 2 (T-ko)"
+imageDirPath := "\\NAS\emul\image\PC98\Mahou no Shougakusei Clit-chan (ja)"
 
 fddContainer := new DiskContainer( imageDirPath, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)" )
 fddContainer.initSlot( 2 )
