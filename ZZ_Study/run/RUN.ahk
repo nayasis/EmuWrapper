@@ -131,7 +131,7 @@ runProgram( fileIni, properties ) {
   	unblockPath := bindValue( unblockPath, properties )
   	command := "powershell unblock-file ""-path \""" unblockPath "\"""""
   	debug( command )
-  	Run, % command
+  	Run, % command,,Hide
   }
 
 	if ( resolution != "_" ) {
