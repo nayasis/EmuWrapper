@@ -1,8 +1,7 @@
 #NoEnv
 #include \\NAS\emul\emulator\ZZ_Library\Include.ahk
 
-global emulatorPid
-global emulatorHandler
+global emulPid
 global diskContainer := new DiskContainer()
 
 runRomEmulator( imageFilePath, core ) {
@@ -12,17 +11,19 @@ runRomEmulator( imageFilePath, core ) {
 		command := "retroarch.exe -L ./cores/" core ".dll """ imageFilePath """"
 		debug( command )
 
-		Run, % command,,Hide,emulatorPid
+		Run, % command, , Hide, emulPid
 		waitEmulator()
 		IfWinExist
 		{
-			WinGet, emulatorHandler, ID
 			activateEmulator()
-		  Process, WaitClose, %emulatorPid%
+			; for reicast (DC)
+			WinWaitClose, ahk_class RetroArch ahk_exe retroarch.exe
+		  Process, WaitClose, emulPid
+		  debug( "wait close" )
 		}
 
 	} else {
-		Run, % "retroarch.exe",,Hide,emulatorPid
+		Run, % "retroarch.exe",,Hide, emulPid
 	}
 
 }
@@ -33,18 +34,13 @@ getOption( imageDirPath ) {
 	{
 		FileRead, jsonText, %dirConf%\option\option.json
 		option := JSON.load( jsonText )
-
-		; IfExist %dirConf%\option\gameMeta.json
-		; {
-		; 	FileRead, jsonText, %dirConf%\option\gameMeta.json
-		; 	gameMeta := JSON.load( jsonText )
-		; 	gameMeta := JSON.load( gameMeta.option )
-		; 	option.layout := gameMeta.layout
-		; }
-
-		return option
+	} else {
+		option := {}
 	}
-	return {}
+
+	modifyConfigDefault( option )
+	modifyConfigCore( option )
+	return option
 }
 
 getGameMeta( imageDirPath ) {
@@ -63,26 +59,33 @@ getCore( option, defaultVal ) {
 	return defaultVal
 }
 
+nvl( val, defaultVal ) {
+	if( val != "" )
+		return val
+	return defaultVal
+}
+
 getFilter( option, defaultVal ) {
 	if ( option.run.filter != "" )
 		return option.run.filter
 	return defaultVal
 }
 
-getRomPath( imageDirPath, option, filter ) {
+getRomPath( imageDirPath, option, filter, readM3u=true ) {
 	if ( option.run.rom != "" ) {
 		romPath := FileUtil.getFile( imageDirPath, "i)" option.run.rom "\.(" filter ")$" )
 		if ( romPath != "" ) {
 			return romPath
 		}
 	}
-	romPath := FileUtil.getFile( imageDirPath, "i).*\.(m3u)$")
-	if ( romPath != "" ) {
-		readM3U( romPath )
-		return romPath
-	} else {
-		return FileUtil.getFile( imageDirPath, "i).*\.(" filter ")$" )
+	if ( readM3u == true ) {
+		romPath := FileUtil.getFile( imageDirPath, "i).*\.(m3u)$")
+		if ( romPath != "" ) {
+			readM3U( romPath )
+			return romPath
+		}
 	}
+	return FileUtil.getFile( imageDirPath, "i).*\.(" filter ")$" )
 }
 
 readM3U( path ) {
@@ -98,7 +101,7 @@ readM3U( path ) {
 }
 
 waitEmulator() {
-	WinWait, ahk_class RetroArch ahk_exe retroarch.exe,, 30
+	WinWait, ahk_class RetroArch ahk_exe retroarch.exe,, 60
 	IfWinExist
 	{
 	  activateEmulator()
@@ -110,4 +113,56 @@ activateEmulator( delay:="" ) {
 	if ( delay != "" && delay > 0 ) {
 		Sleep %delay%
 	}
+}
+
+readConfig( fileConfig ) {
+	config := {}
+	loop, read, % fileConfig
+	{
+		words := StrSplit( A_LoopReadLine, " = " )
+		key   := words[1]
+		val   := SubStr( words[2], 2, StrLen(words[2]) - 2 )
+		config[ key ] := val
+	}
+	return config
+}
+
+writeConfig( fileConfig, config ) {
+	buffer := ""
+	for key, val in config {
+		buffer .= key " = """ val """`n"
+	}
+	FileUtil.delete( fileConfig )
+	FileAppend, % buffer, % fileConfig
+}
+
+modifyConfig( fileConfig, option, functionName ) {
+	lambdaFunc := Func( functionName )
+	if( lambdaFunc == null || ! IsFunc(lambdaFunc) )
+	  return
+	config := readConfig( fileConfig )
+	lambdaFunc.( config, option )
+	writeConfig( fileConfig, config )
+}
+
+modifyConfigDefault( option ) {
+	modifyConfig( "retroarch.cfg", option, "setDefaultConfig" )
+}
+
+modifyConfigCore( option ) {
+	modifyConfig( "retroarch-core-options.cfg", option, "setCoreConfig" )
+}
+
+setDefaultConfig( config, option ) {
+	config.video_driver := nvl( option.run.videoDriver, "gl" )
+	config.video_shader := nvl( option.run.videoShader, "\\ntsc\\ntsc-320px-svideo-gauss-scanline" )
+	if ( config.video_driver == "gl" ) {
+		config.video_shader := ":\shaders\shaders_glsl" config.video_shader ".glslp"
+	} else {
+		config.video_shader := ":\shaders\shaders_slang" config.video_shader ".glangp"
+	}
+	debug( "option.run.videoDriver : " option.run.videoDriver )
+	debug( "option.run.videoShader : " option.run.videoShader )
+	debug( "config.video_driver : " config.video_driver )
+	debug( "config.video_shader : " config.video_shader )
 }

@@ -60,14 +60,18 @@ class DiskContainer {
     }
 
     size() {
-
         cnt := this.container.MaxIndex()
-
         if( cnt == "" )
             return 0
         return cnt
+    }
 
-        ; return this.container.MaxIndex()
+    hasDisk() {
+      return this.size() > 0
+    }
+
+    hasMultiDisk() {
+      return this.size() > 1
     }
 
     addPath( path ) {
@@ -210,16 +214,12 @@ class DiskContainer {
     }
 
     initSlot( size ) {
-
         Loop % this.size()
         {
             if( A_index > size )
                 break
-            
             this.setSlot( A_Index, this.getFile(A_Index) )
-            
         }
-
     }
 
 }

@@ -12,23 +12,6 @@ imageFilePath := getRomPath( imageDirPath, option, filter )
 
 runRomEmulator( imageFilePath, core )
 
-	; if ( imageFilePath != "" ) {
-
-	; 	command := "retroarch.exe -L ./cores/" core ".dll """ imageDirPath "\game.cmd"""
-	; 	debug( command )
-
-	; 	Run, % command,,Hide,emulatorPid
-	; 	waitEmulator()
-	; 	IfWinExist
-	; 	{
-	; 		activateEmulator()		
-	; 	  Process, WaitClose, %emulatorPid%
-	; 	}
-
-	; } else {
-	; 	Run, % "retroarch.exe",,Hide,
-	; }
-
 ExitApp
 
 #include %A_ScriptDir%\WrapperAbstrctHotkey.ahk
