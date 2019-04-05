@@ -64,8 +64,10 @@ cli( command ) {
 		Sleep,100
 		DllCall( "AttachConsole","UInt",pid )
 	}
-	shell := ComObjCreate("WScript.Shell")
-	return shell.Exec( command ).StdOut.readAll()
+	shell  := ComObjCreate("WScript.Shell")
+	result := shell.Exec( command ).StdOut.readAll()
+	DllCall("FreeConsole")
+	return result
 }
 
 debug( message ) {

@@ -7,7 +7,7 @@ pathWorkRoot := "f:\download\megaCd"
 ; pathRoot     := "\\NAS\emul\image\PcFx"
 ; pathRoot     := "\\NAS\emul\image\PlayStation"
 ; pathRoot     := "\\NAS\emul\image\3DO\Games\Guardian War"
-pathRoot     := "\\NAS\emul\image\MegaCd\Fahrenheit (32X) (En)"
+pathRoot     := "\\NAS\emul\image\DOS\Appareden - Fukuryuu no Shou (T-ko)\_EL_CONFIG\cdrom"
 ; pathRoot     := "\\NAS\emul\image\Saturn\RPG\Grandia (T-Kr)"
 ; pathRoot     := "\\NAS\emul\image\PcFx\Aa! Megami Sama"
 replaceFile  := false
@@ -79,7 +79,7 @@ for gameDir, files in cueFiles {
 
 			; MegaCd
 			; toCdImage( workDir, diskName, "", "2352" )
-			toCdImageWithTurboRip( workDir, diskName, "2352" )
+			; toCdImageWithTurboRip( workDir, diskName, "2352" )
 
       ; DOS
       ; toCdImage( workDir, diskName, "", "2048" )
@@ -92,7 +92,7 @@ for gameDir, files in cueFiles {
 			; toCdImageWithTurboRip( workDir, diskName )
 			
 			; PlayStation
-			; toCdImage( workDir, diskName, "-r", "" )
+			toCdImage( workDir, diskName, "-r", "" )
 
 			VirtualDisk.close()
 			Sleep, 1000

@@ -10,6 +10,5 @@
 #Include 7Zip.ahk
 #Include JSON.ahk
 #Include Jxon.ahk
-#Include Linker.ahk
 #Include Cli.ahk
 #Include Registry.ahk

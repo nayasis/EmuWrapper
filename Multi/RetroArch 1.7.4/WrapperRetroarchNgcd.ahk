@@ -2,14 +2,15 @@
 #include WrapperAbstrctFunction.ahk
 
 imageDirPath := %0%
-; imageDirPath := "\\NAS\emul\image\MegaCd\Who Shot Johnny Rock  (en)"
+imageDirPath := "\\NAS\emul\image\NeoGeo CD\Samurai Shodown 4 (en)"
 
 option := getOption( imageDirPath )
-core   := getCore( option, "genesis_plus_gx_libretro" )
-filter := getFilter( option, "(zip|md|smd|gen|sms|gg)" )
+core   := getCore( option, "mess2014_libretro" )
+filter := getFilter( option, "(zip)" )
 
 imageFilePath := getRomPath( imageDirPath, option, filter )
 
+; runRomEmulator( imageFilePath, core, "--subsystem neocd" )
 runRomEmulator( imageFilePath, core )
 
 ExitApp
