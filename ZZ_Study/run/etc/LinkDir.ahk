@@ -1,3 +1,22 @@
+EnvGet, userHome, userprofile
+
+targetDir  := userHome "\Documents\Paradox Interactive\Hearts of Iron IV"
+sourceDir  := RegExReplace( A_ScriptDir, "(^.+\\).+", "$1" ) "bin\_link"
+
+debug( "sourceDir : " sourceDir )
+debug( "targetDir : " targetDir )
+
+FileUtil.makeLink( sourceDir, targetDir )
+
+ExitApp
+
+debug( message ) {
+ if( A_IsCompiled == 1 )
+   return
+  message .= "`n" 
+  FileAppend %message%, * ; send message to stdout
+}
+
 class FileUtil {
 
 	static void := FileUtil._init()
@@ -11,6 +30,8 @@ class FileUtil {
 
 	getDir( path ) {
 		path := RegExReplace( path, "^(.*?)\\$", "$1" )
+		IfNotExist %path%
+			return ""
 		if( this.isDir(path) )
 			return path
 		return this.getParentDir( path )
@@ -23,9 +44,15 @@ class FileUtil {
 	}
 
 	getExt( filePath ) {
+
+		IfNotExist %filePath%
+			return ""
+		
 		SplitPath, % filePath, fileName, fileDir, fileExtention, fileNameWithoutExtension, DriveName
 		StringLower, fileExtention, fileExtention
+
 		return fileExtention
+
 	}
 
   /**
@@ -50,7 +77,9 @@ class FileUtil {
 	}
 	
 	getFileName( filePath, withExt:=true ) {
-		filePath := RegExReplace( filePath, "^(.*?)\\$", "$1" )
+		path := RegExReplace( path, "^(.*?)\\$", "$1" )
+		IfNotExist %filePath%
+			return ""
 		SplitPath, filePath, fileName, fileDir, fileExtention, fileNameWithoutExtension, DriveName
 		if( withExt == true )
 			return fileName
@@ -100,14 +129,14 @@ class FileUtil {
 	}
 	
 	isDir( path ) {
-		if( ! this.exist(path) )
+		IfNotExist %path%
 			return false
 		FileGetAttrib, attr, %path%
 		Return InStr( attr, "D" )
 	}
 	
 	isFile( path ) {
-		if( ! this.exist(path) )
+		IfNotExist %path%
 			return false
 		FileGetAttrib, attr, %path%
 		Return ! InStr( attr, "D" )

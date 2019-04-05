@@ -11,19 +11,11 @@ runAsAdmin( fileIni )
 
 prop := readProperties( fileIni )
 
-; set default
-prop[ "cd" ]      := A_ScriptDir
-prop[ "cdWin" ]   := RegExReplace( A_ScriptDir, "\\", "\\" ) ; double file seperator slash
-; single file seperator slash
-prop[ "cdUnix" ]  := RegExReplace( A_ScriptDir, "\\", "/" ) ; normal file seperator
-
 setRegistry( fileReg, prop )
 
 runSub( "pre", fileIni, prop )
 runProgram( fileIni, prop )
 runSub( "post", fileIni, prop )
-
-ExitApp
 
 closeApplication() {
 	Process, Close, % applicationPid
@@ -46,7 +38,6 @@ hasSub( section, fileIni ) {
 		IniRead, executor,    %fileIni%, %section%, executor%a_loopfield%,    _
 		IniRead, executorDir, %fileIni%, %section%, executor%a_loopfield%Dir, _
 		executor    := RegExReplace( executor,    "\\", "\\" )
-		debug( executor )
 		if( executor != "_" )
 			return true
   }	
@@ -71,40 +62,31 @@ runSub( section, fileIni, properties ) {
 		executorDir   := RegExReplace( executorDir,   "\\",     "\\"    )
 		executorDelay := RegExReplace( executorDelay, "[^0-9]", ""      )
 		executorWait  := RegExReplace( executorWait,  "_",      "true"  )
-
 		; debug( section "-executor : " executor )
-
-		_runSub( executor, executorDir, executorDelay, executorWait, properties )    
+		runSubHelper( executor, executorDir, executorDelay, executorWait, properties )    
   }
 }
 
-_runSub( executor, executorDir, executorDelay, executorWait, properties ) {
-
+runSubHelper( executor, executorDir, executorDelay, executorWait, properties ) {
 	if ( executor == "_" )
 		return
-
 	if ( executorDelay != "" )
 		Sleep, %executorDelay%
-
 	if ( executor == "!RESOLUTION" ) {
 		debug( "executorDir in resolution : " executorDir )
 		changeResolution( executorDir )
 	} else {
-
 		executor := bindValue( executor, properties )
 		if ( executorDir == "_" ) {
 			SplitPath, executor, , executorDir
 		}
 		executorDir := bindValue( executorDir, properties )
-
 		if ( executorWait == "true" ) {
-			RunWait, %executor%, %executorDir%
+			RunWait, %executor%, %executorDir%, Hide
 		} else {
-			Run, %executor%, %executorDir%
+			Run, %executor%, %executorDir%, Hide
 		}
-
 	}
-
 }
 
 runProgram( fileIni, properties ) {
@@ -115,7 +97,9 @@ runProgram( fileIni, properties ) {
 	IniRead, resolution,               %fileIni%, init,   resolution,   _
 	IniRead, hideTaskbar,              %fileIni%, init,   hideTaskbar,  _
 	IniRead, hideMouse,                %fileIni%, init,   hideMouse,    _
-	IniRead, isRunWait,                %fileIni%, init,   runWait,      true
+  IniRead, symlink,                  %fileIni%, init,   symlink,      _
+	IniRead, hideConsole,              %fileIni%, init,   hideConsole,  false
+	IniRead, isRunWait,                %fileIni%, init,   runWait,      false
   IniRead, exitAltF4,                %fileIni%, init,   exitAltF4,    true
 
 	IniRead, windowTarget,             %fileIni%, window, target,       _
@@ -123,6 +107,8 @@ runProgram( fileIni, properties ) {
 	IniRead, windowStart,              %fileIni%, window, start,        _
 	IniRead, windowSize,               %fileIni%, window, size,         _
 	IniRead, windowBorderless,         %fileIni%, window, borderless,   true
+
+	hideConsole := hideConsole == "true" ? "Hide" : ""
 
 	; executor    := RegExReplace( executor,    "\\", "\\" )
 	; executorDir := RegExReplace( executorDir, "\\", "\\" )
@@ -155,6 +141,8 @@ runProgram( fileIni, properties ) {
 		windowSize := A_ScreenWidth x A_ScreenHeight
 	}
 
+	makeSymlink( symlink, properties )
+
 	if ( hideTaskbar != "_" && hideTaskbar == "true" ) {
 		isRunWait := "true"
 		Taskbar.hide()
@@ -173,11 +161,9 @@ runProgram( fileIni, properties ) {
 	  isRunWait := "true"	
 	}
 
-	;MsgBox windowSize : %windowSize%
-
 	if ( executor != "_" ) {
 		
-		executor    := bindValue( executor, properties )
+		executor := bindValue( executor, properties )
 		; executorDir 변수에 executor의 경로만 담는다.
 		if ( executorDir == "_" ) {
 			SplitPath, executor, , executorDir
@@ -186,7 +172,7 @@ runProgram( fileIni, properties ) {
 
 		if ( windowTarget != "_" ) {
 			SetTimer, runMidThread, 500
-			Run, %executor%, %executorDir%,,applicationPid
+			Run, %executor%, %executorDir%,%hideConsole%,applicationPid
 			debug( "windowSearchDelay : " windowSearchDelay )
 			Sleep, %windowSearchDelay%
 			WinWait, %windowTarget%,, 20
@@ -220,7 +206,7 @@ runProgram( fileIni, properties ) {
 		} else if ( isRunWait == "true" ) {
 
 			SetTimer, runMidThread, 500
-			RunWait, %executor%, %executorDir%,,applicationPid
+			RunWait, %executor%, %executorDir%,%hideConsole%,applicationPid
 
 			ResolutionChanger.restore()
 			Taskbar.show()
@@ -230,17 +216,11 @@ runProgram( fileIni, properties ) {
 			SetTimer, runMidThread, 500
 			debug( "executor    : " executor    )
 			debug( "executorDir : " executorDir )
-			Run, %executor%, %executorDir%
+			Run, %executor%, %executorDir%,Hide
 		}
 
 	}
 
-}
-
-isFile( path ) {
-	IfNotExist %path%, return false
-	FileGetAttrib, attr, %path%
-	Return ! InStr( attr, "D" )
 }
 
 readProperties( file ) {
@@ -271,6 +251,14 @@ readProperties( file ) {
 		prop[ Trim(key) ] := Trim(val)
 	}
 
+	; set default
+	prop[ "cd" ]     := A_ScriptDir
+	prop[ "cdWin" ]  := RegExReplace( A_ScriptDir, "\\", "\\" ) ; double file seperator slash
+	prop[ "cdUnix" ] := RegExReplace( A_ScriptDir, "\\", "/" ) ; normal file seperator
+
+	EnvGet, userHome, userprofile
+	prop[ "home" ] := userHome
+
 	return prop
 
 }
@@ -284,10 +272,10 @@ readProperties( file ) {
 setRegistry( file, properties ) {
 
 	SetRegView 32
-	_setRegistry( file, properties )
+	writeRegistryFrom( file, properties )
 
 	SetRegView 64
-	_setRegistry( file, properties )
+	writeRegistryFrom( file, properties )
 
 }
 
@@ -297,7 +285,7 @@ setRegistry( file, properties ) {
 * @param file       {String} filePath contains data formatted Windows Registry
 * @param properties {Array}  properties to bind
 */
-_setRegistry( file, properties ) {
+writeRegistryFrom( file, properties ) {
 
 	regKey       := ""
 	readNextLine := false
@@ -331,7 +319,7 @@ _setRegistry( file, properties ) {
 			regVal  := RegExReplace( regVal, "\\""", """" )
 			regType := "REG_SZ"
 
-			debug( regName ":" regVal )
+			; debug( regName ":" regVal )
 
       if ( regName == "@" ) {
       	regName := ""
@@ -393,7 +381,7 @@ _setRegistry( file, properties ) {
 		
 		regName := bindValue( regName, properties )
 
-		debug( "[" regKey "] " regName " - " regType ":" regVal )
+		; debug( "[" regKey "] " regName " - " regType ":" regVal )
 
 		; if it needs to run as admin, restart itself
 		if ( ! RegExMatch(regKey, "^(HKEY_CURRENT_USER|HKEY_USERS)\\.*$") ) {
@@ -408,12 +396,9 @@ _setRegistry( file, properties ) {
 }
 
 bindValue( value, properties ) {
-
 	For key, val in properties
 		value := StrReplace( value, "#{" key "}", val )
-
 	return value
-
 }
 
 toStringFromHex( hexValue ) {
@@ -423,9 +408,8 @@ toStringFromHex( hexValue ) {
 
   array := StrSplit( hexValue, "," )
 
-  if ( mod( array.MaxIndex(), 2 ) != 0 ) {
+  if ( mod( array.MaxIndex(), 2 ) != 0 )
   	array.Insert( "00" )
-  }
 
   result := ""
 
@@ -433,7 +417,6 @@ toStringFromHex( hexValue ) {
   {
   	if ( mod(i,2) == 0 )
   		Continue
-
   	result := result chr( "0x" array[i + 1] array[i] )
   }
 
@@ -448,9 +431,8 @@ toNumberFromHex( hexValue ) {
 
   array := StrSplit( hexValue, "," )
 
-  if ( mod( array.MaxIndex(), 2 ) != 0 ) {
+  if ( mod( array.MaxIndex(), 2 ) != 0 )
   	array.Insert( "00" )
-  }
 
   result := ""
 
@@ -458,14 +440,28 @@ toNumberFromHex( hexValue ) {
   {
   	if ( mod(i,2) == 0 )
   		Continue
-
   	result := array[i + 1] array[i] result
-
   }
 
   ;return "0x" result
   return "0x0000000c"
 
+}
+
+makeSymlink( symlink, properties ) {
+	if ( symlink == "_" )
+		return
+	symlink := bindValue( symlink, properties )
+	debug( "symlink : " symlink )
+	path    := StrSplit( symlink, "->" )
+	if ( path.MaxIndex() == 2 ) {
+		sourceDir := Trim( path[1] )
+		targetDir := Trim( path[2] )
+		debug( ">> Make symlink" )
+		debug( "   sourceDir : " sourceDir )
+		debug( "   targetDir : " targetDir )
+		FileUtil.makeLink( sourceDir, targetDir )
+	}	
 }
 
 convertBase( fromBase, toBase, number ) {
@@ -487,21 +483,27 @@ changeResolution( resolutionConfig ) {
 
 restartAsAdmin() {
 	if not (A_IsAdmin) {
-	    try ; leads to having the script re-launching itself as administrator
-	    {
-	        if A_IsCompiled
-	            Run *RunAs "%A_ScriptFullPath%" /restart
-	        else
-	            Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
-	    }
-	    ExitApp
+    try ; leads to having the script re-launching itself as administrator
+    {
+        if A_IsCompiled
+            Run *RunAs "%A_ScriptFullPath%" /restart
+        else
+            Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
+    }
+    ExitApp
 	}
+}
+
+debug( message ) {
+ if( A_IsCompiled == 1 )
+   return
+  message .= "`n" 
+  FileAppend %message%, * ; send message to stdout
 }
 
 class ResolutionChanger {
 
-    static void := ResolutionChanger._init()
-
+    static void    := ResolutionChanger._init()
     static changed := false
 
     _init() {
@@ -509,10 +511,6 @@ class ResolutionChanger {
         this.srcHeight := A_ScreenHeight
     }
   
-    __New() {
-        throw Exception( "ResolutionChanger is a static class, dont instante it!", -1 )
-    }
-
     change( width, height, colorDepth := 32, refreshRate := 60 ) {
 
     	If ( RegExMatch(width, "^\d+$") == false || RegExMatch(height, "^\d+$") == false ) {
@@ -546,56 +544,53 @@ class ResolutionChanger {
 }
 
 class Taskbar {
-		static void := Taskbar._init()
-    __New() {
-        throw Exception( "TaskbarChanger is a static class, dont instante it!", -1 )
-    }
-    _init() {
-    }
+	static void := Taskbar._init()
+  _init() {
+  }
 
-    toggle() {
-			IfWinExist ahk_class Shell_TrayWnd
-			{
-				NumPut( ( ABS_AUTOHIDE := 0x1 ), APPBARDATA, 32, "UInt" )            ;Disable "Always on top" (& enable auto-hide to hide Start button)
-		    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
+  toggle() {
+		IfWinExist ahk_class Shell_TrayWnd
+		{
+			NumPut( ( ABS_AUTOHIDE := 0x1 ), APPBARDATA, 32, "UInt" )            ;Disable "Always on top" (& enable auto-hide to hide Start button)
+	    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
 
-		    WinHide ahk_class Shell_TrayWnd
-		    WinHide ahk_class Shell_SecondaryTrayWnd
-				WinHide, Start ahk_class Button
+	    WinHide ahk_class Shell_TrayWnd
+	    WinHide ahk_class Shell_SecondaryTrayWnd
+			WinHide, Start ahk_class Button
 
-			} Else {
-				NumPut( (ABS_ALWAYSONTOP := 0x2), APPBARDATA, 32, "UInt" )           ;Enable "Always on top" (& disable auto-hide)
-		    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
+		} Else {
+			NumPut( (ABS_ALWAYSONTOP := 0x2), APPBARDATA, 32, "UInt" )           ;Enable "Always on top" (& disable auto-hide)
+	    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
 
-		    WinShow ahk_class Shell_TrayWnd
-		    WinShow ahk_class Shell_SecondaryTrayWnd
-				WinShow, Start ahk_class Button
-			}
-    }
+	    WinShow ahk_class Shell_TrayWnd
+	    WinShow ahk_class Shell_SecondaryTrayWnd
+			WinShow, Start ahk_class Button
+		}
+  }
 
-    show() {
-			IfWinNotExist ahk_class Shell_TrayWnd
-			{
-				;Enable "Always on top" (& disable auto-hide)
-				NumPut( (ABS_ALWAYSONTOP := 0x2), APPBARDATA, 32, "UInt" )
-		    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
-		    WinShow ahk_class Shell_TrayWnd
-		    WinShow ahk_class Shell_SecondaryTrayWnd
-				WinShow, Start ahk_class Button
-			}
-    }
+  show() {
+		IfWinNotExist ahk_class Shell_TrayWnd
+		{
+			;Enable "Always on top" (& disable auto-hide)
+			NumPut( (ABS_ALWAYSONTOP := 0x2), APPBARDATA, 32, "UInt" )
+	    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
+	    WinShow ahk_class Shell_TrayWnd
+	    WinShow ahk_class Shell_SecondaryTrayWnd
+			WinShow, Start ahk_class Button
+		}
+  }
 
-    hide() {
-			IfWinExist ahk_class Shell_TrayWnd
-			{
-				;Disable "Always on top" (& enable auto-hide to hide Start button)
-				NumPut( ( ABS_AUTOHIDE := 0x1 ), APPBARDATA, 32, "UInt" )
-		    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
-		    WinHide ahk_class Shell_TrayWnd
-		    WinHide ahk_class Shell_SecondaryTrayWnd
-				WinHide, Start ahk_class Button
-			}    	
-    }
+  hide() {
+		IfWinExist ahk_class Shell_TrayWnd
+		{
+			;Disable "Always on top" (& enable auto-hide to hide Start button)
+			NumPut( ( ABS_AUTOHIDE := 0x1 ), APPBARDATA, 32, "UInt" )
+	    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
+	    WinHide ahk_class Shell_TrayWnd
+	    WinHide ahk_class Shell_SecondaryTrayWnd
+			WinHide, Start ahk_class Button
+		}    	
+  }
 }
 
 /**
@@ -603,83 +598,361 @@ class Taskbar {
 */
 class MouseCursor {
 
-    static void := FileUtil._init()
+  static void := FileUtil._init()
 
-    _init() {
-        this._setSystemCursor( "Init" )
+  _init() {
+      this._setSystemCursor( "Init" )
+  }
+
+  _setSystemCursor( OnOff=1 ) {  ; INIT = "I","Init"; OFF = 0,"Off"; TOGGLE = -1,"T","Toggle"; ON = others
+    static AndMask, XorMask, $, h_cursor
+      ,c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13 ; system cursors
+      ,b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13    ; blank cursors
+      ,h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12,h13    ; handles of default cursors
+    if (OnOff = "Init" or OnOff = "I" or $ = "")       ; init when requested or at first call
+    {
+      $ = h                                          ; active default cursors
+      VarSetCapacity( h_cursor,4444, 1 )
+      VarSetCapacity( AndMask, 32*4, 0xFF )
+      VarSetCapacity( XorMask, 32*4, 0 )
+      system_cursors = 32512,32513,32514,32515,32516,32642,32643,32644,32645,32646,32648,32649,32650
+      StringSplit c, system_cursors, `,
+      Loop %c0%
+      {
+          h_cursor   := DllCall( "LoadCursor", "Ptr",0, "Ptr",c%A_Index% )
+          h%A_Index% := DllCall( "CopyImage", "Ptr",h_cursor, "UInt",2, "Int",0, "Int",0, "UInt",0 )
+          b%A_Index% := DllCall( "CreateCursor", "Ptr",0, "Int",0, "Int",0
+              , "Int",32, "Int",32, "Ptr",&AndMask, "Ptr",&XorMask )
+      }
     }
+    if (OnOff = 0 or OnOff = "Off" or $ = "h" and (OnOff < 0 or OnOff = "Toggle" or OnOff = "T"))
+      $ = b  ; use blank cursors
+    else
+      $ = h  ; use the saved cursors
 
-    _setSystemCursor( OnOff=1 ) {  ; INIT = "I","Init"; OFF = 0,"Off"; TOGGLE = -1,"T","Toggle"; ON = others
-
-        static AndMask, XorMask, $, h_cursor
-            ,c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13 ; system cursors
-            ,b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13    ; blank cursors
-            ,h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12,h13    ; handles of default cursors
-        if (OnOff = "Init" or OnOff = "I" or $ = "")       ; init when requested or at first call
-        {
-            $ = h                                          ; active default cursors
-            VarSetCapacity( h_cursor,4444, 1 )
-            VarSetCapacity( AndMask, 32*4, 0xFF )
-            VarSetCapacity( XorMask, 32*4, 0 )
-            system_cursors = 32512,32513,32514,32515,32516,32642,32643,32644,32645,32646,32648,32649,32650
-            StringSplit c, system_cursors, `,
-            Loop %c0%
-            {
-                h_cursor   := DllCall( "LoadCursor", "Ptr",0, "Ptr",c%A_Index% )
-                h%A_Index% := DllCall( "CopyImage", "Ptr",h_cursor, "UInt",2, "Int",0, "Int",0, "UInt",0 )
-                b%A_Index% := DllCall( "CreateCursor", "Ptr",0, "Int",0, "Int",0
-                    , "Int",32, "Int",32, "Ptr",&AndMask, "Ptr",&XorMask )
-            }
-        }
-        if (OnOff = 0 or OnOff = "Off" or $ = "h" and (OnOff < 0 or OnOff = "Toggle" or OnOff = "T"))
-            $ = b  ; use blank cursors
-        else
-            $ = h  ; use the saved cursors
-
-        Loop %c0%
-        {
-            h_cursor := DllCall( "CopyImage", "Ptr",%$%%A_Index%, "UInt",2, "Int",0, "Int",0, "UInt",0 )
-            DllCall( "SetSystemCursor", "Ptr",h_cursor, "UInt",c%A_Index% )
-        }
+    Loop %c0%
+    {
+      h_cursor := DllCall( "CopyImage", "Ptr",%$%%A_Index%, "UInt",2, "Int",0, "Int",0, "UInt",0 )
+      DllCall( "SetSystemCursor", "Ptr",h_cursor, "UInt",c%A_Index% )
     }
+  }
 
-    show() {
-        ; SetTimer, MouseCursor.no_move_check, off
-        MouseCursor._setSystemCursor( "On" )
-    }
+  show() {
+    MouseCursor._setSystemCursor( "On" )
+  }
 
-    hide( duration=500 ) {
-
-        ; SetTimer, MouseCursor.no_move_check, %duration%
-        MouseCursor._setSystemCursor( "Off" )
-        ; return
-
-        ; MouseCursor.no_move_check:
-
-        ;     MouseGetPos, prevX, prevY
-            
-        ;     Sleep 100
-
-        ;     MouseGetPos, x, y
-
-        ;     if ( prevX != x or prevY != y ) {
-        ;         MouseCursor._setSystemCursor( "On" )
-        ;     } else {
-        ;         MouseCursor._setSystemCursor( "Off" )
-        ;     }
-
-        ;     return
-
-    }
+  hide() {
+    MouseCursor._setSystemCursor( "Off" )
+  }
 
 }
 
-debug( message ) {
+class FileUtil {
 
- if( A_IsCompiled == 1 )
-   return
+	static void := FileUtil._init()
 
-  message .= "`n" 
-  FileAppend %message%, * ; send message to stdout
-    
+	_init() {
+	}
+
+	getDir( path ) {
+		path := RegExReplace( path, "^(.*?)\\$", "$1" )
+		if( this.isDir(path) )
+			return path
+		return this.getParentDir( path )
+	}
+
+	getParentDir( path ) {
+		path := RegExReplace( path, "^(.*?)\\$", "$1" )
+		path := RegExReplace( path, "^(.*)\\.+?$", "$1" )
+		return path
+	}
+
+	getExt( filePath ) {
+		SplitPath, % filePath, fileName, fileDir, fileExtention, fileNameWithoutExtension, DriveName
+		StringLower, fileExtention, fileExtention
+		return fileExtention
+	}
+
+  /**
+  * File extention is matched width extentionPattern
+  *
+  * @param {string} filePath
+  * @param {string} extentionPattern 
+  * @exmaple
+  *   FileUtil.isExt("cue|mdx")
+  */
+	isExt( filePath, extentionPattern ) {
+
+		IfNotExist %filePath%
+			return false
+
+		if ( RegExMatch( filePath, "i).*\.(" extentionPattern ")$" ) ) {
+			return true
+		} else {
+			return false
+		}
+
+	}
+	
+	getFileName( filePath, withExt:=true ) {
+		filePath := RegExReplace( filePath, "^(.*?)\\$", "$1" )
+		SplitPath, filePath, fileName, fileDir, fileExtention, fileNameWithoutExtension, DriveName
+		if( withExt == true )
+			return fileName
+		return fileNameWithoutExtension
+	}
+	
+	getFiles( path, pattern=".*", includeDir=false, recursive=false ) {
+		
+		files := []
+
+		if ( this.isFile(path) ) {
+			if RegExMatch( path, pattern )
+				files.Insert( path )
+
+		} else {
+
+		currDir := this.getDir( path )
+			Loop, %currDir%\*, % includeDir, % recursive
+			{
+					if not RegExMatch( A_LoopFileFullPath, pattern )
+						continue
+					files.Insert( A_LoopFileFullPath )        	
+			}
+
+			this._sortArray( files )
+
+		}
+		
+		return files
+		
+	}
+
+	getFile( pathDirOrFile, pattern=".*" ) {
+
+		if ( pathDirOrFile == "" or this.isFile(pathDirOrFile) )  {
+			return pathDirOrFile
+		}
+
+        files := this.getFiles( pathDirOrFile, pattern )
+
+        if ( files.MaxIndex() > 0 ) {
+        	return files[ 1 ]
+        }
+
+        return ""
+
+	}
+	
+	isDir( path ) {
+		if( ! this.exist(path) )
+			return false
+		FileGetAttrib, attr, %path%
+		Return InStr( attr, "D" )
+	}
+	
+	isFile( path ) {
+		if( ! this.exist(path) )
+			return false
+		FileGetAttrib, attr, %path%
+		Return ! InStr( attr, "D" )
+	}
+
+	readProperties( path ) {
+
+		prop := []
+
+		Loop, Read, %path%
+		{
+
+			If RegExMatch(A_LoopReadLine, "^#.*" )
+				continue
+
+			splitPosition := InStr(A_LoopReadLine, "=" )
+
+			If ( splitPosition = 0 ) {
+				key := A_LoopReadLine
+				val := ""
+			} else {
+				key := SubStr( A_LoopReadLine, 1, splitPosition - 1 )
+				val := SubStr( A_LoopReadLine, splitPosition + 1 )
+			}
+			
+			prop[ Trim(key) ] := Trim(val)
+
+		}
+
+		return prop
+
+	}
+
+	makeDir( path ) {
+		FileCreateDir, %path%
+	}
+
+	makeParentDir( path, forDirectory=true ) {
+		if ( forDirectory == true ) {
+			parentDir := this.getParentDir( path )
+		} else {
+			parentDir := this.getDir( path )
+		}
+		FileCreateDir, % parentDir
+	}
+
+	exist( path ) {
+		return FileExist( path )
+	}
+
+	delete( path, recursive=1 ) {
+		if ( this.isFile(path) ) {
+			FileDelete, % path
+		} else if( this.isDir(path) ) {
+			FileRemoveDir, % path, % recursive
+		}
+	}
+
+	move( src, trg, overwrite=1 ) {
+		if ( ! this.exist(src) )
+			return
+		this.makeParentDir( trg, this.isDir(src) )
+		FileMove, % src, % trg, % overwrite
+	}
+
+	copy( src, trg, overwrite=1 ) {
+		if ( ! this.exist(src) )
+			return
+		this.makeParentDir( trg, this.isDir(src) )
+		if ( this.isDir(src) ) {
+			FileCopyDir, % src, % trg, % overwrite
+		} else {
+			FileCopy, % src, % trg, % overwrite
+		}
+	}
+
+  /**
+  * get file size
+  *
+  * @param {path} filePath
+  * @return size (byte)
+  */
+	getSize( path ) {
+		FileGetSize, size, % path
+		return size
+	}
+
+  /**
+  * get time
+  *
+  * @param {path} file path
+  * @param {witchTime} M: modification time (default), C: creation time, A: last access time
+  * @return YYYYMMDDHH24MISS
+  */
+	getTime( path, whichTime="M" ) {
+		FileGetTime, var, % path, % whichTime
+		return var
+	}
+
+    /**
+    * Get Symbolic Link Information
+    *
+    * @param  filePath   path to check if it is symbolic link
+    * @param  srcPath    path to linked by filePath
+    * @param  linkType   link type ( file or directory )
+    * @return true if filepath is symbolic link
+    */
+	isSymlink( filePath, ByRef srcPath="", ByRef linkType="" ) {
+
+		IfNotExist, % filePath
+			return false
+
+		if RegExMatch(filePath,"^\w:\\?$") ; false if it is a root directory
+			return false
+
+		SplitPath, filePath, fn, parentDir
+
+		result := this.cli( "/c dir /al """ (InStr(FileExist(filePath),"D") ? parentDir "\" : filePath) """" )
+
+		if RegExMatch(result,"<(.+?)>.*?\b" fn "\b.*?\[(.+?)\]",m) {
+			linkType:= m1, srcPath := m2
+			if ( linkType == "SYMLINK" )
+  			linkType := "file"
+			else if ( linkType == "SYMLINKD" )
+  			linkType := "directory"
+			return true
+		} else {
+			return false
+		}
+	
+	}
+
+  /**
+  * make symbolic link
+  *
+  * @param src  source path (real file)
+  * @param trg  target path (path to used as link)
+  */
+  makeLink( src, trg ) {
+
+  	if this.isSymlink( trg ) {
+  		this.delete( trg )
+  	}
+
+		this.makeParentDir( trg, this.isDir(src) )
+		if ( this.isDir(src) ) {
+			cmd := "/c mklink /d """ trg """ """ src """"
+		} else {
+			cmd := "/c mklink /f """ trg """ """ src """"
+		}
+		this.cli( cmd )
+
+  }
+
+  /**
+  * run command and return result
+  *
+  * @param  command	 command
+  * @return command execution result
+  */
+	cli( command ) {
+
+		dhw := A_DetectHiddenWindows
+		DetectHiddenWindows,On
+		Run, %ComSpec% /k,,Hide UseErrorLevel, pid
+		if not ErrorLevel
+		{
+			while ! WinExist("ahk_pid" pid)
+				Sleep,100
+			DllCall( "AttachConsole","UInt",pid )
+		}
+		DetectHiddenWindows, % dhw
+
+		; debug( "command :`n`t" command )
+		shell := ComObjCreate("WScript.Shell")
+		try {
+			exec := shell.Exec( comspec " " command )
+			While ! exec.Status
+				sleep, 100
+			result := exec.StdOut.readAll()
+		}
+		catch e
+		{
+			debug( "error`n" e.what "`n" e.message )
+		}
+		; debug( "result :`n`t" result )
+		DllCall("FreeConsole")
+		Process Close, %pid%
+
+		return result
+
+	}
+
+	_sortArray( Array ) {
+	  t := Object()
+	  for k, v in Array
+	    t[RegExReplace(v,"\s")]:=v
+	  for k, v in t
+	    Array[A_Index] := v
+	  return Array
+	}
+
 }

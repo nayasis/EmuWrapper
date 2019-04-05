@@ -7,7 +7,7 @@ arguments := getArguments()
 imageDirPath  := nvl( arguments[0] )
 coreName      := nvl( arguments[1], "4do_libretro" )
 
-; imageDirPath := "f:\download\3do\Yakyuuken Special"
+imageDirPath := "\\NAS\emul\image\3DO\Night Trap"
 
 hasMultiDisc := false
 

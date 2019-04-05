@@ -4,11 +4,18 @@
 global emulPid
 global diskContainer := new DiskContainer()
 
-runRomEmulator( imageFilePath, core ) {
+runRomEmulator( imageFilePath, core, option="", callback="" ) {
+
+	debug( "imageFilePath : " imageFilePath )
+	debug( "core          : " core )
 
 	if ( imageFilePath != "" ) {
 
-		command := "retroarch.exe -L ./cores/" core ".dll """ imageFilePath """"
+		command := "retroarch.exe -L ./cores/" core ".dll"
+		if ( option != "" ) {
+			command .= " " option
+		}
+		command .= " """ imageFilePath """"
 		debug( command )
 
 		Run, % command, , Hide, emulPid
@@ -16,6 +23,9 @@ runRomEmulator( imageFilePath, core ) {
 		IfWinExist
 		{
 			activateEmulator()
+			if ( isFunc(callback) ) {
+				Func( callback ).( emulPid, core, imageFilePath, option )
+			}
 			; for reicast (DC)
 			WinWaitClose, ahk_class RetroArch ahk_exe retroarch.exe
 		  Process, WaitClose, emulPid
@@ -83,6 +93,10 @@ getRomPath( imageDirPath, option, filter, readM3u=true ) {
 		if ( romPath != "" ) {
 			readM3U( romPath )
 			return romPath
+		}
+		romPath := FileUtil.getFile( imageDirPath, "i).*\.(cue|chd)$")
+		if ( romPath != "" ) {
+			return romPath	
 		}
 	}
 	return FileUtil.getFile( imageDirPath, "i).*\.(" filter ")$" )
@@ -154,15 +168,17 @@ modifyConfigCore( option ) {
 }
 
 setDefaultConfig( config, option ) {
+	config.rewind_enable := nvl( option.run.rewind, "false" )
 	config.video_driver := nvl( option.run.videoDriver, "gl" )
 	config.video_shader := nvl( option.run.videoShader, "\\ntsc\\ntsc-320px-svideo-gauss-scanline" )
 	if ( config.video_driver == "gl" ) {
 		config.video_shader := ":\shaders\shaders_glsl" config.video_shader ".glslp"
 	} else {
-		config.video_shader := ":\shaders\shaders_slang" config.video_shader ".glangp"
+		config.video_shader := ":\shaders\shaders_slang" config.video_shader ".slangp"
 	}
 	debug( "option.run.videoDriver : " option.run.videoDriver )
 	debug( "option.run.videoShader : " option.run.videoShader )
-	debug( "config.video_driver : " config.video_driver )
-	debug( "config.video_shader : " config.video_shader )
+	debug( "config.rewind_enable : " config.rewind_enable )
+	debug( "config.video_driver  : " config.video_driver )
+	debug( "config.video_shader  : " config.video_shader )
 }
