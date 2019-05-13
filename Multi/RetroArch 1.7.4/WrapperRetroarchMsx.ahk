@@ -2,7 +2,8 @@
 #include WrapperAbstrctFunction.ahk
 
 imageDirPath := %0%
-imageDirPath := "\\NAS\emul\image\MSX\XZR II (T-ko)"
+; imageDirPath := "\\NAS\emul\image\MSX\XZR II (T-ko)"
+; imageDirPath := "\\NAS\emul\image\MSX\MSX2 Various\Ball Out (ja)"
 
 option := getOption( imageDirPath )
 core   := getCore( option, "bluemsx_libretro" )
