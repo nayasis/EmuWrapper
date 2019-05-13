@@ -17,6 +17,8 @@ runSub( "pre", fileIni, prop )
 runProgram( fileIni, prop )
 runSub( "post", fileIni, prop )
 
+ExitApp
+
 closeApplication() {
 	Process, Close, % applicationPid
 }
@@ -58,11 +60,14 @@ runSub( section, fileIni, properties ) {
 		IniRead, executorDelay, %fileIni%, %section%, executor%a_loopfield%Delay, _
 		IniRead, executorWait,  %fileIni%, %section%, executor%a_loopfield%Wait,  _
 
+		if ( executor == "_" )
+			return
+
 		executor      := RegExReplace( executor,      "\\",     "\\"    )
 		executorDir   := RegExReplace( executorDir,   "\\",     "\\"    )
 		executorDelay := RegExReplace( executorDelay, "[^0-9]", ""      )
 		executorWait  := RegExReplace( executorWait,  "_",      "true"  )
-		; debug( section "-executor : " executor )
+		debug( section "-executor : " executor "`n`t delay : " executorDelay ", wait : " executorWait )
 		runSubHelper( executor, executorDir, executorDelay, executorWait, properties )    
   }
 }
@@ -83,6 +88,7 @@ runSubHelper( executor, executorDir, executorDelay, executorWait, properties ) {
 		executorDir := bindValue( executorDir, properties )
 		if ( executorWait == "true" ) {
 			RunWait, %executor%, %executorDir%, Hide
+			debug( "closed ??")
 		} else {
 			Run, %executor%, %executorDir%, Hide
 		}
@@ -99,7 +105,7 @@ runProgram( fileIni, properties ) {
 	IniRead, hideMouse,                %fileIni%, init,   hideMouse,    _
   IniRead, symlink,                  %fileIni%, init,   symlink,      _
 	IniRead, hideConsole,              %fileIni%, init,   hideConsole,  false
-	IniRead, isRunWait,                %fileIni%, init,   runWait,      false
+	IniRead, isRunWait,                %fileIni%, init,   runWait,      true
   IniRead, exitAltF4,                %fileIni%, init,   exitAltF4,    true
 
 	IniRead, windowTarget,             %fileIni%, window, target,       _
@@ -117,19 +123,17 @@ runProgram( fileIni, properties ) {
   	unblockPath := bindValue( unblockPath, properties )
   	command := "powershell unblock-file ""-path \""" unblockPath "\"""""
   	debug( command )
-  	Run, % command,,Hide
+  	RunWait, % command,,Hide
   }
 
 	if ( resolution != "_" ) {
 		changeResolution( resolution )
-		isRunWait := "true"
 		if ( windowSize == "_" ) {
 		    windowSize := resolution
 		}
 	}
 
   if ( exitAltF4 == "true" ) {
-    isRunWait := "true"
   	Hotkey, !F4, closeApplication
   }
 
@@ -144,21 +148,11 @@ runProgram( fileIni, properties ) {
 	makeSymlink( symlink, properties )
 
 	if ( hideTaskbar != "_" && hideTaskbar == "true" ) {
-		isRunWait := "true"
 		Taskbar.hide()
 	}
 
 	if ( hideMouse != "_" && hideMouse == "true" ) {
-		isRunWait := "true"
 		MouseCursor.hide()
-	}
-
-	if ( hasSub("mid", fileIni) == true ) {
-		isRunWait := "true"
-	}
-
-	if ( ResolutionChanger.changed == true ) {
-	  isRunWait := "true"	
 	}
 
 	if ( executor != "_" ) {
@@ -206,7 +200,9 @@ runProgram( fileIni, properties ) {
 		} else if ( isRunWait == "true" ) {
 
 			SetTimer, runMidThread, 500
+			debug( "???" )
 			RunWait, %executor%, %executorDir%,%hideConsole%,applicationPid
+			debug( "end !!" )
 
 			ResolutionChanger.restore()
 			Taskbar.show()
