@@ -1,5 +1,5 @@
 #NoEnv
-#include \\NAS\emul\emulator\ZZ_Library\Include.ahk
+#include c:\app\emulator\ZZ_Library\Include.ahk
 
 global emulPid
 global diskContainer := new DiskContainer()
@@ -123,7 +123,7 @@ waitEmulator() {
 }
 
 activateEmulator( delay:="" ) {
-	WinActivate, ahk_class RetroArch ahk_exe retroarch.exe,, 30
+	WinActivate, ahk_class RetroArch ahk_exe retroarch.exe,, 60
 	if ( delay != "" && delay > 0 ) {
 		Sleep %delay%
 	}
@@ -168,6 +168,8 @@ modifyConfigCore( option ) {
 }
 
 setDefaultConfig( config, option ) {
+	config.cache_directory := FileUtil.getHomeDir() "\retroarch"
+	FileUtil.makeDir( config.cache_directory )
 	config.rewind_enable := nvl( option.run.rewind, "false" )
 	config.video_driver := nvl( option.run.videoDriver, "gl" )
 	config.video_shader := nvl( option.run.videoShader, "\\ntsc\\ntsc-320px-svideo-gauss-scanline" )

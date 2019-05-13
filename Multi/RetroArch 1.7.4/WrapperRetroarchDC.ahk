@@ -3,11 +3,12 @@
 
 imageDirPath := %0%
 ; imageDirPath := "f:\download\Virtua Cop 2 v1.011 (2000)(Sega)(NTSC)(JP)(en)[!]"
+imageDirPath := "f:\download\_dc\Kidou Senshi Gundam - Renpou vs. Zeon DX (Japan)"
 
 option := getOption( imageDirPath )
 ; core   := nvl( option.run.core, "redream_libretro" )
 core   := nvl( option.run.core,   "reicast_libretro" )
-filter := nvl( option.run.filter, "chd" )
+filter := nvl( option.run.filter, "chd|iso" )
 
 imageFilePath := getRomPath( imageDirPath, option, filter, false )
 

@@ -2,7 +2,9 @@
 #include WrapperAbstrctFunction.ahk
 
 imageDirPath := %0%
-imageDirPath := "f:\pacman\"
+; imageDirPath := "f:\pacman\"
+; imageDirPath := "\\NAS\emul\image\Neogeo\The King of Fighters 2001 (en)"
+
 
 option := getOption( imageDirPath )
 core   := getCore( option, "fbalpha_libretro" )
