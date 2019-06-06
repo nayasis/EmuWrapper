@@ -10,9 +10,10 @@ core   := getCore( option, "bluemsx_libretro" )
 ; core   := getCore( option, "fmsx_libretro" )
 filter := getFilter( option, "zip|7z|rom|dsk" )
 
-imageFilePath := getRomPath( imageDirPath, option, filter )
+modifyConfigDefault( option )
+modifyConfigCore( option )
 
-debug( "diskSize : " diskContainer.size() )
+imageFilePath := getRomPath( imageDirPath, option, filter )
 
 runRomEmulator( imageFilePath, core )
 

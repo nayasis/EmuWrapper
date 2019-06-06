@@ -10,6 +10,9 @@ option := getOption( imageDirPath )
 core   := getCore( option, "genesis_plus_gx_libretro" )
 filter := getFilter( option, "zip|7z|gg" )
 
+modifyConfigDefault( option )
+modifyConfigCore( option )
+
 imageFilePath := getRomPath( imageDirPath, option, filter )
 
 runRomEmulator( imageFilePath, core )

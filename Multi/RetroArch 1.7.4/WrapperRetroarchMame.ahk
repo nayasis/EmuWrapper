@@ -3,11 +3,14 @@
 
 imageDirPath := %0%
 ; imageDirPath := "\\NAS\emul\image\SuperFamicom\Excitebike - Bunbun Mario Battle - Stadium 1 (ja)"
-imageDirPath := "\\NAS\emul\image\ArcadeMame\Super Shanghai Dragon's Eye (en)"
+; imageDirPath := "\\NAS\emul\image\ArcadeMame\Super Shanghai Dragon's Eye (en)"
 
 option := getOption( imageDirPath )
 core   := getCore( option, "mame_libretro" )
 filter := getFilter( option, "zip|7z" )
+
+modifyConfigDefault( option )
+modifyConfigCore( option )
 
 imageFilePath := getRomPath( imageDirPath, option, filter )
 

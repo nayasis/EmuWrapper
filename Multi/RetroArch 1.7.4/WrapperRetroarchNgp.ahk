@@ -8,6 +8,9 @@ option := getOption( imageDirPath )
 core   := getCore( option, "mednafen_ngp_libretro" )
 filter := getFilter( option, "(zip|ngc|ngp)" )
 
+modifyConfigDefault( option )
+modifyConfigCore( option )
+
 imageFilePath := getRomPath( imageDirPath, option, filter )
 
 runRomEmulator( imageFilePath, core )

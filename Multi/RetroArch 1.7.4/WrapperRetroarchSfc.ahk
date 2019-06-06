@@ -9,6 +9,9 @@ option := getOption( imageDirPath )
 core   := getCore( option, "snes9x_libretro" )
 filter := getFilter( option, "zip|smc|sfc" )
 
+modifyConfigDefault( option )
+modifyConfigCore( option )
+
 imageFilePath := getRomPath( imageDirPath, option, filter )
 
 runRomEmulator( imageFilePath, core )
