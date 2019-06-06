@@ -10,6 +10,9 @@ option := getOption( imageDirPath )
 core   := getCore( option, "fbalpha_libretro" )
 filter := getFilter( option, "zip|7z" )
 
+modifyConfigDefault( option )
+modifyConfigCore( option )
+
 imageFilePath := getRomPath( imageDirPath, option, filter )
 
 runRomEmulator( imageFilePath, core )

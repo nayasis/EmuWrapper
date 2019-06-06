@@ -47,9 +47,6 @@ getOption( imageDirPath ) {
 	} else {
 		option := {}
 	}
-
-	modifyConfigDefault( option )
-	modifyConfigCore( option )
 	return option
 }
 
@@ -173,14 +170,17 @@ setDefaultConfig( config, option ) {
 	config.rewind_enable := nvl( option.run.rewind, "false" )
 	config.video_driver := nvl( option.run.videoDriver, "gl" )
 	config.video_shader := nvl( option.run.videoShader, "\\ntsc\\ntsc-320px-svideo-gauss-scanline" )
+	debug( "config.systemfiles_in_content_dir >> " config.systemfiles_in_content_dir )
+	config.systemfiles_in_content_dir := nvl( option.systemfiles_in_content_dir, "false" )
 	if ( config.video_driver == "gl" ) {
 		config.video_shader := ":\shaders\shaders_glsl" config.video_shader ".glslp"
 	} else {
 		config.video_shader := ":\shaders\shaders_slang" config.video_shader ".slangp"
 	}
-	debug( "option.run.videoDriver : " option.run.videoDriver )
-	debug( "option.run.videoShader : " option.run.videoShader )
-	debug( "config.rewind_enable : " config.rewind_enable )
-	debug( "config.video_driver  : " config.video_driver )
-	debug( "config.video_shader  : " config.video_shader )
+	debug( "option.run.videoDriver  : " option.run.videoDriver )
+	debug( "option.run.videoShader  : " option.run.videoShader )
+	debug( "config.rewind_enable    : " config.rewind_enable )
+	debug( "config.video_driver     : " config.video_driver )
+	debug( "config.video_shader     : " config.video_shader )
+	debug( "config.systemfiles_in_content_dir : " config.systemfiles_in_content_dir )
 }

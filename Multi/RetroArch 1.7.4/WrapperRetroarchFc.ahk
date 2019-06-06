@@ -9,6 +9,9 @@ option := getOption( imageDirPath )
 core   := getCore( option, "nestopia_libretro" )
 filter := getFilter( option, "zip|nes" )
 
+modifyConfigDefault( option )
+modifyConfigCore( option )
+
 imageFilePath := getRomPath( imageDirPath, option, filter )
 
 runRomEmulator( imageFilePath, core )

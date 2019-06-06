@@ -8,6 +8,9 @@ option := getOption( imageDirPath )
 core   := getCore( option, "mess2014_libretro" )
 filter := getFilter( option, "(zip)" )
 
+modifyConfigDefault( option )
+modifyConfigCore( option )
+
 imageFilePath := getRomPath( imageDirPath, option, filter )
 
 ; runRomEmulator( imageFilePath, core, "--subsystem neocd" )

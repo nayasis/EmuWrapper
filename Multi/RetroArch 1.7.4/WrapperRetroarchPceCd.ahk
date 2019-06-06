@@ -8,6 +8,9 @@ option := getOption( imageDirPath )
 core   := getCore( option, "mednafen_pce_fast_libretro" )
 filter := getFilter( option, "zip|pce" )
 
+modifyConfigDefault( option )
+modifyConfigCore( option )
+
 imageFilePath := getRomPath( imageDirPath, option, filter )
 
 runRomEmulator( imageFilePath, core, option, "pressStart" )
