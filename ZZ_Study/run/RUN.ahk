@@ -59,6 +59,13 @@ runSub( section, fileIni, properties ) {
 		IniRead, executorDir,   %fileIni%, %section%, executor%a_loopfield%Dir,   _
 		IniRead, executorDelay, %fileIni%, %section%, executor%a_loopfield%Delay, _
 		IniRead, executorWait,  %fileIni%, %section%, executor%a_loopfield%Wait,  _
+		IniRead, closeWait,     %fileIni%, %section%, executor%a_loopfield%,      _
+		IniRead, closeWaitSec,  %fileIni%, %section%, executor%a_loopfield%Sec,   _
+		IniRead, closeWin,      %fileIni%, %section%, executor%a_loopfield%,      _
+		IniRead, closeWinSec,   %fileIni%, %section%, executor%a_loopfield%Sec,   _
+
+		StringLower, executorWait, executorWait
+
 
 		if ( executor == "_" )
 			return
@@ -66,16 +73,25 @@ runSub( section, fileIni, properties ) {
 		executor      := RegExReplace( executor,      "\\",     "\\"    )
 		executorDir   := RegExReplace( executorDir,   "\\",     "\\"    )
 		executorDelay := RegExReplace( executorDelay, "[^0-9]", ""      )
-		executorWait  := RegExReplace( executorWait,  "_",      "true"  )
-		debug( section "-executor : " executor "`n`t delay : " executorDelay ", wait : " executorWait )
-		runSubHelper( executor, executorDir, executorDelay, executorWait, properties )    
+		executorWait  := executorWait == "true"
+		debug( section "-executor:" executor " ,executorDir:" executorDir "`n`t delay : " executorDelay ", wait : " executorWait )
+		runSubHelper( executor, executorDir, executorDelay, executorWait, properties )
+
+		if ( closeWait != "_" ) {
+			WinWaitClose, # closeWait,, # closeWaitSec
+		}
+
+		if ( closeWin != "_" ) {
+			WinClose, # closeWin,, # closeWinSec
+		}
+		
   }
 }
 
 runSubHelper( executor, executorDir, executorDelay, executorWait, properties ) {
 	if ( executor == "_" )
 		return
-	if ( executorDelay != "" )
+	if ( executorDelay != "_" )
 		Sleep, %executorDelay%
 	if ( executor == "!RESOLUTION" ) {
 		debug( "executorDir in resolution : " executorDir )
@@ -105,7 +121,7 @@ runProgram( fileIni, properties ) {
 	IniRead, hideMouse,                %fileIni%, init,   hideMouse,    _
   IniRead, symlink,                  %fileIni%, init,   symlink,      _
 	IniRead, hideConsole,              %fileIni%, init,   hideConsole,  false
-	IniRead, isRunWait,                %fileIni%, init,   runWait,      true
+	IniRead, isRunWait,                %fileIni%, init,   runwait,      true
   IniRead, exitAltF4,                %fileIni%, init,   exitAltF4,    true
 
 	IniRead, windowTarget,             %fileIni%, window, target,       _
@@ -445,19 +461,26 @@ toNumberFromHex( hexValue ) {
 }
 
 makeSymlink( symlink, properties ) {
+
 	if ( symlink == "_" )
 		return
-	symlink := bindValue( symlink, properties )
-	debug( "symlink : " symlink )
-	path    := StrSplit( symlink, "->" )
-	if ( path.MaxIndex() == 2 ) {
-		sourceDir := Trim( path[1] )
-		targetDir := Trim( path[2] )
-		debug( ">> Make symlink" )
-		debug( "   sourceDir : " sourceDir )
-		debug( "   targetDir : " targetDir )
-		FileUtil.makeLink( sourceDir, targetDir )
-	}	
+
+	links := StrSplit( symlink, ";" )
+
+	for i, link in links {
+		link := bindValue( link, properties )
+		debug( "link : " link )
+		path := StrSplit( link, "->" )
+		if ( path.MaxIndex() == 2 ) {
+			sourceDir := Trim( path[1] )
+			targetDir := Trim( path[2] )
+			debug( ">> Make symlink" )
+			debug( "   sourceDir : " sourceDir )
+			debug( "   targetDir : " targetDir )
+			FileUtil.makeLink( sourceDir, targetDir )
+		}	
+	}
+
 }
 
 convertBase( fromBase, toBase, number ) {
