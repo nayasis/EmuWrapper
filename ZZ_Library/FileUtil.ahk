@@ -98,13 +98,13 @@ class FileUtil {
 			return pathDirOrFile
 		}
 
-        files := this.getFiles( pathDirOrFile, pattern, includeDir, recursive )
+    files := this.getFiles( pathDirOrFile, pattern, includeDir, recursive )
 
-        if ( files.MaxIndex() > 0 ) {
-        	return files[ 1 ]
-        }
+    if ( files.MaxIndex() > 0 ) {
+      return files[ 1 ]
+    }
 
-        return ""
+    return ""
 
 	}
 	
