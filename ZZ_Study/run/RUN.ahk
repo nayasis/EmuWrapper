@@ -11,6 +11,7 @@ runAsAdmin( fileIni )
 
 prop := readProperties( fileIni )
 
+setEnvVariable( fileIni, prop )
 setRegistry( fileReg, prop )
 
 runSub( "pre", fileIni, prop )
@@ -30,21 +31,21 @@ runAsAdmin( fileIni ) {
 	}
 }
 
-; check whether ini file has executor to Run
-; @param section    pre,mid,post
-; @param fileIni    ini file path
-hasSub( section, fileIni ) {
-  indices = ,0,1,2,3,4,5,6,7,8,9
-  loop, parse, indices, `,
-  {
-		IniRead, executor,    %fileIni%, %section%, executor%a_loopfield%,    _
-		IniRead, executorDir, %fileIni%, %section%, executor%a_loopfield%Dir, _
-		executor    := RegExReplace( executor,    "\\", "\\" )
-		if( executor != "_" )
-			return true
-  }	
-  return false
-}
+; ; check whether ini file has executor to Run
+; ; @param section    pre,mid,post
+; ; @param fileIni    ini file path
+; hasSub( section, fileIni ) {
+;   indices = ,0,1,2,3,4,5,6,7,8,9
+;   loop, parse, indices, `,
+;   {
+; 		IniRead, executor,    %fileIni%, %section%, executor%a_loopfield%,    _
+; 		IniRead, executorDir, %fileIni%, %section%, executor%a_loopfield%Dir, _
+; 		executor    := RegExReplace( executor,    "\\", "\\" )
+; 		if( executor != "_" )
+; 			return true
+;   }	
+;   return false
+; }
 
 runMidThread:
   SetTimer, runMidThread, off
@@ -59,23 +60,23 @@ runSub( section, fileIni, properties ) {
 		IniRead, executorDir,   %fileIni%, %section%, executor%a_loopfield%Dir,   _
 		IniRead, executorDelay, %fileIni%, %section%, executor%a_loopfield%Delay, _
 		IniRead, executorWait,  %fileIni%, %section%, executor%a_loopfield%Wait,  _
-		IniRead, closeWait,     %fileIni%, %section%, executor%a_loopfield%,      _
-		IniRead, closeWaitSec,  %fileIni%, %section%, executor%a_loopfield%Sec,   _
-		IniRead, closeWin,      %fileIni%, %section%, executor%a_loopfield%,      _
-		IniRead, closeWinSec,   %fileIni%, %section%, executor%a_loopfield%Sec,   _
+		IniRead, closeWait,     %fileIni%, %section%, closeWait%a_loopfield%,      _
+		IniRead, closeWaitSec,  %fileIni%, %section%, closeWait%a_loopfield%Sec,   _
+		IniRead, closeWin,      %fileIni%, %section%, closeWin%a_loopfield%,      _
+		IniRead, closeWinSec,   %fileIni%, %section%, closeWin%a_loopfield%Sec,   _
+		IniRead, closeProc,     %fileIni%, %section%, closeProc%a_loopfield%,      _
+		IniRead, closeProcSec,  %fileIni%, %section%, closeProc%a_loopfield%Sec,   _
 
 		StringLower, executorWait, executorWait
 
-
-		if ( executor == "_" )
-			return
-
-		executor      := RegExReplace( executor,      "\\",     "\\"    )
-		executorDir   := RegExReplace( executorDir,   "\\",     "\\"    )
-		executorDelay := RegExReplace( executorDelay, "[^0-9]", ""      )
-		executorWait  := executorWait == "true"
-		debug( section "-executor:" executor " ,executorDir:" executorDir "`n`t delay : " executorDelay ", wait : " executorWait )
-		runSubHelper( executor, executorDir, executorDelay, executorWait, properties )
+		if ( executor != "_" ) {
+			executor      := RegExReplace( executor,      "\\",     "\\" )
+			executorDir   := RegExReplace( executorDir,   "\\",     "\\" )
+			executorDelay := RegExReplace( executorDelay, "[^0-9]", ""   )
+			executorWait  := executorWait == "true"
+			debug( section "-executor:" executor " ,executorDir:" executorDir "`n`t delay : " executorDelay ", wait : " executorWait )
+			runSubHelper( executor, executorDir, executorDelay, executorWait, properties )
+		}
 
 		if ( closeWait != "_" ) {
 			WinWaitClose, # closeWait,, # closeWaitSec
@@ -83,6 +84,10 @@ runSub( section, fileIni, properties ) {
 
 		if ( closeWin != "_" ) {
 			WinClose, # closeWin,, # closeWinSec
+		}
+
+		if ( closeProc != "_" ) {
+			Process, Close, %closeProc%
 		}
 		
   }
@@ -216,9 +221,7 @@ runProgram( fileIni, properties ) {
 		} else if ( isRunWait == "true" ) {
 
 			SetTimer, runMidThread, 500
-			debug( "???" )
 			RunWait, %executor%, %executorDir%,%hideConsole%,applicationPid
-			debug( "end !!" )
 
 			ResolutionChanger.restore()
 			Taskbar.show()
@@ -272,6 +275,67 @@ readProperties( file ) {
 	prop[ "home" ] := userHome
 
 	return prop
+
+}
+
+setEnvVariable( fileIni, properties ) {
+
+	IniRead, env, %fileIni%, init, env, _
+	
+	if( env == "_" )
+	  return
+	envs := StrSplit( "" env, ";" )
+
+	for i, env in envs {
+
+		overwrite := true
+
+		key := "____"
+		val := "____"
+
+		path := StrSplit( env, "+=" )
+		if ( path.MaxIndex() == 2 ) {
+			key := Trim( path[1] )
+			val := Trim( path[2] )
+			overwrite := false
+		} else {
+			path := StrSplit( env, "=" )
+			if ( path.MaxIndex() == 2 ) {
+				key := Trim( path[1] )
+				val := Trim( path[2] )
+				overwrite := true
+			} if ( path.MaxIndex() == 1 ) {
+				key := Trim( path[1] )
+				val := ""
+				overwrite := true
+			}
+		}
+
+		if( key != "____" && val != "____" ) {
+
+      key := bindValue( key, properties )
+      val := bindValue( val, properties )
+
+			debug( ">> EnvSet"                 )
+			debug( "   key       : " key       )
+			debug( "   value     : " val       )
+			debug( "   overwrite : " overwrite )
+
+			prevEnv := ""
+
+			if( overwrite == false ) {
+				EnvGet, prevEnv, % key
+			}
+
+			if( prevEnv != "" ) {
+				EnvSet, % key, % prevEnv ";" val
+			} else {
+				EnvSet, % key, % val
+			}
+
+		}
+
+	}
 
 }
 
@@ -504,6 +568,7 @@ restartAsAdmin() {
 	if not (A_IsAdmin) {
     try ; leads to having the script re-launching itself as administrator
     {
+				; MsgBox, % "Run as Admin !!"
         if A_IsCompiled
             Run *RunAs "%A_ScriptFullPath%" /restart
         else
