@@ -1,13 +1,16 @@
 #NoEnv
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
-pathRoot := "f:\download\dc"
+; pathRoot := "f:\download\dc"
+; pathRoot := "\\NAS\emul\image\PC88\Acchi Muite Hoi! (19xx)"
+pathRoot := "\\NAS\emul\image\PC88"
 
-debug( "start" )
+debug( ">> start" )
 
-files   := FileUtil.getFiles( pathRoot, "i).*\.(chd)", false, true )
+files   := FileUtil.getFiles( pathRoot, "i).*\.(d88|fdd)$", false, true )
 srcDirs := {}
 
+debug( ">> read files")
 ; gathering files
 Loop, % files.MaxIndex()
 {
@@ -19,21 +22,25 @@ Loop, % files.MaxIndex()
   }
 
   srcDirs[srcDir].insert( fileSrc )
+  debug( srcDir " :: " fileSrc )
 }
 
+debug( ">> write m3u")
+
 for srcDir, files in srcDirs {
+	debug( srcDir " has " files.MaxIndex() )
 	if ( files.MaxIndex() <= 1 )
 		continue
 	fileM3u := srcDir "/multi-disk.m3u"
 	m3uText := ""
 	for idx, fileName in files {
-		m3uText .= FileUtil.getFileName( fileName ) "`n"
-		; debug( "`t " FileUtil.getFileName( fileName ) )
+		m3uText .= FileUtil.getName( fileName ) "`n"
+		debug( "`t " FileUtil.getName( fileName ) )
 	}
 	FileUtil.delete( fileM3u )
 	FileAppend, % m3uText, % fileM3u
 }
 
-debug( "end" )
+debug( ">> end" )
 
 ExitApp
