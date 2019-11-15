@@ -11,6 +11,8 @@ class FileUtil {
 
 	getDir( path ) {
 		path := RegExReplace( path, "^(.*?)\\$", "$1" )
+		if( ! this.exist(path) )
+		  return ""
 		if( this.isDir(path) )
 			return path
 		return this.getParentDir( path )
@@ -73,19 +75,17 @@ class FileUtil {
 		if ( this.isFile(path) ) {
 			if RegExMatch( path, pattern )
 				files.Insert( path )
-
 		} else {
-
-		currDir := this.getDir( path )
-			Loop, %currDir%\*, % includeDir, % recursive
-			{
+		  currDir := this.getDir( path )
+		  if( currDir != "" ) {
+				Loop, %currDir%\*, % includeDir, % recursive
+				{
 					if not RegExMatch( A_LoopFileFullPath, pattern )
 						continue
 					files.Insert( A_LoopFileFullPath )        	
-			}
-
-			this._sortArray( files )
-
+				}
+				this._sortArray( files )
+		  }
 		}
 		
 		return files
@@ -318,5 +318,15 @@ class FileUtil {
 	    Array[A_Index] := v
 	  return Array
 	}
+
+	resolvePath( absolutePath, relativePath ) {
+    VarSetCapacity( dest, (A_IsUnicode ? 2 : 1) * 260, 1 ) ; MAX_PATH
+    DllCall( "Shlwapi.dll\PathCombine", "UInt", &dest, "UInt", &absolutePath, "UInt", &relativePath )
+    Return, dest
+  }
+
+  normalizePath( path ) {
+  	return RegExReplace( path, "\\+", "\" )
+  }
 
 }
