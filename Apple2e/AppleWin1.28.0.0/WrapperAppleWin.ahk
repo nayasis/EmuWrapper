@@ -4,15 +4,16 @@
 global singleFddMode  := false
 global fullscreenMode := false
 
-imageFilePath  := %0%
-; imageFilePath  := "\\NAS\emul\image\Apple2\RPG\Ultima V - Warriors of Destiny"
-; imageFilePath  := "\\NAS\emul\image\Apple2\RPG\Times of Lore (en)"
-; imageFilePath  := "\\NAS\emul\image\Apple2\Shooting\Wings of Fury (en)"
+imageDir  := %0%
+; imageDir  := "\\NAS\emul\image\Apple2\RPG\Ultima V - Warriors of Destiny"
+; imageDir  := "\\NAS\emul\image\Apple2\RPG\Times of Lore (en)"
+; imageDir  := "\\NAS\emul\image\Apple2\Shooting\Wings of Fury (en)"
+; imageDir  := "\\NAS\emul\image\Apple2\Silvern Castle v9.5.1"
 
-fddContainer := new DiskContainer( imageFilePath, "i).*\.zip" )
+fddContainer := new DiskContainer( imageDir, "i).*\.zip" )
 fddContainer.initSlot( 2 )
 
-if( setConfig( imageFilePath ) == true )
+if( setConfig( imageDir ) == true )
 {
   Run, % "AppleWin.exe -no-printscreen-dlg ",,,emulatorPid
   WinWait, ahk_class APPLE2FRAME,, 5
@@ -128,11 +129,11 @@ removeDisk( slotNo ) {
 }
 
 
-setConfig( imageFilePath ) {
+setConfig( imageDir ) {
 
   registryPath := "Software\AppleWin\CurrentVersion"
 
-  currDir := FileUtil.getDir( imageFilepath )
+  currDir := FileUtil.getDir( imageDir )
   confDir := currDir . "\_EL_CONFIG"
 
   if( currDir == "" )
@@ -164,7 +165,7 @@ setConfig( imageFilePath ) {
   RegWrite REG_SZ, HKCU, %registryPath%\Preferences, Last Harddisk Image 1,
   RegWrite REG_SZ, HKCU, %registryPath%\Preferences, Last Harddisk Image 2,
 
-  files := FileUtil.getFiles( currDir, "i).*\.po\.zip" )
+  files := FileUtil.getFiles( currDir, "i).*\.(po|hdd)\.zip" )
   Loop, % files.MaxIndex()
   {
     if( a_index > 2 )
