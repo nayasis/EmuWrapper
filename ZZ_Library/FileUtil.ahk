@@ -164,7 +164,7 @@ class FileUtil {
 	}
 
 	exist( path ) {
-		return FileExist( path )
+		return FileExist( path ) != ""
 	}
 
 	delete( path, recursive=1 ) {
@@ -191,6 +191,12 @@ class FileUtil {
 		} else {
 			FileCopy, % src, % trg, % overwrite
 		}
+	}
+
+	write( path, content="" ) {
+		this.makeParentDir( path )
+		FileDelete, % path
+		FileAppend, % content, % path
 	}
 
   /**
@@ -265,8 +271,9 @@ class FileUtil {
 		if ( this.isDir(src) ) {
 			cmd := "/c mklink /d """ trg """ """ src """"
 		} else {
-			cmd := "/c mklink /f """ trg """ """ src """"
+			cmd := "/c mklink """ trg """ """ src """"
 		}
+		debug( cmd )
 		this.cli( cmd )
 
   }
