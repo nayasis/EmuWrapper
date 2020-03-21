@@ -44,6 +44,16 @@ sendKey( key ) {
   Sleep, 50
 }
 
+wrap( command ) {
+    return """" command """"
+}
+
+nvl( val, defaultVal ) {
+    if( val != "" )
+        return val
+    return defaultVal
+}
+
 sortArray( Array ) {
   t := Object()
   for k, v in Array
