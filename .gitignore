@@ -1,8 +1,20 @@
-mame.exe
-mame64.exe
-mamepgui.exe
-mameui64.exe
+*.wav
 *.png
+*.zip
+*.dll
+*.exe
+*.bin
+*.md
+*.rom
+**/LICENSE
+**/readme.txt
+**/license.txt
+**/README.md
+**/faq.txt
+
+ZZ_Util/installLibrary
+ZZ_Util/wit*
+
 Multi/_bios/
 Multi/RetroArch*/_system/
 Multi/RetroArch*/assets/
@@ -27,8 +39,7 @@ Multi/RetroArch*/retroarch_debug.exe
 Multi/RetroArch*/retroarch.exe
 Multi/RetroArch*/content_image_history.lpl
 Multi/RetroArch*/content_history.lpl
-Multi/RetroArch*/*.dll
-Multi/RetroArch*/**/*.dll
+
 Multi/Mednafen*/b
 Multi/Mednafen*/cheat
 Multi/Mednafen*/de
@@ -40,37 +51,58 @@ Multi/Mednafen*/pgconfig
 Multi/Mednafen*/ru
 Multi/Mednafen*/sav
 Multi/Mednafen*/snaps
-Multi/Mednafen*/stdout.txt
-Multi/Mednafen*/ChangeLog
-Multi/Mednafen*/COPYING
-Multi/Mednafen*/*.dll
 Multi/Mednafen*/mcs
 Multi/Mednafen*/mednafen.lck
 Multi/Mednafen*/stderr.txt
-Multi/Mednafen*/mednafen.exe
+Multi/Mednafen*/stdout.txt
+Multi/Mednafen*/ChangeLog
+Multi/Mednafen*/COPYING
+
+
+Retroarch/*/overlays
+Retroarch/*/saves
+Retroarch/*/shaders
+Retroarch/*/system
+Retroarch/*/playlists
+Retroarch/*/info/
+Retroarch/*/styles/
+Retroarch/*/platforms/
+Retroarch/*/imageformats/
+Retroarch/*/filters/
+Retroarch/*/database/
+Retroarch/*/cores/
+Retroarch/*/iconengines/
+Retroarch/*/bearer/
+Retroarch/*/autoconfig/
+Retroarch/*/assets/
+Retroarch/*/config/
+Retroarch/*/cheats/
+Retroarch/*/states/
+Retroarch/*/*.lpl
+
+Mednafen/*/Documentation/
+Mednafen/*/mcs/
+Mednafen/*/ru/
+Mednafen/*/sav/
+Mednafen/*/b/
+Mednafen/*/de/
+Mednafen*/stdout.txt
+Mednafen*/ChangeLog
+Mednafen*/COPYING
+
 Windows 95/WIN98/0/
 Windows 95/WIN98/SHADERS/
 Windows 95/WIN98/WIN_IMG/
-Windows 95/WIN98/*.dll
-Windows 95/WIN98/dosbox_debug.exe
-Windows 95/WIN98/dosbox.exe
 Windows 95/WIN98/glide.log
-Windows 95/WIN98/dosbox_x64.exe
 Windows 95/WIN98/stderr.txt
-PC88/**/*.zip
-PC98/**/*.zip
+
 3DS/_tool/
 3DS/*/fix/
-3DS/*/*.dll
-3DS/*/**/*.dll
-3DS/*/citra.exe
-3DS/*/citra-qt.exe
-3DS/*/citra-room.exe
-3DS/*/license.txt
-3DS/*/README.md
 3DS/*/updater.cfg
 3DS/*/updater.ps1
-ZZ_Util/installLibrary
+3DS/Citra*/user/
+3DS/Citra*/installationLog.txt
+
 PlayStation2/PCSX2 1.5.0/Bios/
 PlayStation2/PCSX2 1.5.0/cheats/
 PlayStation2/PCSX2 1.5.0/docs/
@@ -80,59 +112,32 @@ PlayStation2/PCSX2 1.5.0/plugins/
 PlayStation2/PCSX2 1.5.0/inis/
 PlayStation2/PCSX2 1.5.0/shaders/
 PlayStation2/PCSX2 1.5.0/memcards/
-PC88/M88 2.19a/2608_
-*.wav
-PC88/M88 2.19a/readme.txt
-*.rom
 PlayStation2/PCSX2 1.5.0/run_spu2_replay.cmd
-PlayStation2/PCSX2 1.5.0/pcsx2.exe
 PlayStation2/PCSX2 1.5.0/cheats_ws/8897c208.pnach
-PlayStation2/PCSX2 1.5.0/cheats_ws.zip
 PlayStation2/PCSX2 1.5.0/GameIndex.dbf
+
+PC88/M88 2.19a/2608_
 PC88/M88 2.19a/M88.exe
 PC88/M88 2.19a/KANJI1.ROM.src
 PC88/M88 2.19a/INI.txt
 PC88/M88 2.19a/ENHANCED.txt
-PC88/M88 2.19a/faq.txt
-3DS/Citra 2019-01-29/user/
-3DS/Citra 2019-01-29/ReShade_Setup_4.0.2.exe
-N64/Project64-20181205/Lang
-N64/Project64-20181205/Plugin/1.6 Plugins/Adaptoid_v1_0.dll
-N64/Project64-20181205/Plugin
-N64/Project64-20181205/Logs
-N64/Project64-20181205/Docs/3rd Party Plugins/N-Rage - Readme.txt
-N64/Project64-20181205/*.chm
-N64/Project64-20181205/pif2.dat
-N64/Project64-20181205/UpdateVersion.exe
-N64/Project64-20181205/Project64.exe
-N64/Project64-20181205/Config/Glide64.rdb
-N64/Project64-20181205/Config/Blank Project64.rdb
-N64/Project64-20181205/Config/Audio.rdb
-N64/Project64-20181205/Config
-N64/Project64-20181205/Docs
-N64/Project64-20181205/Save
-Retroarch/1.8.1/*.dll
-Retroarch/1.8.1/overlays/*
-Retroarch/1.8.1/saves
-Retroarch/1.8.1/shaders
-Retroarch/1.8.1/system
-Retroarch/1.8.1/playlists
-Retroarch/1.8.1/info/
-Retroarch/1.8.1/styles/
-Retroarch/1.8.1/platforms/
-Retroarch/1.8.1/imageformats/
-Retroarch/1.8.1/filters/
-Retroarch/1.8.1/database/
-Retroarch/1.8.1/cores/
-Retroarch/1.8.1/iconengines/
-Retroarch/1.8.1/bearer/
-Retroarch/1.8.1/autoconfig/
-Retroarch/1.8.1/assets/
-Retroarch/1.8.1/retroarch.exe
-Retroarch/1.8.1/retroarch_debug.exe
-Retroarch/1.8.1/config
-Retroarch/1.8.1/states
-Retroarch/*.exe
-Retroarch/1.8.1/*.lpl
-Multi/RetroArch 1.7.4/*.exe
-1.8.1/config
+
+Mame/*/bgfx/
+Mame/*/docs/
+Mame/*/lx/
+Mame/*/history/
+Mame/*/plugins/
+Mame/*/glsl/
+Mame/*/hlsl/
+Mame/*/hash/
+Mame/*/cfg/
+Mame/*/nvram/
+Mame/*/ini/
+Mame/*/language/
+Mame/*/uismall.bdf
+Mame/*/artwork/dir.txt
+Mame/*/artwork/bgfx/
+Mame/*/ctrlr/
+
+Mame/*/whatsnew.txt
+Mame/*/*.sym
