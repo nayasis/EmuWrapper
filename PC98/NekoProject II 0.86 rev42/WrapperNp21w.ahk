@@ -3,6 +3,7 @@
 
 emulatorPid  := ""
 imageDirPath := %0%
+; imageDirPath := "\\NAS\emul\image\PC98\Policenauts"
 ; imageDirPath := "\\NAS\emul\image\PC98\Tamashii no Mon (ja)"
 ; imageDirPath  := "\\NAS\emul\image\PC98\Ys 2 (T-ko)"
 ; imageDirPath  := "\\NAS\emul\image\PC98\Carmine (ja)"
@@ -210,9 +211,28 @@ setConfig( imageDirPath ) {
 	Else
 		IniWrite, % "3e 63 7b", %NekoIniFile%, NekoProject21, DIPswtch
 
-	; IniWrite, % "48 05 04 08 0b 20 00 6e", %NekoIniFile%, NekoProject21, MEMswtch
-	IniWrite, % "48 05 04 08 ab 20 00 6e", %NekoIniFile%, NekoProject21, MEMswtch
-	; HDD -> FDD
+  ; boot priority
+  ; - MEMswtch=48 05 04 08 0b 20 00 6e : 1 Floopy disk -> Hard disk
+  ; - MEMswtch=48 05 04 08 2b 20 00 6e : 2 Boot on 640KB Floop disk
+  ; - MEMswtch=48 05 04 08 4b 20 00 6e : 3 Boot on 1MB Floop disk
+  ; - MEMswtch=48 05 04 08 ab 20 00 6e : 4 Boot on hard disk 1
+  ; - MEMswtch=48 05 04 08 bb 20 00 6e : 5 Boot on hard disk 2
+  ; - MEMswtch=48 05 04 08 fb 20 00 6e : 6 ROM BASIC
+
+  IniRead, MemorySwitch, %NekoIniFile%, NekoProject21, MEMswtch
+  debug( "MEMswtch (before) : " MemorySwitch )
+
+  switch option.config.bootPrior {
+  	case "1" : MemorySwitch := RegExReplace( MemorySwitch, "(.. .. .. ..) .(.) (.. .. ..)", "$1 0$2 $3")
+  	case "2" : MemorySwitch := RegExReplace( MemorySwitch, "(.. .. .. ..) .(.) (.. .. ..)", "$1 2$2 $3")
+  	case "3" : MemorySwitch := RegExReplace( MemorySwitch, "(.. .. .. ..) .(.) (.. .. ..)", "$1 4$2 $3")
+  	case "4" : MemorySwitch := RegExReplace( MemorySwitch, "(.. .. .. ..) .(.) (.. .. ..)", "$1 a$2 $3")
+  	case "5" : MemorySwitch := RegExReplace( MemorySwitch, "(.. .. .. ..) .(.) (.. .. ..)", "$1 b$2 $3")
+  	case "6" : MemorySwitch := RegExReplace( MemorySwitch, "(.. .. .. ..) .(.) (.. .. ..)", "$1 f$2 $3")
+  }
+  debug( "MEMswtch (after)  : " MemorySwitch )
+    
+	IniWrite, % MemorySwitch, %NekoIniFile%, NekoProject21, MEMswtch
 
 	return true
 
