@@ -3,11 +3,11 @@
 
 ; pathRoot := "f:\download\dc"
 ; pathRoot := "\\NAS\emul\image\PC88\Acchi Muite Hoi! (19xx)"
-pathRoot := "\\NAS\emul\image\PC88"
+pathRoot := "\\NAS\emul\image\PC98"
 
 debug( ">> start" )
 
-files   := FileUtil.getFiles( pathRoot, "i).*\.(d88|fdd)$", false, true )
+files   := FileUtil.getFiles( pathRoot, "i).*\.(d88|fdd|fdi)$", false, true )
 srcDirs := {}
 
 debug( ">> read files")
