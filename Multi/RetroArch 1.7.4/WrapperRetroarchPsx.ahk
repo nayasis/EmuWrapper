@@ -2,6 +2,7 @@
 #include WrapperAbstrctFunction.ahk
 
 imageDirPath := %0%
+imageDirPath := "\\NAS\emul\image\PlayStation\R4 Ridge Racer Type 4 (en)"
 ; imageDirPath := "\\NAS\emul\image\PlayStation\Silent Hill (T-ko)"
 ; imageDirPath := "\\NAS\emul\image\PlayStation\Ganbare Goemon - Uchuu Kaizoku Akogingu (en)"
 

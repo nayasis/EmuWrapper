@@ -66,12 +66,6 @@ getCore( option, defaultVal ) {
 	return defaultVal
 }
 
-nvl( val, defaultVal ) {
-	if( val != "" )
-		return val
-	return defaultVal
-}
-
 getFilter( option, defaultVal ) {
 	if ( option.run.filter != "" )
 		return option.run.filter
