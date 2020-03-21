@@ -185,6 +185,11 @@ runProgram( fileIni, properties ) {
 		}
 		executorDir := bindValue( executorDir, properties )
 
+		debug( "executor     : " executor     )
+		debug( "executorDir  : " executorDir  )
+		debug( "windowTarget : " windowTarget )
+		debug( "isRunWait    : " isRunWait    )
+
 		if ( windowTarget != "_" ) {
 			SetTimer, runMidThread, 500
 			Run, %executor%, %executorDir%,%hideConsole%,applicationPid
@@ -221,7 +226,7 @@ runProgram( fileIni, properties ) {
 		} else if ( isRunWait == "true" ) {
 
 			SetTimer, runMidThread, 500
-			RunWait, %executor%, %executorDir%,%hideConsole%,applicationPid
+			RunWait, %executor%, %executorDir%, %hideConsole%, applicationPid
 
 			ResolutionChanger.restore()
 			Taskbar.show()
@@ -229,8 +234,6 @@ runProgram( fileIni, properties ) {
 
 		} else {
 			SetTimer, runMidThread, 500
-			debug( "executor    : " executor    )
-			debug( "executorDir : " executorDir )
 			Run, %executor%, %executorDir%,Hide
 		}
 
@@ -568,7 +571,6 @@ restartAsAdmin() {
 	if not (A_IsAdmin) {
     try ; leads to having the script re-launching itself as administrator
     {
-				; MsgBox, % "Run as Admin !!"
         if A_IsCompiled
             Run *RunAs "%A_ScriptFullPath%" /restart
         else
@@ -985,8 +987,9 @@ class FileUtil {
 		if ( this.isDir(src) ) {
 			cmd := "/c mklink /d """ trg """ """ src """"
 		} else {
-			cmd := "/c mklink /f """ trg """ """ src """"
+			cmd := "/c mklink """ trg """ """ src """"
 		}
+		debug( cmd )
 		this.cli( cmd )
 
   }
