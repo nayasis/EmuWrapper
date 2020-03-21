@@ -1,34 +1,29 @@
 #NoEnv
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-global EMUL_ROOT     := A_ScriptDir "\1.8.1"
+global EMUL_ROOT     := A_ScriptDir "\1.8.4"
 global diskContainer := new DiskContainer()
 
-runEmulator( imageFile, config, appendCommand="", callback="" ) {
+runEmulator( imageFile, config, appendCommand="", callback="", appendImageFile="" ) {
 
 	debug( "imageFile : " imageFile           )
 	debug( "core      : " config.core         )
 	debug( "shader    : " config.video_shader )
 
-	emulator := wrapCmd( EMUL_ROOT "\retroarch.exe" )
-  core     := wrapCmd( EMUL_ROOT "\cores\" config.core ".dll" )
+	emulator := wrap( EMUL_ROOT "\retroarch.exe" )
+  core     := wrap( EMUL_ROOT "\cores\" config.core ".dll" )
 
-	if ( imageFile != "" ) {
+	command := emulator " -L " core
+	command .= " --set-shader " wrap( config.video_shader )
+	if ( appendCommand != "" )
+		command .= " " appendCommand
+	if ( imageFile != "" )
+		command .= " " wrap( imageFile )
+	if ( appendImageFile != "" )
+		command .= " " wrap( appendImageFile )
 
-		command := emulator " -L " core
-		command .= " --set-shader " wrapCmd( config.video_shader )
-		if ( appendCommand != "" ) {
-			command .= " " appendCommand
-		}
-
-		command .= " " wrapCmd( imageFile )
-		debug( "command   : " command )
-
-		Run, % command, , Hide, emulPid
-
-	} else {
-		Run, % emulator,,Hide, emulPid
-	}
+  debug( "command   : " command )
+	Run, % command, % EMUL_ROOT,Hide, emulPid
 
 	waitEmulator()
 	IfWinExist
@@ -37,14 +32,9 @@ runEmulator( imageFile, config, appendCommand="", callback="" ) {
 		if ( imageFile != "" && isFunc(callback) ) {
 			Func(callback).( emulPid, core, imageFile, option )
 		}
-		WinWaitClose, ahk_class RetroArch ahk_exe retroarch.exe
-	  Process, WaitClose, emulPid
+		waitCloseEmulator( emulPid )
 	}
 
-}
-
-wrapCmd( command ) {
-	return """" command """"
 }
 
 getOption( imageDirPath ) {
@@ -75,31 +65,26 @@ nvl( val, defaultVal ) {
 	return defaultVal
 }
 
-getRomPath( imageDirPath, option, filter ) {
+getRomPath( imageDir, option, filter ) {
 	if ( option.run.rom != "" ) {
-		romPath := FileUtil.getFile( imageDirPath, "i)" option.run.rom "\.(" filter ")$" )
+		romPath := FileUtil.getFile( imageDir, "i)" option.run.rom "\.(" filter ")$" )
 		if ( romPath != "" ) {
 			return romPath
 		}
 	}
-	filter := nvl(option.run.filter,filter)
-	romPath := extractRomPath( imageDirPath, filter, "m3u" )
-	if ( romPath != "" )
-	  return romPath
-	romPath := extractRomPath( imageDirPath, filter, "chd" )
-	if ( romPath != "" )
-	  return romPath
-	romPath := extractRomPath( imageDirPath, filter, "cue" )
-	if ( romPath != "" )
-	  return romPath
-  return FileUtil.getFile( imageDirPath, "i).*\.(" filter ")$" )
+	filters := StrSplit( nvl(option.run.filter, filter), "|" )
+	for key, val in filters {
+		romPath := extractRomPath( imageDir, filter, val )
+		if ( romPath != "" )
+	  	return romPath		
+	}
 }
 
 extractRomPath( dir, filter, extension ) {
 	if InStr(filter, extension) {
 	  romPath := FileUtil.getFile( dir, "i).*\." extension "$" )
 	  if ( romPath != "" ) {
-	  	if InStr(filter,"m3u")
+	  	if ( extension == "m3u" )
 	  	  readM3U( romPath )
 	    return romPath
 	  }
@@ -118,8 +103,8 @@ readM3U( path ) {
 	}
 }
 
-waitEmulator() {
-	WinWait, ahk_class RetroArch ahk_exe retroarch.exe,, 60
+waitEmulator( delay:=10 ) {
+	WinWait, ahk_class RetroArch ahk_exe retroarch.exe,, % delay
 	IfWinExist
 	{
 	  activateEmulator()
@@ -127,10 +112,16 @@ waitEmulator() {
 }
 
 activateEmulator( delay:="" ) {
-	WinActivate, ahk_class RetroArch ahk_exe retroarch.exe,, 60
+	WinActivate, ahk_class RetroArch ahk_exe retroarch.exe,, 10
 	if ( delay != "" && delay > 0 ) {
 		Sleep %delay%
 	}
+}
+
+waitCloseEmulator( emulPid:="" ) {
+	WinWaitClose, ahk_class RetroArch ahk_exe retroarch.exe,,
+	if( emulPid != "" )
+	  Process, WaitClose, emulPid
 }
 
 setConfig( core, option ) {
@@ -142,9 +133,8 @@ setConfig( core, option ) {
   if( IsFunc(fn) ) {
   	fn.( config, option )
   }
-  writeConfig( getPathCoreConfig(core), config )
 
-  config.core := nvl( option.run.core, core )
+  config.core := nvl( nvl(option.core.common_core,option.run.core), core )
 
   debug( ">> FROM option`n" JSON.dump(option) )
   debug( ">> TO config`n" JSON.dump(config) )
@@ -156,11 +146,39 @@ getPathCoreConfig( core ) {
 
   map := ({
   (join,
-    "mednafen_saturn_libretro" : "Beetle Saturn"
-    "4do_libretro"             : "4DO"
-    "bluemsx_libretro"         : "blueMSX"
-    "nekop2_libretro"          : "Neko Project II"
-    "np2kai_libretro"          : "Neko Project II kai"
+    "4do_libretro"                    : "4DO"
+    "bluemsx_libretro"                : "blueMSX"
+    "fmsx_libretro"                   : "FMSX"
+    "nekop2_libretro"                 : "Neko Project II"
+    "np2kai_libretro"                 : "Neko Project II kai"
+    "genesis_plus_gx_libretro"        : "Genesis Plus GX"
+    "fceumm_libretro"                 : "FCEUmm"
+    "mednafen_psx_libretro"           : "Beetle PSX"
+    "mednafen_psx_hw_libretro"        : "Beetle PSX HW"
+    "pcsx_rearmed_libretro"           : "PCSX-ReARMed"
+    "yabause_libretro"                : "Yabause"
+    "mednafen_saturn_libretro"        : "Beetle Saturn"
+    "mupen64plus_next_libretro"       : "Mupen64Plus-Next GLES3"
+    "mupen64plus_next_gles3_libretro" : "Mupen64Plus-Next OpenGL"
+    "parallel_n64_libretro"           : "ParaLLEl N64"
+    "flycast_libretro"                : "Flycast"
+    "fbneo_libretro"                  : "FinalBurn Neo"
+    "fbalpha_libretro"                : "FB Alpha"
+    "fbalpha2012_libretro"            : "FB Alpha 2012"
+    "fbalpha2012_cps1_libretro"       : "FB Alpha 2012 CPS-1"
+    "fbalpha2012_cps2_libretro"       : "FB Alpha 2012 CPS-2"
+    "fbalpha2012_neogeo_libretro"     : "FB Alpha 2012 NEOGEO"
+    "mednafen_ngp_libretro"           : "Beetle NeoPop"
+  	"dolphin_libretro"                : "dolphin-emu"
+  	"play_libretro"                   : "Play!"
+  	"gambatte_libretro"               : "GAMBATTE"
+  	"mame_libretro"                   : "MAME"
+  	"mame2000_libretro"               : "MAME 2000"
+  	"mame2003_plus_libretro"          : "MAME 2003-Plus"
+  	"mame2010_libretro"               : "MAME 2010"
+  	"mame2014_libretro"               : "MAME 2014"
+  	"mame2015_libretro"               : "MAME 2015"
+  	"mame2016_libretro"               : "MAME 2016"
   )})
   trgCore := map[core]
 
@@ -170,30 +188,39 @@ getPathCoreConfig( core ) {
   }
 
 	dir  := EMUL_ROOT "\config\" trgCore
-	path := dir "\" trgCore ".cfg"
+	path := dir "\" trgCore
 	FileUtil.makeDir( dir )
 	return path
 
 }
 
-writeConfig( fileConfig, config ) {
+writeConfig( config, imageFile ) {
+
+  ROM_NAME := FileUtil.getName( imageFile, false )
+  debug( "ROM_NAME : " ROM_NAME )
+
+	fileConfig := getPathCoreConfig( config.core )
+	config.core_options_path := fileConfig
+
 	buffer := ""
 	for key, val in config {
-		buffer .= key " = """ val """`n"
+		debug( RegExReplace(key,"#{romname}",ROM_NAME) ":" val )
+		buffer .= RegExReplace(key,"#{romname}",ROM_NAME) " = """ val """`n"
 	}
-	FileUtil.delete( fileConfig )
-	FileAppend, % buffer, % fileConfig
+
+	FileUtil.delete( fileConfig ".cfg")
+	FileUtil.delete( fileConfig ".opt")
+	FileAppend, % buffer, % fileConfig ".cfg"
+	FileAppend, % buffer, % fileConfig ".opt"
+
 }
 
 setDefaultConfig( config, option ) {
 
 	config.cache_directory            := FileUtil.getHomeDir() "\retroarch"
-	config.rewind_enable              := nvl( option.run.rewind, "false" )
-	config.video_driver               := nvl( option.run.videoDriver, "gl" )
-	config.video_shader               := nvl( option.run.videoShader, "\ntsc\ntsc-320px-svideo-gauss-scanline" )
+	config.video_driver               := nvl( option.run.videoDriver, "vulkan" )
+	config.video_shader               := nvl( option.run.videoShader, "\\ntsc\\ntsc-320px-svideo-gauss-scanline" )
 	config.systemfiles_in_content_dir := nvl( option.systemfiles_in_content_dir, "false" )
-  setVideoShader( config )
-  FileUtil.makeDir( config.cache_directory )
 
   config.input_enable_hotkey       := "menu"
   config.input_reset               := "h"
@@ -202,6 +229,16 @@ setDefaultConfig( config, option ) {
   config.input_disk_prev           := "comma"
   config.input_toggle_fast_forward := "space"
   config.input_toggle_fullscreen   := "f"
+
+  for key, val in option.run
+  	config[key] := val
+  for key, val in option.core
+  	config[key] := val
+
+  setVideoShader( config )
+  setResolution( config )
+
+	FileUtil.makeDir( config.cache_directory )
 
 }
 
@@ -212,4 +249,16 @@ setVideoShader( config ) {
 		config.video_shader := "shaders_slang\" config.video_shader ".slangp"
 	}
 	config.video_shader := FileUtil.normalizePath( config.video_shader )
+}
+
+setResolution( config ) {
+  if( config.fullscreen_resolution == "" || config.fullscreen_resolution == "none" ) {
+  	config.video_windowed_fullscreen := "true"
+  } else {
+  	width  := RegExReplace( config.fullscreen_resolution, "^(\d*?)x(\d*?)$", "$1" )
+    height := RegExReplace( config.fullscreen_resolution, "^(\d*?)x(\d*?)$", "$2" )
+    config.video_windowed_fullscreen := "false"
+    config.video_fullscreen_x        := width
+		config.video_fullscreen_y        := height
+  }
 }
