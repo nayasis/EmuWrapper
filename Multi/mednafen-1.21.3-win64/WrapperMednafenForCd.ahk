@@ -3,8 +3,8 @@
 
 emulatorPid  := ""
 imageDirPath := %0%
-; imageDirPath := "\\NAS\emul\image\Saturn\Grandia (T-ko)"
-imageDirPath := "\\NAS\emul\image\MegaCd\Batman Returns (En)"
+imageDirPath := "\\NAS\emul\image\Saturn\Grandia (T-ko)"
+; imageDirPath := "\\NAS\emul\image\MegaCd\Batman Returns (En)"
 
 hasMultiDisc := false
 
