@@ -86,9 +86,11 @@ Mednafen/*/ru/
 Mednafen/*/sav/
 Mednafen/*/b/
 Mednafen/*/de/
-Mednafen*/stdout.txt
-Mednafen*/ChangeLog
-Mednafen*/COPYING
+Mednafen/*/stdout.txt
+Mednafen/*/ChangeLog
+Mednafen/*/COPYING
+Mednafen/*/mednafen.lck
+Mednafen/*/stderr.txt
 
 Windows 95/WIN98/0/
 Windows 95/WIN98/SHADERS/
@@ -102,6 +104,11 @@ Windows 95/WIN98/stderr.txt
 3DS/*/updater.ps1
 3DS/Citra*/user/
 3DS/Citra*/installationLog.txt
+3DS/Citra*/components.xml
+3DS/Citra*/maintenancetool.ini
+3DS/Citra*/network.xml
+3DS/Citra*/nightly-mingw/scripting/citra.py
+3DS/Citra*/maintenancetool.dat
 
 PlayStation2/PCSX2 1.5.0/Bios/
 PlayStation2/PCSX2 1.5.0/cheats/
@@ -138,6 +145,9 @@ Mame/*/uismall.bdf
 Mame/*/artwork/dir.txt
 Mame/*/artwork/bgfx/
 Mame/*/ctrlr/
+Mame/*/diff/
+Mame/*/roms/
 
-Mame/*/whatsnew.txt
-Mame/*/*.sym
+Mame/**/dir.txt
+Mame/**/whatsnew.txt
+Mame/**/*.sym
