@@ -78,6 +78,7 @@ Retroarch/*/assets/
 Retroarch/*/config/
 Retroarch/*/cheats/
 Retroarch/*/states/
+Retroarch/*/screenshots
 Retroarch/*/*.lpl
 
 Mednafen/*/Documentation/
