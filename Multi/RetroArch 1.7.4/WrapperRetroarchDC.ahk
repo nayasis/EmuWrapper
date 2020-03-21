@@ -2,13 +2,16 @@
 #include WrapperAbstrctFunction.ahk
 
 imageDirPath := %0%
-; imageDirPath := "f:\download\Virtua Cop 2 v1.011 (2000)(Sega)(NTSC)(JP)(en)[!]"
+; imageDirPath := "e:\download\[GDI] Napple Tale - Arsia in Daydream (JP)\ttt\new"
+; imageDirPath := "e:\download\[GDI] Napple Tale - Arsia in Daydream (JP)"
+; imageDirPath := "e:\download\LazyBoot_v3.3_20181116_oketado\LazyBoot_v3.3_20181116\Lazyboot\gdi_image"
+; imageDirPath := "e:\download\RebuildGDI\NAPPLETALE ARSIA IN DAYDREAM"
 ; imageDirPath := "f:\download\_dc\Kidou Senshi Gundam - Renpou vs. Zeon DX (Japan)"
 
 option := getOption( imageDirPath )
 ; core   := nvl( option.run.core, "redream_libretro" )
-core   := nvl( option.run.core,   "reicast_libretro" )
-filter := nvl( option.run.filter, "chd|iso" )
+core   := nvl( option.run.core,   "flycast_libretro" )
+filter := nvl( option.run.filter, "chd|gdi|cdi|cue|iso" )
 
 modifyConfigDefault( option )
 modifyConfigCore( option )
