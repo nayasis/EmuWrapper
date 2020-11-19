@@ -3,11 +3,12 @@
 
 global emulPid  := ""
 imageDir := %0%
-imageDir := "\\NAS\emul\image\GameCube\Star Wars Rogue Squadron III - Rebel Strike (en)"
+imageDir := "\\NAS\emul\image\Wii\translated\Ikenie No Yoru (T-en 1.02)"
+; imageDir := "e:\download\Ikenie no Yoru [SEKJ99]\Ikenie no Yoru [SEKJ99]\src"
 
 setConfig( imageDir )
 
-cdContainer := new DiskContainer( imageDir, "i).*\.(gcz|cue|iso)$" )
+cdContainer := new DiskContainer( imageDir, "i).*\.(gcz|cue|iso|wbfs)$" )
 cdContainer.initSlot( 1 )
 
 ; emulDir  := A_ScriptDir "\bin\dolphin-master-5.0-6766-x64"

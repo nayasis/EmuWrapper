@@ -2,8 +2,9 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS\emul\image\PC98\Siritsu Tantei MAX - Sennyuu!! Nazo no Joshikou ~ Outside Graphic (ja)"
+; imageDir := "\\NAS\emul\image\PC98\Exceed Jack (misty)(ja)"
 ; imageDir := "\\NAS\emul\image\PC98\Policenauts (ja)"
+; imageDir := "\\NAS\emul\image\PC98\(Great)(Plum)(1993) What is Fantasy?"
 
 option := getOption( imageDir )
 config := setConfig( "np2kai_libretro", option )
@@ -11,12 +12,15 @@ config := setConfig( "np2kai_libretro", option )
 
 setNpConfig( config )
 applyCustomFont( imageDir, config )
-setCdRom( imageDir, config )
-setHdd( imageDir, config )
-setFdd( imageDir, config )
+makeCmd( imageDir )
 
-imageFile := getRomPath( imageDir, option, "cmd|m3u|d88|fdi|fdd|hdm|nfd|xdf|tfd" )
-writeConfig( config, imageFile )
+; setCdRom( imageDir, config )
+; setHdd( imageDir, config )
+; setFdd( imageDir, config )
+
+; imageFile := getRomPath( imageDir, option, "cmd|m3u|d88|fdi|fdd|hdm|nfd|xdf|tfd" )
+imageFile := getRomPath( imageDir, option, "cmd" )
+; writeConfig( config )
 
 runEmulator( imageFile, config )
 
@@ -56,14 +60,26 @@ applyCustomFont( imageDir, config ) {
 }
 
 setNpConfig( config ) {
+
   cfg := getCfg( config )
 
   ; set DIP switch
-	if( config.np2kai_gdc_block == "2.5" ) {
-		IniWrite, % "3e e3 7b", % cfg.path, % cfg.section, DIPswtch
-	} else {
-		IniWrite, % "3e 63 7b", % cfg.path, % cfg.section, DIPswtch
-	}
+  dipswitch := "3e"
+
+  if( config.np2kai_gdc_block == "2.5" ) {
+    dipswitch .= " e3"
+  } else {
+    dipswitch .= " 63"
+  }
+
+  if( config.np2kai_cpu_mode == "low" ) {
+    dipswitch .= " fb"
+  } else {
+    dipswitch .= " 7b"
+  }
+
+  IniWrite, % dipswitch, % cfg.path, % cfg.section, DIPswtch
+
 	; set MEM switch
   IniRead, MEMswitch, % cfg.path, % cfg.section, MEMswtch
   debug( "MEMswtch (before) : " MEMswitch )
@@ -101,28 +117,33 @@ getCfg( config ) {
   return { "path" : cfgPath, "section" : section }
 }
 
-setCdRom( imageDir, config ) {
-	dir := imageDir "\_EL_CONFIG\cdrom"
-	cdRom := FileUtil.getFile( dir, "i).*\.(cue)$" )
-	if( cdRom == "" )
-		cdRom := FileUtil.getFile( dir, "i).*\.(ccd)$" )
-	if( cdRom == "" )
-		cdRom := FileUtil.getFile( dir, "i).*\.(iso|bin|img)$" )
-  if( cdRom == "" )
-    return
+makeCmd( imageDir ) {
 
   files := FileUtil.getFiles( imageDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
-  files.push( cdRom )
+  hdd   := FileUtil.getFile( imageDir, "i).*\.(hdi|hdd)$" )
+  cdrom := getCdrom( imageDir )
+  if( hdd != "" )
+    files.push( hdd )
+  if( cdrom != "" )
+    files.push( cdrom )
 
   content := "np2kai"
   for i, file in files {
-    content .= " " wrapCmd(file)
+    content .= " " wrap(file)
   }
 
   FileUtil.write( imageDir "\run.cmd", content )
 
-  ; cfg := getCfg( config )
-  ; IniWrite, % cdRom, % cfg.path, % cfg.section, CDD3FILE
+}
+
+getCdrom( imageDir ) {
+  dir := imageDir "\_EL_CONFIG\cdrom"
+  cdRom := FileUtil.getFile( dir, "i).*\.(cue)$" )
+  if( cdRom == "" )
+    cdRom := FileUtil.getFile( dir, "i).*\.(ccd)$" )
+  if( cdRom == "" )
+    cdRom := FileUtil.getFile( dir, "i).*\.(iso|bin|img)$" )  
+  return cdRom
 }
 
 setHdd( imageDir, config ) {

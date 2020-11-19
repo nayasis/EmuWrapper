@@ -2,10 +2,9 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS\emul\image\MSX\XZR II (T-ko)"
+; imageDir := "\\NAS\emul\image\MSX\Puyo Puyo (compile)(T-en 1.0 by 232, BiFi)"
 
 option    := getOption( imageDir )
-; config    := setConfig( "fmsx_libretro", option )
 config    := setConfig( "bluemsx_libretro", option )
 imageFile := getRomPath( imageDir, option, "m3u|zip|7z|rom|dsk" )
 

@@ -28,7 +28,6 @@ runEmulator( imageFile, config, appendCommand="", callback="", appendImageFile="
 	waitEmulator()
 	IfWinExist
 	{
-		activateEmulator()
 		if ( imageFile != "" && isFunc(callback) ) {
 			Func(callback).( emulPid, core, imageFile, option )
 		}
@@ -57,12 +56,6 @@ getGameMeta( imageDirPath ) {
 		return JSON.load( jsonText )
 	}
 	return {}
-}
-
-nvl( val, defaultVal ) {
-	if( val != "" )
-		return val
-	return defaultVal
 }
 
 getRomPath( imageDir, option, filter ) {
@@ -103,7 +96,7 @@ readM3U( path ) {
 	}
 }
 
-waitEmulator( delay:=10 ) {
+waitEmulator( delay:=15 ) {
 	WinWait, ahk_class RetroArch ahk_exe retroarch.exe,, % delay
 	IfWinExist
 	{
@@ -112,7 +105,12 @@ waitEmulator( delay:=10 ) {
 }
 
 activateEmulator( delay:="" ) {
-	WinActivate, ahk_class RetroArch ahk_exe retroarch.exe,, 10
+	loop, 50
+	{
+		WinActivate, ahk_class RetroArch ahk_exe retroarch.exe
+		; debug( ">> activate emulator ... " A_Index )
+		sleep 20
+	}
 	if ( delay != "" && delay > 0 ) {
 		Sleep %delay%
 	}
@@ -124,7 +122,7 @@ waitCloseEmulator( emulPid:="" ) {
 	  Process, WaitClose, emulPid
 }
 
-setConfig( core, option ) {
+setConfig( core, option, log:=false ) {
 
 	config := {}
 
@@ -135,9 +133,12 @@ setConfig( core, option ) {
   }
 
   config.core := nvl( nvl(option.core.common_core,option.run.core), core )
+  config._overwrite := option.extra["option-overwrite"]
 
-  debug( ">> FROM option`n" JSON.dump(option) )
-  debug( ">> TO config`n" JSON.dump(config) )
+  if( log ) {
+	  debug( ">> FROM option`n" JSON.dump(option) )
+	  debug( ">> TO config`n" JSON.dump(config) )
+  }
   return config
 
 }
@@ -152,15 +153,18 @@ getPathCoreConfig( core ) {
     "nekop2_libretro"                 : "Neko Project II"
     "np2kai_libretro"                 : "Neko Project II kai"
     "genesis_plus_gx_libretro"        : "Genesis Plus GX"
+    "picodrive_libretro"              : "PicoDrive"
     "fceumm_libretro"                 : "FCEUmm"
+    "mednafen_pce_fast_libretro"      : "Beetle PCE Fast"
     "mednafen_psx_libretro"           : "Beetle PSX"
     "mednafen_psx_hw_libretro"        : "Beetle PSX HW"
     "pcsx_rearmed_libretro"           : "PCSX-ReARMed"
     "yabause_libretro"                : "Yabause"
+    "yabasanshiro_libretro"           : "Yabasanshiro"
     "mednafen_saturn_libretro"        : "Beetle Saturn"
-    "mupen64plus_next_libretro"       : "Mupen64Plus-Next GLES3"
-    "mupen64plus_next_gles3_libretro" : "Mupen64Plus-Next OpenGL"
-    "parallel_n64_libretro"           : "ParaLLEl N64"
+    "mupen64plus_next_libretro"       : "Mupen64Plus-Next OpenGL"
+    "mupen64plus_next_gles3_libretro" : "Mupen64Plus-Next GLES3"
+    "parallel_n64_libretro"           : "Parallel N64"
     "flycast_libretro"                : "Flycast"
     "fbneo_libretro"                  : "FinalBurn Neo"
     "fbalpha_libretro"                : "FB Alpha"
@@ -194,24 +198,51 @@ getPathCoreConfig( core ) {
 
 }
 
-writeConfig( config, imageFile ) {
+writeConfig( config, imageFile="" ) {
 
-  ROM_NAME := FileUtil.getName( imageFile, false )
-  debug( "ROM_NAME : " ROM_NAME )
+  romName := FileUtil.getName( imageFile, false )
+  debug( ">> romName : " romName )
 
 	fileConfig := getPathCoreConfig( config.core )
-	config.core_options_path := fileConfig
 
-	buffer := ""
-	for key, val in config {
-		debug( RegExReplace(key,"#{romname}",ROM_NAME) ":" val )
-		buffer .= RegExReplace(key,"#{romname}",ROM_NAME) " = """ val """`n"
+	; overwrite option
+	overwrite := config._overwrite
+	overwrite := toMapFromProperties( overwrite )
+	debug( ">> overwrite option`n" JSON.dump(overwrite) )
+
+	config.Delete("_overwrite")
+	for key, val in overwrite {
+		config[ key ] := val
 	}
 
-	FileUtil.delete( fileConfig ".cfg")
-	FileUtil.delete( fileConfig ".opt")
-	FileAppend, % buffer, % fileConfig ".cfg"
-	FileAppend, % buffer, % fileConfig ".opt"
+	; write option to config file
+	buffer := ""
+	for key, val in config {
+		debug( RegExReplace(key,"#{romname}",romName) ":" val )
+		buffer .= RegExReplace(key,"#{romname}",romName) " = """ val """`n"
+	}
+
+	FileUtil.write( fileConfig ".cfg", buffer )
+	FileUtil.write( fileConfig ".opt", buffer )
+
+}
+
+toMapFromProperties( properties ) {
+
+	map := {}
+
+	Loop, parse, properties, `n
+	{
+		words := StrSplit( A_LoopField, "=" )
+		key   := Trim(words[1])
+		val   := Trim(words[2])
+		val   := RegExReplace( val, "^""", "" )
+		val   := RegExReplace( val, """$", "" )
+
+    map[ key ] := val
+	}
+
+	return map
 
 }
 

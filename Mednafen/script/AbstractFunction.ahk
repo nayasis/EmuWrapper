@@ -1,7 +1,7 @@
 #NoEnv
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-global EMUL_ROOT     := A_ScriptDir "\1.24.0"
+global EMUL_ROOT     := A_ScriptDir "\1.24.3"
 global diskContainer := new DiskContainer()
 
 runEmulator( imageFile, config, appendCommand="", callback="" ) {
@@ -10,7 +10,7 @@ runEmulator( imageFile, config, appendCommand="", callback="" ) {
 	debug( "core      : " config.core         )
 	debug( "shader    : " config.video_shader )
 
-	emulator := wrapCmd( EMUL_ROOT "\mednafen.exe" )
+	emulator := wrap( EMUL_ROOT "\mednafen.exe" )
   
   command := emulator
   ; if( config.core != "" )
@@ -18,7 +18,7 @@ runEmulator( imageFile, config, appendCommand="", callback="" ) {
 	if ( appendCommand != "" )
 		command .= " " appendCommand
 	if ( imageFile != "" )
-		command .= " " wrapCmd( imageFile )
+		command .= " " wrap( imageFile )
 
   debug( "command   : " command )
 	Run, % command, % EMUL_ROOT,Hide, emulPid
@@ -33,10 +33,6 @@ runEmulator( imageFile, config, appendCommand="", callback="" ) {
 		closeEmulator( emulPid )
 	}
 
-}
-
-wrapCmd( command ) {
-	return """" command """"
 }
 
 getOption( imageDirPath ) {
@@ -59,12 +55,6 @@ getGameMeta( imageDirPath ) {
 		return JSON.load( jsonText )
 	}
 	return {}
-}
-
-nvl( val, defaultVal ) {
-	if( val != "" )
-		return val
-	return defaultVal
 }
 
 getRomPath( imageDirPath, option, filter ) {
@@ -182,6 +172,12 @@ getPathCoreConfig( core ) {
 }
 
 writeConfig( fileConfig, config ) {
+
+	overwrite := config._overwrite
+	config._overwrite := ""
+
+	debug( ">> Final config`n" JSON.dump(config) )
+
 	config.core_options_path := fileConfig
 	buffer := ""
 	for key, val in config {

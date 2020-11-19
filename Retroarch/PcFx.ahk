@@ -2,7 +2,7 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-imageDir := "\\NAS\emul\image\PcFx\God Fighter Zeroigar - CirnoRadimore AD (T-en)"
+; imageDir := "\\NAS\emul\image\PcFx\God Fighter Zeroigar - CirnoRadimore AD (T-en)"
 
 option    := getOption( imageDir )
 config    := setConfig( "mednafen_pcfx_libretro", option )

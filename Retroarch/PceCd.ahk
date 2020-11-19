@@ -3,6 +3,7 @@
 
 imageDir := %0%
 ; imageDir := "\\NAS\emul\image\PcEngineCd\Bonanza Brothers (ja)"
+; imageDir := "e:\download\pcecd\Ryuuko no Ken - Sample Disc (J)"
 
 option    := getOption( imageDir )
 config    := setConfig( "mednafen_pce_fast_libretro", option )

@@ -28,7 +28,7 @@ class VirtualDisk {
       ;this.daemonPath := "c:\Program Files (x86)\DAEMON Tools Lite\DTLite.exe"
       ; this.daemonPath   := "c:\Program Files\DAEMON Tools Lite\DTAgent.exe"
       this.daemonPath   := "c:\Program Files\DAEMON Tools Lite\DTCommandLine.exe"
-      this.DRIVE_LETTER := "H"
+      this.DRIVE_LETTER := "G"
   }
 
   __New() {
@@ -133,3 +133,85 @@ class VirtualDisk {
   }
 
 }
+
+/*
+
+Commands:
+  -a [ --add ]          Adds an optical virtual device.
+  -m [ --mount ]        Mounts a new or existing optical virtual drive
+                        depending on what is chosen in Preferences.
+  -M [ --mount_to ]     Mounts existing optical virtual drive with an image
+                        file.
+  -u [ --unmount ]      Unmounts a virtual drive.
+  -U [ --unmount_all ]  Unmounts all currently mounted images.
+  -r [ --remove ]       Unmounts(if needed) and deletes the specified drive.
+  -R [ --remove_all ]   Removes all virtual devices.
+  -s [ --set_count ]    Sets quantity of optical virtual devices.
+  -G [ --get_letter ]   Returns a letter assigned to an optical virtual device.
+  -g [ --get_count ]    Returns the quantity of all virtual devices.
+  -h [ --help ]         Shows this info.
+
+Note that SCSI and IDE functionality is limited in Windows 10.
+
+add command options:
+  -t [ --type ] arg     "dt", "scsi" or "ide"
+                        (IDE devices are available only with "Advanced Mount"
+                        feature.)
+
+                        Example: DTCommandLine.exe --add --type "dt"
+
+mount command options:
+  -t [ --type ] arg (=dt) "dt", "scsi" or "ide"
+                          (Can not be used with *.iscsi, *.vhd, *.tc, *.hc,
+                          *.vmdk and *.zip files)
+  -l [ --letter ] arg     device letter
+                          (If not specified, the first free letter will be used
+                          by default. Can not be used for *.iscsi files)
+  --pass arg              password for crypted *.tc, *.hc files
+  --ro                    mount as read-only device
+  -p [ --path ] arg       path to file
+
+                        Example: DTCommandLine.exe --mount --letter "K" --pass "123" --ro --path "f:\test.tc"
+
+mount_to command options:
+  -l [ --letter ] arg   device letter
+  --pass arg            password for crypted *.tc, *.hc files
+  --ro                  mount as read-only device
+  -p [ --path ] arg     path to file
+
+                        Example: DTCommandLine.exe --mount_to --letter "K" --pass "123" --ro --path "f:\test.tc"
+
+unmount command options:
+  -l [ --letter ] arg   device letter
+
+                        Example: DTCommandLine.exe --unmount --letter "K"
+
+remove command options:
+  -l [ --letter ] arg   device letter
+
+                        Example: DTCommandLine.exe --remove --letter "K"
+
+set_count command options:
+  -t [ --type ] arg     "dt", "scsi" or "ide"
+                        (IDE devices are available only with "Advanced Mount"
+                        feature.)
+  -n [ --number ] arg   number of virtual devices to be set
+                        (Maximum number of allowed devices depends on
+                        "Unlimited Devices" feature state.)
+
+                        Example: DTCommandLine.exe --set_count --type "dt" --number 5
+
+get_letter command options:
+  -t [ --type ] arg     "dt", "scsi" or "ide"
+  -n [ --number ] arg   device number.)
+
+                        Example: DTCommandLine.exe --get_letter --type "dt" --number 1
+
+get_count command options:
+  -t [ --type ] arg     "hdd" , "dt", "scsi" or "ide"
+                        (the total quantity will be returned if nothing is
+                        specified)
+
+                        Example: DTCommandLine.exe --get_count --type "scsi"
+
+*/
