@@ -2,11 +2,12 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS\emul\image\GameCube\Star Wars Jedi Knight II - Jedi Outcast (en)"
+; imageDir := "\\NAS\emul\image\Wii\temp"
+; imageDir := "\\NAS\emul\image\Wii\translated\Captain Rainbow (T-en)"
 
 option    := getOption( imageDir )
 config    := setConfig( "dolphin_libretro", option )
-imageFile := getRomPath( imageDir, option, "m3u|chd|gcz|cue|iso" )
+imageFile := getRomPath( imageDir, option, "m3u|chd|gcz|cue|iso|wad|wbfs" )
 
 writeConfig( config, imageFile )
 runEmulator( imageFile, config )

@@ -107,7 +107,7 @@ class DiskContainer {
             returnVal := % returnVal prefix " """ this.container[A_Index] """" postfix
         }
         
-        return returnVal
+        return Trim( returnVal )
         
     }
 

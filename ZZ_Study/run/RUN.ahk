@@ -1,5 +1,7 @@
 #NoEnv
 
+DetectHiddenWindows, On
+
 global applicationPid := ""
 
 SplitPath, A_ScriptName, , , , NoextScriptFileName

@@ -2,20 +2,23 @@
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 ; pathWorkRoot := "f:\download\3do"
-pathWorkRoot := "f:\download\megaCd"
+pathWorkRoot := "e:\download\pcecd"
 ; pathWorkRoot := "f:\download\saturn"
 ; pathRoot     := "\\NAS\emul\image\PcFx"
 ; pathRoot     := "\\NAS\emul\image\PlayStation"
 ; pathRoot     := "\\NAS\emul\image\3DO\Games\Guardian War"
-pathRoot     := "\\NAS\emul\image\DOS\Appareden - Fukuryuu no Shou (T-ko)\_EL_CONFIG\cdrom"
+; pathRoot     := "\\NAS\emul\image\DOS\Appareden - Fukuryuu no Shou (T-ko)\_EL_CONFIG\cdrom"
+pathRoot     := "e:\iso\pcecd"
 ; pathRoot     := "\\NAS\emul\image\Saturn\RPG\Grandia (T-Kr)"
 ; pathRoot     := "\\NAS\emul\image\PcFx\Aa! Megami Sama"
 replaceFile  := false
 
 debug( "start" )
 
+FileUtil.makeDir( pathWorkRoot )
+
 ; files := FileUtil.getFiles( pathRoot, "i).*\.(bin|cue|mdx|ccd)", false, true )
-files := FileUtil.getFiles( pathRoot, "i).*\.(cue)", false, true )
+files := FileUtil.getFiles( pathRoot, "i).*\.(cue|ccd)", false, true )
 ; files := FileUtil.getFiles( pathRoot, "i).*\.(ccd)", false, true )
 ; files := FileUtil.getFiles( pathRoot, "i).*\\_EL_CONFIG\\.*\.(bin|cue|iso|mdx|ccd)", false, true )
 ; files := FileUtil.getFiles( pathRoot, "i).*\\_EL_CONFIG\\.*\.(bin|cue|iso|mdx|ccd)", false, true )
@@ -37,7 +40,7 @@ Loop, % files.MaxIndex()
 {
 	fileSrc := files[ A_Index ]
 	srcDir  := FileUtil.getDir( fileSrc )
-	gameDir := FileUtil.getFileName( srcDir )
+	gameDir := FileUtil.getName( srcDir )
 	; remove unrecognized character
 	gameDir  := RegExReplace( gameDir, "%", "_" )
 
@@ -75,11 +78,12 @@ for gameDir, files in cueFiles {
 			
 			; PcEngine
 			; toCdImage( workDir, diskName, "", "2048" )
-			; toCdImageWithTurboRip( workDir, diskName, "2048" )
+			; toCdImage( workDir, diskName, "", "2352" )
+			; toCdImageWithTurboRip( workDir, diskName, "2352" )
 
 			; MegaCd
 			; toCdImage( workDir, diskName, "", "2352" )
-			; toCdImageWithTurboRip( workDir, diskName, "2352" )
+			toCdImageWithTurboRip( workDir, diskName, "2352" )
 
       ; DOS
       ; toCdImage( workDir, diskName, "", "2048" )
@@ -92,7 +96,7 @@ for gameDir, files in cueFiles {
 			; toCdImageWithTurboRip( workDir, diskName )
 			
 			; PlayStation
-			toCdImage( workDir, diskName, "-r", "" )
+			; toCdImage( workDir, diskName, "-r", "" )
 
 			VirtualDisk.close()
 			Sleep, 1000
@@ -167,7 +171,7 @@ toCdImage( workDir, fileName, bchunkOption="", modeSize="" ) {
 
 	debug( "  - read to cd image" )
 	command := % """" A_ScriptDir "\util\ImgBurn.exe"" /MODE READ /SRC G: /DEST """ binFile """ /START /CLOSE"
-	; debug( command )
+	debug( command )
 	RunWait, % command, % workDir, Hide, pid
 
 	debug( "  - convert to bin/wav image" )
@@ -183,7 +187,7 @@ toCdImage( workDir, fileName, bchunkOption="", modeSize="" ) {
 
 }
 
-toCdImageWithTurboRip( workDir, fileName, modeSize="" ) {
+toCdImageWithTurboRip( workDir, fileName, modeSize="", ogg=true ) {
 
 	tmpDir := workDir "\tmp"
 	FileUtil.makeDir( tmpDir )
@@ -194,40 +198,38 @@ toCdImageWithTurboRip( workDir, fileName, modeSize="" ) {
 		command := command " /RAW " modeSize
 	}
 	debug( command )
-	Run, % command, % tmpDir, Hide, pid
-
-	WinWait, ahk_exe TurboRip.exe,, 10
-	IfWinExist
+	; RunWait, % command, % tmpDir, Hide, pid
+	; RunWait, % command, % tmpDir,, pid
+	Run, % command, % tmpDir,, pid
+	While True
 	{
-		
-	  while True
-	  {
-	      Sleep, 1000
-	      WinActivate, ahk_exe TurboRip.exe
-	      IfWinExist
-	      {
-	      	break
-	      }
-	      Send {Enter}
-	  }
+		Sleep, 500
+		if WinExist("ahk_exe TurboRip.exe") 
+		{
+			WinActivate
+			send {I}
+			WinActivate
+			send {enter}
+		} else {
+			Break
+		}
 	}
-	Process, Close, % pid
 
-  ; waitToCloseTurboRip( tmpDir, pid )
+  ; waitToCloseTurboRip( tmpDir, pid, false )
 
 	tracks := FileUtil.getFiles( tmpDir, "i).*\.(iso|wav|cue)$", false, true )
 	Loop, % tracks.MaxIndex()
 	{
 		srcFilePath := tracks[ A_Index ]
 		if ( FileUtil.getExt(srcFilePath) != "cue" ) {
-			trgFileName := FileUtil.getFileName(srcFilePath)
+			trgFileName := FileUtil.getName(srcFilePath)
 			trgFileName := RegExReplace( trgFileName, "^([0-9]{2}) (.+?)\.([a-z]+?)$", fileName "-$1.$3" )
 		} else {
 			trgFileName := fileName ".cue"
 		}
 		FileMove, % srcFilePath, % workDir "\" trgFileName
 	}
-	FileUtil.removeDir( tmpDir )
+	FileUtil.delete( tmpDir )
 
 	newCuesheet := ""
 	cueFile := workDir "\" fileName ".cue"
@@ -244,11 +246,12 @@ toCdImageWithTurboRip( workDir, fileName, modeSize="" ) {
 	FileDelete, % cueFile
 	FileAppend, % newCuesheet, % cueFile
 
-	toCdOgg( workDir, cueFile )
+  if( ogg == true )
+		toCdOgg( workDir, cueFile )
 
 }
 
-waitToCloseTurboRip( workDir, pid ) {
+waitToCloseTurboRip( workDir, pid, closeAdv=false ) {
 
   prevFileCount := 0
   retryCount    := 0
@@ -271,13 +274,15 @@ waitToCloseTurboRip( workDir, pid ) {
 
   Process, Close, % pid
 
-  SetTitleMatchMode,2
-  loop
-  {
-      IfWinNotExist, Chrome
-          break
-      else
-          WinClose, Chrome
+  if( closeAdv == true ) {
+	  SetTitleMatchMode,2
+	  loop
+	  {
+	      IfWinNotExist, Chrome
+	          break
+	      else
+	          WinClose, Chrome
+	  }
   }
 
 }
@@ -297,8 +302,10 @@ toCdOgg( workDir, cueFile, modeSize="" ) {
 }
 
 toOgg( wavFile, targetDir ) {
-	targetFile := targetDir "\" FileUtil.getFileName(wavFile, false) ".ogg"
-	RunWait, % A_ScriptDir "\util\oggenc2.exe -n """ targetFile """ """ wavFile """", % targetDir, Hide, pid
+	targetFile := targetDir "\" FileUtil.getName(wavFile, false) ".ogg"
+	cmd := A_ScriptDir "\util\oggenc2.exe -n """ targetFile """ """ wavFile """"
+	debug( cmd )
+	RunWait, % cmd, % targetDir, Hide, pid
 	FileDelete, % wavFile
 }
 
@@ -308,7 +315,7 @@ toOggCue( cueFile, targetDir, modeSize="" ) {
 	; MODE_SIZE := "2048"
 	MODE_SIZE := ""
 
-	cueName    := FileUtil.getFileName( cueFile, false )
+	cueName    := FileUtil.getName( cueFile, false )
 	workDir    := FileUtil.getDir( cueFile )
 	trackFiles := FileUtil.getFiles( workDir, ".*-.*\.(ogg|iso)$" )
 	targetFile := targetDir "\" cueName ".cue"
@@ -319,12 +326,15 @@ toOggCue( cueFile, targetDir, modeSize="" ) {
 		
 		if ( RegExMatch(A_LoopReadLine, "^ *TRACK [0-9]{2} .*$") ) {
 			trackIndex++
-			trackName := FileUtil.getFileName( trackFiles[trackIndex] )
+			trackName := FileUtil.getName( trackFiles[trackIndex] )
 			trackExt  := RegExReplace( trackName, ".*\.(.*?)$", "$1" )
+			StringLower, trackExt, trackExt
 
 			newCueSheet .= "FILE """ trackName """ "
 			if ( trackExt == "ogg" )
-				newCueSheet .= "MP3`n"
+				newCueSheet .= "OGG`n"
+			else if ( trackExt == "mp3" )
+				newCueSheet .= "MP3`n"				
 			else
 				newCueSheet .= "BINARY`n"
 

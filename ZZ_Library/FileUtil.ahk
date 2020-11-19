@@ -258,12 +258,16 @@ class FileUtil {
   /**
   * make symbolic link
   *
-  * @param src  source path (real file)
-  * @param trg  target path (path to used as link)
+  * @param src        source path (real file)
+  * @param trg        target path (path to used as link)
+  * @param deleteTrg  delete trg forcidly
   */
-  makeLink( src, trg ) {
+  makeLink( src, trg, deleteTrg=false ) {
 
-  	if this.isSymlink( trg ) {
+    if( ! this.exist(src) )
+    	return false
+
+  	if( deleteTrg == true || this.isSymlink(trg) ) {
   		this.delete( trg )
   	}
 
@@ -275,6 +279,8 @@ class FileUtil {
 		}
 		debug( cmd )
 		this.cli( cmd )
+
+		return true
 
   }
 

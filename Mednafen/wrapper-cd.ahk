@@ -1,15 +1,15 @@
 #NoEnv
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDirPath := %0%
-; imageDirPath := "\\NAS\emul\image\Saturn\Grandia (T-ko)"
-; imageDirPath := "\\NAS\emul\image\Saturn\Daytona USA (en)"
+imageDir := %0%
+; imageDir := "\\NAS\emul\image\Saturn\Grandia (T-ko)"
+; imageDir := "\\NAS\emul\image\Saturn\Daytona USA (en)"
 
-option := getOption( imageDirPath )
+option := getOption( imageDir )
 config := setConfig( "", option )
 
-imageFilePath := getRomPath( imageDirPath, option, "chd|cue" )
-runEmulator( imageFilePath, config )
+imageFile := getRomPath( imageDir, option, "chd|cue" )
+runEmulator( imageFile, config )
 
 ExitApp
 

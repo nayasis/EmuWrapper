@@ -2,16 +2,20 @@
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 ; SetKeyDelay, 0, 10, Play
 
+; MsgBox, % "you are right ??!"
+
 global emulatorExe  := "M88.exe"
 
 emulatorPid  := ""
-imageDirPath := %0%
-; imageDirPath := "\\NAS\emul\image\PC88\Ys 1 (1987)(Nihon Falcom)"
-; imageDirPath := "\\NAS\emul\image\PC88\Ys 2 (1988)(Nihon Falcom)\"
-; imageDirPath := "\\NAS\emul\image\PC88\Zeliard (1987)(Game Arts)"
-; imageDirPath := "\\NAS\emul\image\PC88\Xak (1989)(Microcabin)"
+imageDir := %0%
+; imageDir := "\\NAS\emul\image\PC88\Ys 1 (1987)(Nihon Falcom)"
+; imageDir := "\\NAS\emul\image\PC88\Ys 2 (1988)(Nihon Falcom)\"
+; imageDir := "\\NAS\emul\image\PC88\Zeliard (1987)(Game Arts)"
+; imageDir := "\\NAS\emul\image\PC88\Xak (1989)(Microcabin)"
+; imageDir := "\\NAS\emul\image\PC88\Galaxian (dempa shinbunsha)(ja)"
+; imageDir := "\\NAS\emul\image\PC88\Silpheed (game arts)(ja)"
 
-fddContainer := new DiskContainer( imageDirPath, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
+fddContainer := new DiskContainer( imageDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
 fddContainer.initSlot( 2 )
 
 ;// ---------------------------------------------------------------------------
@@ -41,9 +45,10 @@ fddContainer.initSlot( 2 )
 ;//	他のパラメータも変更できるようにしたい場合も，一言頂ければ対応します．
 ;//
 
-if ( setConfig( imageDirPath ) == true ) {
+if ( setConfig( imageDir ) == true ) {
 
-	command := emulatorExe " -F " fddContainer.toOption(1)
+	; command := emulatorExe " -F " fddContainer.toOption(1)
+	command := emulatorExe
 	debug( command )
 	Run, % command,,,emulatorPid
 	waitEmulator()
@@ -51,20 +56,35 @@ if ( setConfig( imageDirPath ) == true ) {
 	{
 		activateEmulator()
 		; maximizeWindows()
+
 		insertDisk( "1", fddContainer.getFile(1) )
-		Sleep, 500
-		insertDisk( "2", fddContainer.getFile(2) )
+		if( fddContainer.size() > 1 ) {
+			Sleep, 500
+			insertDisk( "2", fddContainer.getFile(2) )			
+		}
+
 		reset()
-		Process, WaitClose, %emulatorPid%
+		waitCloseEmulator()
+		deleteTempFile()
 	}
 
-	debug( fddContainer.toOption(2) )
-	
 } else {
 	RunWait, % emulatorExe,,,emulatorPid
 }
 
+debug("end !!")
+
 ExitApp
+
+deleteTempFile() {
+  tempFiles := FileUtil.getFiles( A_ScriptDir, ".*" )
+  for i, file in tempFiles {
+    size := FileUtil.getSize(file)
+    if( size != 40 )
+      continue
+    FileUtil.delete( file )
+  }
+}
 
 !F4:: ; ALT + F4
 	activateEmulator()
@@ -103,8 +123,8 @@ ExitApp
 	Send {F11}
 	return
 
-getOption( imageDirPath ) {
-	dirConf := imageDirPath "\_EL_CONFIG"
+getOption( imageDir ) {
+	dirConf := imageDir "\_EL_CONFIG"
 	IfExist %dirConf%\option\option.json
 	{
 		FileRead, jsonText, %dirConf%\option\option.json
@@ -118,6 +138,13 @@ waitEmulator() {
 	IfWinExist
 	  activateEmulator()
 }
+
+waitCloseEmulator( emulPid:="" ) {
+	WinWaitClose, ahk_exe %emulatorExe%,,
+	if( emulPid != "" )
+	  Process, WaitClose, emulPid
+}
+
 
 activateEmulator() {
 	WinActivate, ahk_exe %emulatorExe%,,10
@@ -177,12 +204,12 @@ removeDisk( slotNo ) {
 	}
 }
 
-setConfig( imageDirPath ) {
+setConfig( imageDir ) {
 
-	currDir := FileUtil.getDir( imageDirPath )
+	currDir := FileUtil.getDir( imageDir )
 	confDir := currDir . "\_EL_CONFIG"
 	fileIni := % A_ScriptDir "\M88.ini"
-	option  := getOption( imageDirPath )
+	option  := getOption( imageDir )
 	
 	if ( currDir == "" ) {
 		return false
@@ -223,7 +250,7 @@ setConfig( imageDirPath ) {
 	}
 
 	; Set option
-	; option := getOption( imageDirPath )
+	; option := getOption( imageDir )
 	; if( option.config.BASICMode != "" )
 	; 	IniWrite, % option.config.clk_mult, % fileIni, % sectionMain, BASICMode
 

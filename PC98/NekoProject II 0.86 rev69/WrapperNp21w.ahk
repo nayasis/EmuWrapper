@@ -198,12 +198,22 @@ setConfig( imageDir ) {
 	if( option.config.ExMemory != "" )
 		IniWrite, % option.config.ExMemory, %NekoIniFile%, NekoProject21, ExMemory
 
-	if( option.config.GdcBlock == "2.5" )
-		; IniWrite, % "3e f3 7b", %NekoIniFile%, NekoProject21, DIPswtch
-		IniWrite, % "3e e3 7b", %NekoIniFile%, NekoProject21, DIPswtch
-	Else
-		; IniWrite, % "3e 73 7b", %NekoIniFile%, NekoProject21, DIPswtch
-		IniWrite, % "3e 63 7b", %NekoIniFile%, NekoProject21, DIPswtch
+	; set DIP switch
+  dipswitch := "3e"
+
+  if( option.config.GdcBlock == "2.5" ) {
+    dipswitch .= " e3"
+  } else {
+    dipswitch .= " 63"
+  }
+
+  if( option.config.cpuMode == "low" ) {
+    dipswitch .= " fb"
+  } else {
+    dipswitch .= " 7b"
+  }
+
+  IniWrite, % dipswitch, %NekoIniFile%, NekoProject21, DIPswtch
 
   ; boot priority
   ; - MEMswtch=48 05 04 08 0b 20 00 6e : 1 Floopy disk -> Hard disk

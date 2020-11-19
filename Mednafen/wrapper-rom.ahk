@@ -1,13 +1,14 @@
 #NoEnv
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDirPath := %0%
+imageDir := %0%
+; imageDir := "\\NAS\emul\image\SuperFamicom\BS Legend of Zelda 1 - Kodai no Sekiban (J)"
 
-option := getOption( imageDirPath )
+option := getOption( imageDir )
 config := setConfig( "", option )
 
-imageFilePath := getRomPath( imageDirPath, option, "zip|7z|fds|gb" )
-runEmulator( imageFilePath, config )
+imageFile := getRomPath( imageDir, option, "zip|7z|fds|gb" )
+runEmulator( imageFile, config )
 
 ExitApp
 

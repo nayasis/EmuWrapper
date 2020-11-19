@@ -2,32 +2,62 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS\emul\image\Neogeo\Metal Slug 3 (en)"
-; imageDir := "\\NAS\emul\image\ArcadeMame\Groove on Fight - Gouketsuji Ichizoku 3 (en)"
-; imageDir := "\\NAS\emul\image\Saturn\Grandia (T-ko)"
-; imageDir := "\\NAS\emul\image\Saturn\Cotton 2 (ja)"
-; imageDir := "\\NAS\emul\image\FBA\Laser Ghost"
-imageDir := "\\NAS\emul\image\ArcadeMame\Tekken Tag Tournament (en)"
+; imageDir := "\\NAS\emul\image\LSI\Game & Watch - Mario The Juggler"
 
-option := getOption( imageDir )
+; EMUL_ROOT := A_ScriptDir "\1.9.0"
 
-; config    := setConfig( "kronos_libretro", option )
-; config    := setConfig( "fbneo_libretro", option )
-; config    := setConfig( "fbalpha_libretro", option )
-config    := setConfig( "mame_libretro", option )
-; config    := setConfig( "mame2016_libretro", option )
-; config    := setConfig( "mame2003_plus_libretro", option )
+option    := getOption( imageDir )
+config    := setConfig( "mame_libretro", option, false )
 imageFile := getRomPath( imageDir, option, "zip|7z" )
+
+; config.core := "kronos_libretro"
+; config.core := "fbneo_libretro"
+; config.core := "fbalpha_libretro"
+; config.core := "mame_libretro"
+; config.core := "mame2016_libretro"
+; config.core := "mame2003_plus_libretro"
+
+; modify command argument : imageFile
+; if( config.core == "mame_libretro" ) {
+; 	config.mame_boot_from_cli := "enabled"
+; 	imageFile := toCliArgument( imageFile )
+; } else
+if( RegExMatch(config.core, "i)^mame.*") ) {
+	linkResource( config, imageFile )
+}
 
 writeConfig( config, imageFile )
 runEmulator( imageFile, config )
+waitCloseEmulator()
 
-if( config.core == "mame_libretro" || config.core == "mame2016_libretro" ) {
-	debug( "wait sub process !" )
-	waitEmulator( 1 )
-	waitCloseEmulator()
+loop, % option.core.wait_subprocess
+{
+	debug( "wait sub process : " A_Index )
+	waitEmulator(1)
+	IfWinExist
+	{
+		waitCloseEmulator()
+	}
 }
 
 ExitApp
+
+toCliArgument( imageFile ) {
+	romName := FileUtil.getName(imageFile,false)
+	dir     := FileUtil.getDir(imageFile)
+	args    := romName " -rp \""" dir "\"""
+	args    .= " -artpath \""" dir "\artwork\"""
+	args    .= " -samplepath \""" dir "\samples\"""
+	return args
+}
+
+linkResource( config, imageFile ) {
+	pathSystem := EMUL_ROOT "\system\mame"
+	FileUtil.makeDir( pathSystem )
+	imageDir := FileUtil.getDir(imageFile)
+	for i,v in ["samples","artwork"] {
+		FileUtil.makeLink( imageDir "\" v,  pathSystem "\" v, true )
+	}
+}
 
 #include %A_ScriptDir%\script\AbstractHotkey.ahk

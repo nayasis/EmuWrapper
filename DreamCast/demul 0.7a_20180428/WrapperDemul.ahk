@@ -4,7 +4,7 @@
 imageDir := %0%
 ; imageDir := "\\NAS\emul\image\Atomiswave\Extreme Hunting 2 (en)"
 ; imageDir := "\\NAS\emul\image\Naomi\Initial D Arcade Stage (en)"
-; imageDir := "\\NAS\emul\image\Naomi\Club Kart Prize"
+imageDir := "\\NAS\emul\image\Naomi\Mahjong Moukari Bancho (ja)"
 
 option  := getOption( imageDir )
 runType := nvl( option.option.run_type, "dc" )
@@ -144,6 +144,7 @@ getGameMeta( imageDir ) {
 
 ^+Insert:: ; Toggle Speed
 	Tray.showMessage( "Toggle speed" )
+	send {Ins down}{Ins up}
 	activateEmulator()
 	return
 

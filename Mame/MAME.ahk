@@ -1,23 +1,28 @@
 #NoEnv
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-global EMUL_ROOT := A_ScriptDir "\0.219"
+global EMUL_ROOT := A_ScriptDir "\0.224"
 global emulPid   := ""
 
 romName    := %0%
 ; romName := "f:\download\MAME 0.203 Software List ROMs (split)\apple2\ultima5.zip"
-; romName := "bmiidx"
+; romName := "gnw_opanic"
 ; romName := "futari15"
 ; romName := "unsquad"
+; romName := "warlords"
 
 if ( FileUtil.isDir(romName) ) {
-	romName := FileUtil.getFile( romName, "i).*\.(zip|7z)$")
+	romName := FileUtil.getFile( romName, "i{P up}).*\.(zip|7z)$")
 	romName .= FileUtil.getFileName( romName )
 }
 
 romPath .= "\\NAS\emul\image\Mame\chd;"
 romPath .= "\\NAS\emul\image\Mame\bios;"
 romPath .= "\\NAS\emul\image\Mame\rom;"
+; romPath .= "\\NAS\emul\image\ArcadeMame\Virtua Racing (en);"
+; romPath .= "e:\download\MAME 0.219 ROMs (bios-devices)"
+
+; artpath .= "\\NAS\emul\image\ArcadeMame\Space Invaders Part II (en)\artwork;"
 
 ; options .= " -hlsl_enable"
 options .= " -waitvsync"
@@ -38,7 +43,10 @@ emulPid  := ""
 emulExe := EMUL_ROOT "\mame64.exe"
 emulIni := EMUL_ROOT "\mame64.ini"
 
-command := wrapCmd(emulExe) " " options " -rompath " wrapCmd(romPath) " " wrapCmd(romName) 
+; command := wrap(emulExe) " " options " -rompath " wrap(romPath) " -artpath " wrap(artpath) " " wrap(romName) 
+command := wrap(emulExe) " " options " -rompath " wrap(romPath) " " wrap(romName) 
+
+debug( romName )
 
 debug( command )
 Run, % command, % EMUL_ROOT, hide, emulPid
@@ -52,10 +60,6 @@ IfWinExist
 debug( "end !")
 
 ExitApp
-
-wrapCmd( command ) {
-	return """" command """"
-}
 
 waitEmulator() {
 	WinWait, ahk_class MAME ahk_exe mame64.exe,, 10
