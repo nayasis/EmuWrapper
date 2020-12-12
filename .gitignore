@@ -153,3 +153,27 @@ Mame/**/dir.txt
 Mame/**/whatsnew.txt
 Mame/**/*.sym
 Mame/0.219/sta
+Mame/0.224/sta
+PlayStation2/PCSX2 1.6.0/bios
+PlayStation2/PCSX2 1.6.0/Docs
+PlayStation2/PCSX2 1.6.0/Langs
+PlayStation2/PCSX2 1.6.0/logs
+PlayStation2/PCSX2 1.6.0/memcards
+PlayStation2/PCSX2 1.6.0/sstates
+PlayStation2/PCSX2 1.6.0/Shaders
+Retroarch/1.9.0/downloads
+PlayStation2/PCSX2 1.7.0/logs/dev9Log.txt
+PlayStation2/PCSX2 1.7.0/logs
+PlayStation2/PCSX2 1.7.0/memcards
+PlayStation2/PCSX2 1.7.0/shaders
+PlayStation2/PCSX2 1.7.0/Langs
+PlayStation2/PCSX2 1.7.0/docs
+PlayStation2/PCSX2 1.7.0/bios
+PlayStation2/PCSX2 1.7.0/GameIndex.dbf
+Retroarch/1.8.4/cores
+Retroarch/1.8.4/states
+Retroarch/1.9.0/config
+Retroarch/1.9.0/cores
+Retroarch/1.9.0/states
+Mame/0.224/mame0224.xml
+PlayStation2/PCSX2 1.6.0/GameIndex.dbf
