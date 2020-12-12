@@ -2,7 +2,7 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS\emul\image\SuperFamicom\Far East Of Eden Zero (T-en 30 by Tom)"
+; imageDir := "\\NAS\emul\image\WonderSwan\Gunpey EX (koto)(ja)"
 
 option    := getOption( imageDir )
 config    := setConfig( "mednafen_wswan_libretro", option )

@@ -6,7 +6,7 @@ imageDir := %0%
 
 option    := getOption( imageDir )
 config    := setConfig( "genesis_plus_gx_libretro", option )
-imageFile := getRomPath( imageDir, option, "cue|chd|iso" )
+imageFile := getRomPath( imageDir, option, "m3u|cue|chd|iso" )
 
 writeConfig( config, imageFile )
 runEmulator( imageFile, config )

@@ -4,7 +4,7 @@
 imageDir := %0%
 ; imageDir := "\\NAS\emul\image\PSP\Densha de Go! Pocket - Yamanotesen Hen (ja)"
 ; imageDir := "\\NAS\emul\image\PSP\ToraDora Portable (T-ko)"
-imageDir := "\\NAS\emul\image\PSP\Phantasy Star Portable 2 (en)"
+; imageDir := "\\NAS\emul\image\PSP\Phantasy Star Portable 2 (en)"
 
 setCustomFont( imageDir )
 

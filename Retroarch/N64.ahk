@@ -6,8 +6,10 @@ imageDir := %0%
 
 option    := getOption( imageDir )
 config    := setConfig( "mupen64plus_next_libretro", option )
-; config    := setConfig( "parallel_n64_libretro", option )
 imageFile := getRomPath( imageDir, option, "zip|7z|z64|v64" )
+
+; config.core := "mupen64plus_next_libretro"
+; config.core := "parallel_n64_libretro"
 
 writeConfig( config, imageFile )
 runEmulator( imageFile, config )

@@ -1,15 +1,19 @@
 #NoEnv
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
+; EMUL_ROOT     := A_ScriptDir "\1.8.4"
+
 imageDir := %0%
 ; imageDir := "\\NAS\emul\image\PlayStation\Silent Hill (T-ko)"
-; imageDir := "\\NAS\emul\image\PlayStation\Ganbare Goemon - Uchuu Kaizoku Akogingu (en)"
+imageDir := "\\NAS\emul\image\PlayStation\Capcom Generation 5 - Fighters - Street Fighter Collection 2 (en)"
 
 option := getOption( imageDir )
 setCustomFont( imageDir, option )
-config := setConfig( "mednafen_psx_libretro", option )
-; config := setConfig( "pcsx_rearmed_libretro", option )
+config := setConfig( "mednafen_psx_libretro", option, true )
 imageFile := getRomPath( imageDir, option, "m3u|chd|cue|pbp" )
+
+; config.core := "pcsx_rearmed_libretro"
+; config.core := "mednafen_psx_libretro"
 
 writeConfig( config, imageFile )
 runEmulator( imageFile, config )

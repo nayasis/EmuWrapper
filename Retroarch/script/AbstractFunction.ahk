@@ -1,10 +1,18 @@
 #NoEnv
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-global EMUL_ROOT     := A_ScriptDir "\1.8.4"
+global EMUL_ROOT     := A_ScriptDir "\1.9.0"
 global diskContainer := new DiskContainer()
 
+makeLink() {
+	for i,e in ["config","cores","saves","screenshots","system","states"] {
+		FileUtil.makeLink( A_ScriptDir "\share\" e, EMUL_ROOT "\" e )
+	}
+}
+
 runEmulator( imageFile, config, appendCommand="", callback="", appendImageFile="" ) {
+
+  makeLink()
 
 	debug( "imageFile : " imageFile           )
 	debug( "core      : " config.core         )
@@ -173,6 +181,7 @@ getPathCoreConfig( core ) {
     "fbalpha2012_cps2_libretro"       : "FB Alpha 2012 CPS-2"
     "fbalpha2012_neogeo_libretro"     : "FB Alpha 2012 NEOGEO"
     "mednafen_ngp_libretro"           : "Beetle NeoPop"
+    "mednafen_wswan_libretro"         : "Beetle WonderSwan"
   	"dolphin_libretro"                : "dolphin-emu"
   	"play_libretro"                   : "Play!"
   	"gambatte_libretro"               : "GAMBATTE"
@@ -208,7 +217,7 @@ writeConfig( config, imageFile="" ) {
 	; overwrite option
 	overwrite := config._overwrite
 	overwrite := toMapFromProperties( overwrite )
-	debug( ">> overwrite option`n" JSON.dump(overwrite) )
+	; debug( ">> overwrite option`n" JSON.dump(overwrite) )
 
 	config.Delete("_overwrite")
 	for key, val in overwrite {
