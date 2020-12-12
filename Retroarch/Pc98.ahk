@@ -4,10 +4,10 @@
 imageDir := %0%
 ; imageDir := "\\NAS\emul\image\PC98\Exceed Jack (misty)(ja)"
 ; imageDir := "\\NAS\emul\image\PC98\Policenauts (ja)"
-; imageDir := "\\NAS\emul\image\PC98\(Great)(Plum)(1993) What is Fantasy?"
+; imageDir := "\\NAS\emul\image\PC98\Sacchan no Daibouken (agumix)(ja)"
 
 option := getOption( imageDir )
-config := setConfig( "np2kai_libretro", option )
+config := setConfig( "np2kai_libretro", option, true )
 ; config := setConfig( "nekop2_libretro", option )
 
 setNpConfig( config )
@@ -20,7 +20,7 @@ makeCmd( imageDir )
 
 ; imageFile := getRomPath( imageDir, option, "cmd|m3u|d88|fdi|fdd|hdm|nfd|xdf|tfd" )
 imageFile := getRomPath( imageDir, option, "cmd" )
-; writeConfig( config )
+writeConfig( config )
 
 runEmulator( imageFile, config )
 
@@ -102,7 +102,17 @@ setNpConfig( config ) {
   }
   debug( "MEMswtch (after)  : " MEMswitch )
     
-  IniWrite, % MEMswitch, %NekoIniFile%, NekoProject21, MEMswtch
+  IniWrite, % MEMswitch, %NekoIniFile%, NekoProjectIIkai, MEMswtch
+
+  ; seekSnd := config.np2kai_Seek_Snd == "ON" ? "true" : "false"
+
+  debug( ">> seek snd : " (config.np2kai_Seek_Snd == "ON" ? "true" : "false") )
+  debug( ">> seek vol : " config.np2kai_Seek_Vol )
+
+  IniWrite, % " " (config.np2kai_Seek_Snd == "ON" ? "true" : "false"), %NekoIniFile%, NekoProjectIIkai, Seek_Snd
+  ; IniWrite, % " " config.np2kai_Seek_Vol, %NekoIniFile%, NekoProjectIIkai, Seek_Vol
+
+  ; ExitApp
 
 }
 

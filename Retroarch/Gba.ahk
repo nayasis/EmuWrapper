@@ -6,9 +6,11 @@ imageDir := %0%
 
 option    := getOption( imageDir )
 config    := setConfig( "gambatte_libretro", option )
-; config    := setConfig( "mgba_libretro", option )
-; config   := setConfig( "mednafen_gba_libretro", option )
 imageFile := getRomPath( imageDir, option, "zip|7z|gba|gbc|gb" )
+
+; config.core := "gambatte_libretro"
+; config.core := "mgba_libretro"
+; config.core := "mednafen_gba_libretro"
 
 writeConfig( config, imageFile )
 runEmulator( imageFile, config )
