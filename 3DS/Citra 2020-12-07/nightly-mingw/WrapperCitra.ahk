@@ -2,16 +2,16 @@
 #include \\NAS\emul\emulator\ZZ_Library\Include.ahk
 
 emulatorPid  := ""
-imageDirPath := %0%
-; imageDirPath := "\\NAS\emul\image\3DS\Donkey Kong Country Returns 3D (ko)"
+imageDir := %0%
+imageDir := "e:\download\citra\Layton\"
 
 prepareFont()
 
-imageFilePath := FileUtil.getFile( imageDirPath, "i).*\.(zip|3ds|3dsx|elf|axf|cci|cxi|cia|app)$")
+imageFile := FileUtil.getFile( imageDir, "i).*\.(zip|3ds|3dsx|elf|axf|cci|cxi|cia|app)$")
 
-if ( imageFilePath != "" ) {
+if ( imageFile != "" ) {
 
-	command := "citra-qt.exe """ imageFilePath """"
+	command := "citra-qt.exe """ imageFile """"
 	debug( command )
 
 	Run, % command,,,emulatorPid
@@ -56,8 +56,6 @@ activateEmulator() {
 prepareFont() {
 
 	EnvGet, userHome, userprofile
-
-	debug( "userHome : " userHome )
 
 	trgDir := userHome "\AppData\Roaming\Citra"
 	srcDir := FileUtil.getDir(A_LineFile) "\fix"
