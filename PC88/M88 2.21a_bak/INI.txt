@@ -1,0 +1,49 @@
+INI追加項目
+
+ENHANCED				拡張設定(ENHANCED.TXT参照)
+
+Direct3D				描画にDirect3D9を使う
+D3DAccelerator			D3Dのアクセラレータレベル(0～3)(default = 3)
+
+Zoom					Windowサイズ(50%～400%)
+WindowForeground		ウィンドウを常に最善面
+ChildWindow				描画ウィンドウの子ウィンドウ化
+
+Antialiasing			アンチエイリアス
+StretchFilter			ストレッチフィルタ
+FullScreen32			32ビットでフルスクリーン化
+MaxmizeButton			最大化ボタンでフルスクリーン
+FullWindow				フルスクリーン方法(0～2)(default = 0)
+InterlaceBrightness		偶数ラインの明るさ(0～255)
+Brightness				画面の明るさ(%)(default = 100)
+
+DirectInput				キー入力にDirectInputも使う
+MouseOperationType		マウスモード(0:2.16仕様/1:自動マウス切り替え)
+HideCursorDelayTime		フルスクリーン時のカーソルが自動で消えるまでの時間(ms)
+HideCursorWindow		ウィンドウ時でもカーソル消去
+Romaji					ローマ字かな変換
+RomajiOutputDelayTime	ローマ字表示(内部入力)の遅延値
+
+Joystick				ジョイスティックの使用有無
+
+CheckOverwriteSnapshot	スナップショット上書き確認
+CheckBeforeLoadSnapshot	スナップショット読み込み確認
+
+History					ドライブメニューに履歴追加(0～10)(default = 0)
+SwapDriveMenu			ドライブメニューの位置入れ替え
+
+VolumeBeep				Beepボリューム
+Volume					全体ボリューム
+
+MixRate					サウンド合成周波数(default=55466)
+FMGenDll				外部音源DLL
+BeepType				レトロ風Beep
+
+CPU4MHz					4MHz時設定(Hz)(default = 4000000)
+CPU8MHz					8MHz時設定(Hz)(default = 8000000)
+
+BaudRate				RS-232Cのボーレート(default = 75)
+
+TheradPriority			エミュレートスレッド優先順位(-15～15)(default = 1)
+TimerApiType			タイマー取得方法(0～2)(default = 0)
+FDDWait					FDDアクセス時のウェイト(%)(default = 100)
