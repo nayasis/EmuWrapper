@@ -1,0 +1,29 @@
+外部音源fmgenx.dll
+
+～使用方法
+
+・エミュ本体にfmgenx.dll追加
+FMGenDll=fmgenx.dll
+
+～履歴
+
+～2020-03-11
+
+・fmgenのSSG-EG及びSSG部のエミュレート性能向上
+	PC-98のアローン・イン・ザ・ダークやPC-88のFIRE HAWKが多少違和感無くなる
+	np2xシリーズのレベルバー対応
+
+～2020-05-24
+
+・SSGプリスケーラ修正
+
+～2020-08-14
+
+・ADPCM修正
+
+・コレクションとして
+・ノークレーム／ノンサポート
+
+レッドナウ
+
+http://rednow.php.xdomain.jp/
