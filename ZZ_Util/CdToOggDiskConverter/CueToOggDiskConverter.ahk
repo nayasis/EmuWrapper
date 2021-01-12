@@ -2,13 +2,14 @@
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 ; pathWorkRoot := "f:\download\3do"
-pathWorkRoot := "e:\download\pcecd"
+pathWorkRoot := "e:\download\scd"
 ; pathWorkRoot := "f:\download\saturn"
 ; pathRoot     := "\\NAS\emul\image\PcFx"
 ; pathRoot     := "\\NAS\emul\image\PlayStation"
 ; pathRoot     := "\\NAS\emul\image\3DO\Games\Guardian War"
 ; pathRoot     := "\\NAS\emul\image\DOS\Appareden - Fukuryuu no Shou (T-ko)\_EL_CONFIG\cdrom"
-pathRoot     := "e:\iso\pcecd"
+; pathRoot     := "e:\iso\pcecd"
+pathRoot     := "e:\download\Lunar - Eternal Blue (USA) (RE)"
 ; pathRoot     := "\\NAS\emul\image\Saturn\RPG\Grandia (T-Kr)"
 ; pathRoot     := "\\NAS\emul\image\PcFx\Aa! Megami Sama"
 replaceFile  := false
