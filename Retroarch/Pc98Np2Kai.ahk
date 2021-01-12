@@ -8,7 +8,6 @@ imageDir := %0%
 
 option := getOption( imageDir )
 config := setConfig( "np2kai_libretro", option, true )
-; config := setConfig( "nekop2_libretro", option )
 
 setNpConfig( config )
 applyCustomFont( imageDir, config )
@@ -102,15 +101,15 @@ setNpConfig( config ) {
   }
   debug( "MEMswtch (after)  : " MEMswitch )
     
-  IniWrite, % MEMswitch, %NekoIniFile%, NekoProjectIIkai, MEMswtch
+  IniWrite, % MEMswitch, %NekoIniFile%, cfg.section, MEMswtch
 
   ; seekSnd := config.np2kai_Seek_Snd == "ON" ? "true" : "false"
 
   debug( ">> seek snd : " (config.np2kai_Seek_Snd == "ON" ? "true" : "false") )
   debug( ">> seek vol : " config.np2kai_Seek_Vol )
 
-  IniWrite, % " " (config.np2kai_Seek_Snd == "ON" ? "true" : "false"), %NekoIniFile%, NekoProjectIIkai, Seek_Snd
-  ; IniWrite, % " " config.np2kai_Seek_Vol, %NekoIniFile%, NekoProjectIIkai, Seek_Vol
+  IniWrite, % " " (config.np2kai_Seek_Snd == "ON" ? "true" : "false"), %NekoIniFile%, cfg.section, Seek_Snd
+  ; IniWrite, % " " config.np2kai_Seek_Vol, %NekoIniFile%, cfg.section, Seek_Vol
 
   ; ExitApp
 

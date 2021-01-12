@@ -7,19 +7,16 @@ imageDir := %0%
 ; imageDir := "\\NAS\emul\image\PC98\Sacchan no Daibouken (agumix)(ja)"
 
 option := getOption( imageDir )
-config := setConfig( "np2kai_libretro", option, true )
-; config := setConfig( "nekop2_libretro", option )
+config := setConfig( "nekop2_libretro", option )
 
 setNpConfig( config )
 applyCustomFont( imageDir, config )
-makeCmd( imageDir )
 
-; setCdRom( imageDir, config )
-; setHdd( imageDir, config )
-; setFdd( imageDir, config )
+setCdrom( imageDir, config )
+setHdd( imageDir, config )
+setFdd( imageDir, config )
 
-; imageFile := getRomPath( imageDir, option, "cmd|m3u|d88|fdi|fdd|hdm|nfd|xdf|tfd" )
-imageFile := getRomPath( imageDir, option, "cmd" )
+imageFile := getRomPath( imageDir, option, "m3u|d88|fdi|fdd|hdm|nfd|xdf|tfd" )
 writeConfig( config )
 
 runEmulator( imageFile, config )
@@ -66,13 +63,13 @@ setNpConfig( config ) {
   ; set DIP switch
   dipswitch := "3e"
 
-  if( config.np2kai_gdc_block == "2.5" ) {
+  if( config.np2_gdc_block == "2.5" ) {
     dipswitch .= " e3"
   } else {
     dipswitch .= " 63"
   }
 
-  if( config.np2kai_cpu_mode == "low" ) {
+  if( config.np2_cpu_mode == "low" ) {
     dipswitch .= " fb"
   } else {
     dipswitch .= " 7b"
@@ -102,15 +99,15 @@ setNpConfig( config ) {
   }
   debug( "MEMswtch (after)  : " MEMswitch )
     
-  IniWrite, % MEMswitch, %NekoIniFile%, NekoProjectIIkai, MEMswtch
+  IniWrite, % MEMswitch, %NekoIniFile%, cfg.section, MEMswtch
 
-  ; seekSnd := config.np2kai_Seek_Snd == "ON" ? "true" : "false"
+  ; seekSnd := config.np2_Seek_Snd == "ON" ? "true" : "false"
 
-  debug( ">> seek snd : " (config.np2kai_Seek_Snd == "ON" ? "true" : "false") )
-  debug( ">> seek vol : " config.np2kai_Seek_Vol )
+  debug( ">> seek snd : " (config.np2_Seek_Snd == "ON" ? "true" : "false") )
+  debug( ">> seek vol : " config.np2_Seek_Vol )
 
-  IniWrite, % " " (config.np2kai_Seek_Snd == "ON" ? "true" : "false"), %NekoIniFile%, NekoProjectIIkai, Seek_Snd
-  ; IniWrite, % " " config.np2kai_Seek_Vol, %NekoIniFile%, NekoProjectIIkai, Seek_Vol
+  IniWrite, % " " (config.np2_Seek_Snd == "ON" ? "true" : "false"), %NekoIniFile%, cfg.section, Seek_Snd
+  ; IniWrite, % " " config.np2_Seek_Vol, %NekoIniFile%, cfg.section, Seek_Vol
 
   ; ExitApp
 
@@ -118,42 +115,26 @@ setNpConfig( config ) {
 
 getCfg( config ) {
   if( config.core == "np2kai_libretro" ) {
-  	cfgPath := EMUL_ROOT "\system\np2kai\np2kai.cfg"
-  	section := "NekoProjectIIkai"
+    cfgPath := EMUL_ROOT "\system\np2kai\np2kai.cfg"
+    section := "NekoProjectIIkai"
   } else if( config.core == "nekop2_libretro" ) {
-  	cfgPath := EMUL_ROOT "\system\np2\np2.cfg"
-  	section := "NekoProjectII"
+    cfgPath := EMUL_ROOT "\system\np2\np2.cfg"
+    section := "NekoProjectII"
   }
   return { "path" : cfgPath, "section" : section }
 }
 
-makeCmd( imageDir ) {
-
-  files := FileUtil.getFiles( imageDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
-  hdd   := FileUtil.getFile( imageDir, "i).*\.(hdi|hdd)$" )
-  cdrom := getCdrom( imageDir )
-  if( hdd != "" )
-    files.push( hdd )
-  if( cdrom != "" )
-    files.push( cdrom )
-
-  content := "np2kai"
-  for i, file in files {
-    content .= " " wrap(file)
-  }
-
-  FileUtil.write( imageDir "\run.cmd", content )
-
-}
-
-getCdrom( imageDir ) {
+setCdrom( imageDir, config ) {
   dir := imageDir "\_EL_CONFIG\cdrom"
-  cdRom := FileUtil.getFile( dir, "i).*\.(cue)$" )
-  if( cdRom == "" )
-    cdRom := FileUtil.getFile( dir, "i).*\.(ccd)$" )
-  if( cdRom == "" )
-    cdRom := FileUtil.getFile( dir, "i).*\.(iso|bin|img)$" )  
-  return cdRom
+  cdrom := FileUtil.getFile( dir, "i).*\.(cue)$" )
+  if( cdrom == "" )
+    cdrom := FileUtil.getFile( dir, "i).*\.(ccd)$" )
+  if( cdrom == "" )
+    cdrom := FileUtil.getFile( dir, "i).*\.(iso|bin|img)$" )
+  if( cdrom == "" )
+    return
+  cfg := getCfg( config )
+  IniWrite, % cdrom, % cfg.path, % cfg.section, HDD3FILE
 }
 
 setHdd( imageDir, config ) {
