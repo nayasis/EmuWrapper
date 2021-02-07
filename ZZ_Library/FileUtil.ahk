@@ -94,7 +94,11 @@ class FileUtil {
 
 	getFile( pathDirOrFile, pattern=".*", includeDir=false, recursive=false ) {
 
-		if ( pathDirOrFile == "" or this.isFile(pathDirOrFile) )  {
+    if( ! this.exist(pathDirOrFile) ) {
+    	return ""
+    }
+
+		if( this.isFile(pathDirOrFile) ) {
 			return pathDirOrFile
 		}
 
