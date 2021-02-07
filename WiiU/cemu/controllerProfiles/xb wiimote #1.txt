@@ -1,0 +1,31 @@
+[General]
+emulate = Wiimote
+api = XInput
+controller = 0
+
+[Controller]
+rumble = 0
+leftRange = 1
+rightRange = 1
+leftDeadzone = 0.15
+rightDeadzone = 0.15
+buttonThreshold = 0.5
+1 = button_1
+2 = button_2
+3 = button_4
+4 = button_8
+5 = button_20
+6 = button_10
+7 = button_40
+8 = button_80
+9 = button_4000000
+10 = button_8000000
+11 = button_10000000
+12 = button_20000000
+13 = button_80000000
+14 = button_2000000000
+15 = button_1000000000
+16 = button_40000000
+17 = button_200
+nunchuck = 1
+motionPlus = 1
