@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content>
+    <logflag>0</logflag>
+    <advanced_ppc_logging>false</advanced_ppc_logging>
+    <mlc_path></mlc_path>
+    <permanent_storage>true</permanent_storage>
+    <language>0</language>
+    <use_discord_presence>true</use_discord_presence>
+    <fullscreen_menubar>false</fullscreen_menubar>
+    <check_update>false</check_update>
+    <save_screenshot>true</save_screenshot>
+    <vk_warning>false</vk_warning>
+    <gp_download>true</gp_download>
+    <fullscreen>false</fullscreen>
+    <console_language>1</console_language>
+    <window_position>
+        <x>-1</x>
+        <y>-1</y>
+    </window_position>
+    <window_size>
+        <x>-1</x>
+        <y>-1</y>
+    </window_size>
+    <open_pad>false</open_pad>
+    <pad_position>
+        <x>-1</x>
+        <y>-1</y>
+    </pad_position>
+    <pad_size>
+        <x>-1</x>
+        <y>-1</y>
+    </pad_size>
+    <GameList>
+        <style>0</style>
+        <order>{0, 1, 2, 3, 4, 5, 6, 7}</order>
+        <name_width>-3</name_width>
+        <version_width>-3</version_width>
+        <dlc_width>-3</dlc_width>
+        <game_time_width>-3</game_time_width>
+        <game_started_width>-3</game_started_width>
+        <region_width>-3</region_width>
+    </GameList>
+    <RecentLaunchFiles>
+        <Entry>\\NAS2\emul\image\WiiU\Legend of Zelda - Breath of the Wild (nintendo)(T-ko)\disk\code\U-King.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\New Super Mario U (nintendo)(T-ko)\disk\code\red-pro2.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\New Super Mario U (T-ko)\disk\code\red-pro2.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\Super Mario U (T-ko)\disk\code\red-pro2.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\Mario Kart 8 (T-ko)\disk\code\Turbo.rpx</Entry>
+        <Entry>E:\download\_packaged\wiiu\disk\code\Zelda.rpx</Entry>
+    </RecentLaunchFiles>
+    <RecentNFCFiles/>
+    <GamePaths/>
+    <GameCache>
+        <Entry>
+            <title_id>1407375153861376</title_id>
+            <name>The Legend of Zelda - Breath of the Wild</name>
+            <custom_name></custom_name>
+            <region>1</region>
+            <version>208</version>
+            <dlc_version>80</dlc_version>
+            <path>c:\app\emulator\WiiU\cemu\mlc01\usr\title\00050000\101C9300\code\U-King.rpx</path>
+            <time_played>0</time_played>
+            <last_played>0</last_played>
+            <favorite>false</favorite>
+        </Entry>
+    </GameCache>
+    <GraphicPack/>
+    <Graphic>
+        <api>0</api>
+        <device>00000000000000000000000000000000</device>
+        <VSync>1</VSync>
+        <GX2DrawdoneSync>true</GX2DrawdoneSync>
+        <PrecompiledShaders>0</PrecompiledShaders>
+        <vertex_cache_accuary>0</vertex_cache_accuary>
+        <UpscaleFilter>1</UpscaleFilter>
+        <DownscaleFilter>0</DownscaleFilter>
+        <FullscreenScaling>0</FullscreenScaling>
+        <AsyncCompile>false</AsyncCompile>
+        <Overlay>
+            <Position>0</Position>
+            <TextColor>4294967295</TextColor>
+            <TextScale>100</TextScale>
+            <FPS>true</FPS>
+            <DrawCalls>false</DrawCalls>
+            <CPUUsage>false</CPUUsage>
+            <CPUPerCoreUsage>false</CPUPerCoreUsage>
+            <RAMUsage>false</RAMUsage>
+            <VRAMUsage>false</VRAMUsage>
+            <Debug>false</Debug>
+        </Overlay>
+        <Notification>
+            <Position>1</Position>
+            <TextColor>4294967295</TextColor>
+            <TextScale>100</TextScale>
+            <ControllerProfiles>true</ControllerProfiles>
+            <ControllerBattery>true</ControllerBattery>
+            <ShaderCompiling>true</ShaderCompiling>
+            <FriendService>true</FriendService>
+        </Notification>
+    </Graphic>
+    <Audio>
+        <api>0</api>
+        <delay>2</delay>
+        <TVChannels>1</TVChannels>
+        <PadChannels>1</PadChannels>
+        <TVVolume>50</TVVolume>
+        <PadVolume>60</PadVolume>
+        <TVDevice>default</TVDevice>
+        <PadDevice>default</PadDevice>
+    </Audio>
+    <Account>
+        <PersistentId>2147483649</PersistentId>
+        <OnlineEnabled>false</OnlineEnabled>
+    </Account>
+    <Debug>
+        <CrashDump>0</CrashDump>
+    </Debug>
+    <Input>
+        <DSUC host="127.0.0.1" port="26760"/>
+    </Input>
+</content>
