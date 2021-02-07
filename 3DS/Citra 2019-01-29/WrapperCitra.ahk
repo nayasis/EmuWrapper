@@ -1,5 +1,5 @@
 #NoEnv
-#include \\NAS\emul\emulator\ZZ_Library\Include.ahk
+#include \\NAS2\emul\emulator\ZZ_Library\Include.ahk
 
 emulatorPid  := ""
 imageDirPath := %0%
