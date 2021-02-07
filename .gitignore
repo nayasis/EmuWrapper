@@ -111,18 +111,18 @@ Windows 95/WIN98/stderr.txt
 3DS/Citra*/nightly-mingw/scripting/citra.py
 3DS/Citra*/maintenancetool.dat
 
-PlayStation2/PCSX2 1.5.0/Bios/
-PlayStation2/PCSX2 1.5.0/cheats/
-PlayStation2/PCSX2 1.5.0/docs/
-PlayStation2/PCSX2 1.5.0/Langs/
-PlayStation2/PCSX2 1.5.0/logs/
-PlayStation2/PCSX2 1.5.0/plugins/
-PlayStation2/PCSX2 1.5.0/inis/
-PlayStation2/PCSX2 1.5.0/shaders/
-PlayStation2/PCSX2 1.5.0/memcards/
-PlayStation2/PCSX2 1.5.0/run_spu2_replay.cmd
-PlayStation2/PCSX2 1.5.0/cheats_ws/8897c208.pnach
-PlayStation2/PCSX2 1.5.0/GameIndex.dbf
+PSX2/PCSX2 1.5.0/Bios/
+PSX2/PCSX2 1.5.0/cheats/
+PSX2/PCSX2 1.5.0/docs/
+PSX2/PCSX2 1.5.0/Langs/
+PSX2/PCSX2 1.5.0/logs/
+PSX2/PCSX2 1.5.0/plugins/
+PSX2/PCSX2 1.5.0/inis/
+PSX2/PCSX2 1.5.0/shaders/
+PSX2/PCSX2 1.5.0/memcards/
+PSX2/PCSX2 1.5.0/run_spu2_replay.cmd
+PSX2/PCSX2 1.5.0/cheats_ws/8897c208.pnach
+PSX2/PCSX2 1.5.0/GameIndex.dbf
 
 PC88/M88 2.19a/2608_
 PC88/M88 2.19a/M88.exe
@@ -154,27 +154,40 @@ Mame/**/whatsnew.txt
 Mame/**/*.sym
 Mame/0.219/sta
 Mame/0.224/sta
-PlayStation2/PCSX2 1.6.0/bios
-PlayStation2/PCSX2 1.6.0/Docs
-PlayStation2/PCSX2 1.6.0/Langs
-PlayStation2/PCSX2 1.6.0/logs
-PlayStation2/PCSX2 1.6.0/memcards
-PlayStation2/PCSX2 1.6.0/sstates
-PlayStation2/PCSX2 1.6.0/Shaders
+PSX2/PCSX2 1.6.0/bios
+PSX2/PCSX2 1.6.0/Docs
+PSX2/PCSX2 1.6.0/Langs
+PSX2/PCSX2 1.6.0/logs
+PSX2/PCSX2 1.6.0/memcards
+PSX2/PCSX2 1.6.0/sstates
+PSX2/PCSX2 1.6.0/Shaders
 Retroarch/1.9.0/downloads
-PlayStation2/PCSX2 1.7.0/logs/dev9Log.txt
-PlayStation2/PCSX2 1.7.0/logs
-PlayStation2/PCSX2 1.7.0/memcards
-PlayStation2/PCSX2 1.7.0/shaders
-PlayStation2/PCSX2 1.7.0/Langs
-PlayStation2/PCSX2 1.7.0/docs
-PlayStation2/PCSX2 1.7.0/bios
-PlayStation2/PCSX2 1.7.0/GameIndex.dbf
+PSX2/PCSX2 1.7.0/logs/dev9Log.txt
+PSX2/PCSX2 1.7.0/logs
+PSX2/PCSX2 1.7.0/memcards
+PSX2/PCSX2 1.7.0/shaders
+PSX2/PCSX2 1.7.0/Langs
+PSX2/PCSX2 1.7.0/docs
+PSX2/PCSX2 1.7.0/bios
+PSX2/PCSX2 1.7.0/GameIndex.dbf
 Retroarch/1.8.4/cores
 Retroarch/1.8.4/states
 Retroarch/1.9.0/config
 Retroarch/1.9.0/cores
 Retroarch/1.9.0/states
 Mame/0.224/mame0224.xml
-PlayStation2/PCSX2 1.6.0/GameIndex.dbf
+PSX2/PCSX2 1.6.0/GameIndex.dbf
 ZZ_Util/CdToOggDiskConverter/util/TurboRip/
+PSX2/share/memcards/
+PSX2/share/ssates/
+WiiU/cemu/gameProfiles/
+WiiU/cemu/graphicPacks/
+WiiU/cemu/sharedFonts/
+WiiU/cemu/shaderCache/
+WiiU/cemu/resources/
+WiiU/cemu/log.txt
+WiiU/cemu/mlc01
+PSX2/PCSX2 1.7.0/ssates
+PSX2/PCSX2 1.7.0/snaps
+PSX2/PCSX2 1.6.0/ssates
+PSX2/PCSX2 1.6.0/snaps
