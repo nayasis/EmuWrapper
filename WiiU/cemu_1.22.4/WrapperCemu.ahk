@@ -25,16 +25,16 @@ activateEmulator() {
 }
 
 
-^+Del:: ; Reset
+; ^+Del:: ; Reset
+	; activateEmulator()
 	; Send !{R}{R}
-	; waitEmulator()
-	return
+	; return
 
-^+Insert:: ; Toggle Speed
+; ^+Insert:: ; Toggle Speed
 	; Tray.showMessage( "Toggle speed" )
 	; activateEmulator()
 	; sendKey( "F4" )
-	return
+	; return
 
 getConfig( imageDir ) {
 
@@ -47,6 +47,10 @@ getConfig( imageDir ) {
 		FileUtil.makeDir( imageDir "\emul\" e )
 		FileUtil.makeLink( imageDir "\emul\" e, A_ScriptDir "\" e, true )
 	}
+
+  for i,e in ["screenshots","sharedFonts","controllerProfiles","gameProfiles","graphicPacks"] {
+  	FileUtil.makeLink( A_ScriptDir "\..\share\" e, A_ScriptDir "\" e, true )
+  }
 
 	for i,e in ["CafeCn.ttf","CafeKr.ttf","CafeStd.ttf","CafeTw.ttf"] {
 		setFontLink(imageDir,e)
