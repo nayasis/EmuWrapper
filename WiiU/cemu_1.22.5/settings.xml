@@ -41,12 +41,21 @@
         <region_width>-3</region_width>
     </GameList>
     <RecentLaunchFiles>
+        <Entry>\\NAS2\emul\image\WiiU\Legend of Zelda - Twilight Princess HD (nintendo)(en)\disk\code\Zelda.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\Legend of Zelda - Twilight Princess HD (nintendo)(T-ko)\disk\code\Zelda.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\Ninja Gaiden 3 - Razor's Edge (tecmo)(en)\disk\code\sigma3_cafe.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\Rei Zero - Nuregarasu no Miko (koei tecmo)(T-ko)\disk\code\lens5_cafe.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\Tekken Tag Tournament 2 - Wii U Edition (bandai namco)(en)\disk\code\Tekken.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\Yoshis Woolly World (T-ko)\disk\code\pj023.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\Super Smash Bro (en)\disk\code\cross_f.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\Super Mario 3D World (nintendo)(T-ko)\disk\code\RedCarpet.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\Super Mario 3D World (T-ko)\disk\code\RedCarpet.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\Kirby and the Rainbow Paintbrush (en)\disk\code\seven.rpx</Entry>
+        <Entry>\\NAS2\emul\image\WiiU\Hyrule Warriors (nintendo,koei)(en)\disk\code\ProjectZ.rpx</Entry>
         <Entry>\\NAS2\emul\image\WiiU\Legend of Zelda - Breath of the Wild (nintendo)(T-ko)\disk\code\U-King.rpx</Entry>
         <Entry>\\NAS2\emul\image\WiiU\New Super Mario U (nintendo)(T-ko)\disk\code\red-pro2.rpx</Entry>
         <Entry>\\NAS2\emul\image\WiiU\New Super Mario U (T-ko)\disk\code\red-pro2.rpx</Entry>
         <Entry>\\NAS2\emul\image\WiiU\Super Mario U (T-ko)\disk\code\red-pro2.rpx</Entry>
-        <Entry>\\NAS2\emul\image\WiiU\Mario Kart 8 (T-ko)\disk\code\Turbo.rpx</Entry>
-        <Entry>E:\download\_packaged\wiiu\disk\code\Zelda.rpx</Entry>
     </RecentLaunchFiles>
     <RecentNFCFiles/>
     <GamePaths/>
@@ -64,7 +73,53 @@
             <favorite>false</favorite>
         </Entry>
     </GameCache>
-    <GraphicPack/>
+    <GraphicPack>
+        <Entry filename="graphicPacks\downloadedGraphicPacks\BreathOfTheWild\Mods\FPS++\rules.txt">
+            <Preset>
+                <category>Mode</category>
+                <preset>Advanced Settings</preset>
+            </Preset>
+            <Preset>
+                <category>Fence Type</category>
+                <preset>Performance Fence (Default)</preset>
+            </Preset>
+            <Preset>
+                <category>FPS Limit</category>
+                <preset>60FPS Limit (Default)</preset>
+            </Preset>
+            <Preset>
+                <category>Framerate Limit</category>
+                <preset>60FPS (ideal for 240/120/60Hz displays)</preset>
+            </Preset>
+            <Preset>
+                <category>Menu Cursor Fix (Experimental)</category>
+                <preset>Disabled (Default)</preset>
+            </Preset>
+            <Preset>
+                <category>Static Mode</category>
+                <preset>Disabled (Default, dynamically adjust game speed)</preset>
+            </Preset>
+            <Preset>
+                <category>Debug Options</category>
+                <preset>Disabled (Default)</preset>
+            </Preset>
+            <Preset>
+                <category>Frame Average</category>
+                <preset>8 Frames Averaged (Default)</preset>
+            </Preset>
+        </Entry>
+        <Entry filename="graphicPacks\downloadedGraphicPacks\BreathOfTheWild\Workarounds\NVIDIAExplosionSmoke\rules.txt"/>
+        <Entry filename="graphicPacks\downloadedGraphicPacks\KirbyRainbow_FlashingSquares\rules.txt"/>
+        <Entry filename="graphicPacks\downloadedGraphicPacks\BreathOfTheWild\Workarounds\NVIDIAStretchedClouds\rules.txt"/>
+        <Entry filename="graphicPacks\downloadedGraphicPacks\HyruleWarriors_DLCFix\rules.txt"/>
+        <Entry filename="graphicPacks\downloadedGraphicPacks\HyruleWarriors_EnemyDeathFix\rules.txt"/>
+        <Entry filename="graphicPacks\downloadedGraphicPacks\HyruleWarriors_Resolution\rules.txt">
+            <Preset>
+                <preset>1280x720 (Default)</preset>
+            </Preset>
+        </Entry>
+        <Entry filename="graphicPacks\downloadedGraphicPacks\KirbyRainbow_AA_Removal\rules.txt"/>
+    </GraphicPack>
     <Graphic>
         <api>0</api>
         <device>00000000000000000000000000000000</device>
