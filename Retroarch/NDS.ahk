@@ -3,7 +3,6 @@
 
 imageDir := %0%
 ; imageDir := "\\NAS\emul\image\NDS\Metal Max 3 (crea tech)(T-en 1.0 by Metal Dreamers)"
-; imageDir := "\\NAS\emul\image\NDS\Gyakuten Saiban 3 (T-ko)"
 
 option    := getOption( imageDir )
 config    := setConfig( "desmume_libretro", option )

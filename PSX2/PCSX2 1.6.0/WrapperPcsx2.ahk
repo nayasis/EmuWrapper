@@ -4,9 +4,9 @@
 emulatorPid := ""
 
 imageDir := %0%
-; imageDir := "\\NAS2\emul\image\PSX2\Fight Night Round 3 (en)"
+; imageDir := "\\NAS2\emul\image\PSX2\Jak 2 (naughty dog)(ko)"
 
-container := new DiskContainer( imageDir, "i).*\.(cso|iso)$" )
+container := new DiskContainer( imageDir, "i).*\.(cso|iso|7z|bin)$" )
 container.initSlot( 1 )
 
 config := getConfig( imageDir, container )
