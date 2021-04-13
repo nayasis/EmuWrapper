@@ -3,7 +3,7 @@
 
 imageDir := %0%
 ; imageDir := "\\NAS\emul\image\Wii\temp"
-; imageDir := "\\NAS\emul\image\Wii\translated\Captain Rainbow (T-en)"
+; imageDir := "\\NAS2\emul\image\Wii\Super Paper Mario (ko)"
 
 option    := getOption( imageDir )
 config    := setConfig( "dolphin_libretro", option )
