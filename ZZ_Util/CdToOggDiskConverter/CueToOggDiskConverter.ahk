@@ -2,14 +2,15 @@
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 ; pathWorkRoot := "f:\download\3do"
-pathWorkRoot := "e:\download\scd"
+; pathWorkRoot := "e:\download\mcd"
+pathWorkRoot := "e:\download\pce"
 ; pathWorkRoot := "f:\download\saturn"
 ; pathRoot     := "\\NAS\emul\image\PcFx"
 ; pathRoot     := "\\NAS\emul\image\PlayStation"
 ; pathRoot     := "\\NAS\emul\image\3DO\Games\Guardian War"
 ; pathRoot     := "\\NAS\emul\image\DOS\Appareden - Fukuryuu no Shou (T-ko)\_EL_CONFIG\cdrom"
-; pathRoot     := "e:\iso\pcecd"
-pathRoot     := "e:\download\Lunar - Eternal Blue (USA) (RE)"
+pathRoot     := "e:\iso\pcecd"
+; pathRoot     := "e:\download\Lords of Thunder (USA) [Audio Skip Fix]\Lords of Thunder (USA) [Audio Skip Fix]\"
 ; pathRoot     := "\\NAS\emul\image\Saturn\RPG\Grandia (T-Kr)"
 ; pathRoot     := "\\NAS\emul\image\PcFx\Aa! Megami Sama"
 replaceFile  := false
@@ -80,11 +81,11 @@ for gameDir, files in cueFiles {
 			; PcEngine
 			; toCdImage( workDir, diskName, "", "2048" )
 			; toCdImage( workDir, diskName, "", "2352" )
-			; toCdImageWithTurboRip( workDir, diskName, "2352" )
+			toCdImageWithTurboRip( workDir, diskName, "2352" )
 
 			; MegaCd
 			; toCdImage( workDir, diskName, "", "2352" )
-			toCdImageWithTurboRip( workDir, diskName, "2352" )
+			; toCdImageWithTurboRip( workDir, diskName, "2352" )
 
       ; DOS
       ; toCdImage( workDir, diskName, "", "2048" )

@@ -4,7 +4,8 @@
 imageDir := %0%
 ; imageDir := "\\NAS\emul\image\PC98\Hana to Chiruran (dott plan)(ja)"
 ; imageDir := "\\NAS\emul\image\PC98\Policenauts (ja)"
-; imageDir := "\\NAS\emul\image\PC98\Sacchan no Daibouken (agumix)(ja)"
+; imageDir := "\\NAS2\emul\image\PC98\Night Seep (gray)(ja)"
+imageDir := "\\NAS2\emul\image\PC98\Dragon Knight 3 (ja)"
 
 option := getOption( imageDir )
 config := setConfig( "nekop2_libretro", option )
@@ -16,8 +17,10 @@ setCdrom( imageDir, config )
 setHdd( imageDir, config )
 setFdd( imageDir, config )
 
-imageFile := getRomPath( imageDir, option, "m3u|d88|fdi|fdd|hdm|nfd|xdf|tfd" )
+imageFile := getRomPath( imageDir, option, "m3u|d88|d98|fdi|fdd|hdm|nfd|xdf|tfd" )
 writeConfig( config )
+
+; config.np2kai_cpu_feature := "Intel i80486"
 
 runEmulator( imageFile, config )
 
@@ -145,7 +148,7 @@ setHdd( imageDir, config ) {
 
 setFdd( imageDir, config ) {
 	cfg := getCfg( config ) 
-	files := FileUtil.getFiles( imageDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
+	files := FileUtil.getFiles( imageDir, "i).*\.(d88|d98|fdi|fdd|hdm|nfd|xdf|tfd)$" )
 	Loop, % 2
 	{
 		if( A_Index > 2 )

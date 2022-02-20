@@ -1,9 +1,9 @@
 #NoEnv
-#include \\NAS\emul\emulator\ZZ_Library\Include.ahk
+#include ..\..\..\ZZ_Library\Include.ahk
 
 emulatorPid  := ""
 imageDir := %0%
-imageDir := "e:\download\citra\Layton\"
+; imageDir := "e:\download\citra\Layton\"
 
 prepareFont()
 

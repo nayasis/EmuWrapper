@@ -41,6 +41,7 @@
         <region_width>-3</region_width>
     </GameList>
     <RecentLaunchFiles>
+        <Entry>\\NAS2\emul\image\WiiU\Mario Tennis - Ultra Smash (nintendo)(en)\disk\code\main.rpx</Entry>
         <Entry>\\NAS2\emul\image\WiiU\Rei Zero - Nuregarasu no Miko (koei tecmo)(T-ko)\disk\code\lens5_cafe.rpx</Entry>
         <Entry>\\NAS2\emul\image\WiiU\Tekken Tag Tournament 2 - Wii U Edition (bandai namco)(en)\disk\code\Tekken.rpx</Entry>
         <Entry>\\NAS2\emul\image\WiiU\Yoshis Woolly World (T-ko)\disk\code\pj023.rpx</Entry>
@@ -75,12 +76,12 @@
     <GraphicPack>
         <Entry filename="graphicPacks\downloadedGraphicPacks\BreathOfTheWild\Mods\FPS++\rules.txt">
             <Preset>
-                <category>Fence Type</category>
-                <preset>Performance Fence (Default)</preset>
-            </Preset>
-            <Preset>
                 <category>Mode</category>
                 <preset>Advanced Settings</preset>
+            </Preset>
+            <Preset>
+                <category>Fence Type</category>
+                <preset>Performance Fence (Default)</preset>
             </Preset>
             <Preset>
                 <category>FPS Limit</category>
@@ -95,29 +96,29 @@
                 <preset>Disabled (Default)</preset>
             </Preset>
             <Preset>
-                <category>Debug Options</category>
-                <preset>Disabled (Default)</preset>
-            </Preset>
-            <Preset>
                 <category>Static Mode</category>
                 <preset>Disabled (Default, dynamically adjust game speed)</preset>
+            </Preset>
+            <Preset>
+                <category>Debug Options</category>
+                <preset>Disabled (Default)</preset>
             </Preset>
             <Preset>
                 <category>Frame Average</category>
                 <preset>8 Frames Averaged (Default)</preset>
             </Preset>
         </Entry>
-        <Entry filename="graphicPacks\downloadedGraphicPacks\KirbyRainbow_FlashingSquares\rules.txt"/>
         <Entry filename="graphicPacks\downloadedGraphicPacks\BreathOfTheWild\Workarounds\NVIDIAExplosionSmoke\rules.txt"/>
+        <Entry filename="graphicPacks\downloadedGraphicPacks\KirbyRainbow_FlashingSquares\rules.txt"/>
         <Entry filename="graphicPacks\downloadedGraphicPacks\BreathOfTheWild\Workarounds\NVIDIAStretchedClouds\rules.txt"/>
         <Entry filename="graphicPacks\downloadedGraphicPacks\HyruleWarriors_DLCFix\rules.txt"/>
         <Entry filename="graphicPacks\downloadedGraphicPacks\HyruleWarriors_EnemyDeathFix\rules.txt"/>
-        <Entry filename="graphicPacks\downloadedGraphicPacks\KirbyRainbow_AA_Removal\rules.txt"/>
         <Entry filename="graphicPacks\downloadedGraphicPacks\HyruleWarriors_Resolution\rules.txt">
             <Preset>
                 <preset>1280x720 (Default)</preset>
             </Preset>
         </Entry>
+        <Entry filename="graphicPacks\downloadedGraphicPacks\KirbyRainbow_AA_Removal\rules.txt"/>
     </GraphicPack>
     <Graphic>
         <api>0</api>

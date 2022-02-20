@@ -2,7 +2,7 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS\emul\image\3DO\Night Trap (en)"
+; imageDir := "\\NAS2\emul\image\3DO\Policenauts (konami)(ja)"
 
 option    := getOption( imageDir )
 config    := setConfig( "4do_libretro", option )

@@ -118,7 +118,7 @@ class VirtualDisk {
 
   _run( commandLine ) {
 
-    debug( commandLine )
+    ; debug( commandLine )
 
     RunWait % commandLine
 

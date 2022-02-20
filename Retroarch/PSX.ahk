@@ -4,8 +4,7 @@
 ; EMUL_ROOT     := A_ScriptDir "\1.8.4"
 
 imageDir := %0%
-; imageDir := "\\NAS\emul\image\PlayStation\Silent Hill (T-ko)"
-imageDir := "\\NAS\emul\image\PlayStation\Capcom Generation 5 - Fighters - Street Fighter Collection 2 (en)"
+; imageDir := "\\NAS2\emul\image\PlayStation\Valkyrie Profile (en)"
 
 option := getOption( imageDir )
 setCustomFont( imageDir, option )

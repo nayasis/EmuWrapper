@@ -1,9 +1,9 @@
 [HKEY_LOCAL_MACHINE\SOFTWARE\CD PROJEKT RED\The Witcher 3]
-"Install Dir"="#{cdWin}"
-"GameEXE"="#{cdWin}\\bin\\x64\\witcher3.exe"
-"LauncherEXE"="#{cdWin}\\bin\\x64\\witcher3.exe"
-"Install_Path"="#{cdWin}"
-"execPath"="#{cdWin}\\bin\\x64\\witcher3.exe"
+"Install Dir"="${cdWin}"
+"GameEXE"="${cdWin}\\bin\\x64\\witcher3.exe"
+"LauncherEXE"="${cdWin}\\bin\\x64\\witcher3.exe"
+"Install_Path"="${cdWin}"
+"execPath"="${cdWin}\\bin\\x64\\witcher3.exe"
 "SpeechLanguage"="EN"
 "TextLanguage"="EN"
 "DisplayName"="The Witcher?3: Wild Hunt"
@@ -11,4 +11,4 @@
 "URLInfoAbout"="http://en.cdprojektred.com/"
 
 [HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers]
-"#{cd}\bin\CDS95.EXE"="~^ WIN7RTM 256COLOR"
+"${cd}\bin\CDS95.EXE"="~^ WIN7RTM 256COLOR"

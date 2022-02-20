@@ -3,15 +3,13 @@
 
 global emulPid  := ""
 imageDir := %0%
-imageDir := "\\NAS\emul\image\Wii\translated\Ikenie No Yoru (T-en 1.02)"
-; imageDir := "e:\download\Ikenie no Yoru [SEKJ99]\Ikenie no Yoru [SEKJ99]\src"
+; imageDir := "\\NAS2\emul\image\Wii\Zengeki no Reginleiv (sandiot)(T-en 1.0 by Brand Newman)"
 
 setConfig( imageDir )
 
 cdContainer := new DiskContainer( imageDir, "i).*\.(gcz|cue|iso|wbfs)$" )
 cdContainer.initSlot( 1 )
 
-; emulDir  := A_ScriptDir "\bin\dolphin-master-5.0-6766-x64"
 emulDir  := A_ScriptDir "\bin\dolphin-master-5.0-11590-x64"
 emulPath := emulDir "\Dolphin.exe"
 
@@ -70,27 +68,28 @@ getOption( imageDir ) {
 }
 
 waitEmulator() {
-	; Dolphin 5.0-11590 | JIT64 DC | OpenGL | HLE | FPS: 60 - VPS: 60 - 100% | Metroid Prime: Trilogy (R3ME01)
-	; ahk_class Qt5QWindowIcon ahk_exe Dolphin.exe
-	; ahk_class wxWindowNR ahk_exe Dolphin.exe
-	; WinWait, ahk_class Qt5QWindowIcon ahk_exe Dolphin.exe,,10
-	WinWait, ahk_class wxWindowNR ahk_exe Dolphin.exe,,10
+	; Dolphin 5.0-14095
+	; ahk_class Qt5150QWindowIcon
+	; ahk_exe Dolphin.exe
+	WinWait, ahk_class Qt5150QWindowIcon ahk_exe Dolphin.exe,,10
 	IfWinExist
 	  activateEmulator()
 }
 
 waitEmulatorClosed( emulPid:="" ) {
-	WinWaitClose, ahk_class wxWindowNR ahk_exe Dolphin.exe,,
+	WinWaitClose, ahk_class Qt5150QWindowIcon ahk_exe Dolphin.exe,,
 	if( emulPid != "" )
 	  Process, WaitClose, emulPid
 }
 
 activateEmulator() {
-	WinActivate, ahk_class wxWindowNR ahk_exe Dolphin.exe,,10
+	WinActivate, ahk_class Qt5150QWindowIcon ahk_exe Dolphin.exe,,10
 }
 
-activatePanel() {
-  WinActivate, ahk_class Qt5QWindowIcon ahk_exe Dolphin.exe,,10	
+linkSnapshotDir() {
+	from := A_ScriptDir "\..\..\ZZ_snapshot"
+	to   := FileUtil.getHomeDir() "\Documents\Dolphin Emulator\ScreenShots"
+	FileUtil.makeLink(from,to)
 }
 
 reset() {
@@ -135,6 +134,8 @@ removeDisk( slotNo ) {
 }
 
 setConfig( imageDir ) {
+
+	linkSnapshotDir()
 
 	currDir := FileUtil.getDir( imageDir )
 	confDir := currDir . "\_EL_CONFIG"

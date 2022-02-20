@@ -33,22 +33,6 @@ runAsAdmin( fileIni ) {
 	}
 }
 
-; ; check whether ini file has executor to Run
-; ; @param section    pre,mid,post
-; ; @param fileIni    ini file path
-; hasSub( section, fileIni ) {
-;   indices = ,0,1,2,3,4,5,6,7,8,9
-;   loop, parse, indices, `,
-;   {
-; 		IniRead, executor,    %fileIni%, %section%, executor%a_loopfield%,    _
-; 		IniRead, executorDir, %fileIni%, %section%, executor%a_loopfield%Dir, _
-; 		executor    := RegExReplace( executor,    "\\", "\\" )
-; 		if( executor != "_" )
-; 			return true
-;   }	
-;   return false
-; }
-
 runMidThread:
   SetTimer, runMidThread, off
   runSub( "mid", fileIni, prop )
@@ -69,6 +53,17 @@ runSub( section, fileIni, properties ) {
 		IniRead, closeProc,     %fileIni%, %section%, closeProc%a_loopfield%,      _
 		IniRead, closeProcSec,  %fileIni%, %section%, closeProc%a_loopfield%Sec,   _
 
+	  executor      := removeComment(executor)
+	  executorDir   := removeComment(executorDir)
+	  executorDelay := removeComment(executorDelay)
+	  executorWait  := removeComment(executorWait)
+	  closeWait     := removeComment(closeWait)
+	  closeWaitSec  := removeComment(closeWaitSec)
+	  closeWin      := removeComment(closeWin)
+	  closeWinSec   := removeComment(closeWinSec)
+	  closeProc     := removeComment(closeProc)
+	  closeProcSec  := removeComment(closeProcSec)
+
 		StringLower, executorWait, executorWait
 
 		if ( executor != "_" ) {
@@ -76,22 +71,21 @@ runSub( section, fileIni, properties ) {
 			executorDir   := RegExReplace( executorDir,   "\\",     "\\" )
 			executorDelay := RegExReplace( executorDelay, "[^0-9]", ""   )
 			executorWait  := executorWait == "true"
-			debug( section "-executor:" executor " ,executorDir:" executorDir "`n`t delay : " executorDelay ", wait : " executorWait )
 			runSubHelper( executor, executorDir, executorDelay, executorWait, properties )
 		}
 
 		if ( closeWait != "_" ) {
-			WinWaitClose, # closeWait,, # closeWaitSec
+			WinWaitClose, % closeWait,, % closeWaitSec
 		}
 
 		if ( closeWin != "_" ) {
-			WinClose, # closeWin,, # closeWinSec
+			WinClose, % closeWin,, % closeWinSec
 		}
 
 		if ( closeProc != "_" ) {
 			Process, Close, %closeProc%
 		}
-		
+
   }
 }
 
@@ -120,22 +114,37 @@ runSubHelper( executor, executorDir, executorDelay, executorWait, properties ) {
 
 runProgram( fileIni, properties ) {
 
-	IniRead, executor,                 %fileIni%, init,   executor,     _
-	IniRead, unblockPath,              %fileIni%, init,   unblockPath,  _
-	IniRead, executorDir,              %fileIni%, init,   executorDir,  _
-	IniRead, resolution,               %fileIni%, init,   resolution,   _
-	IniRead, hideTaskbar,              %fileIni%, init,   hideTaskbar,  _
-	IniRead, hideMouse,                %fileIni%, init,   hideMouse,    _
-  IniRead, symlink,                  %fileIni%, init,   symlink,      _
-	IniRead, hideConsole,              %fileIni%, init,   hideConsole,  false
-	IniRead, isRunWait,                %fileIni%, init,   runwait,      true
-  IniRead, exitAltF4,                %fileIni%, init,   exitAltF4,    true
+	IniRead, executor,          %fileIni%, init,   executor,     _
+	IniRead, unblockPath,       %fileIni%, init,   unblockPath,  _
+	IniRead, executorDir,       %fileIni%, init,   executorDir,  _
+	IniRead, resolution,        %fileIni%, init,   resolution,   _
+	IniRead, hideTaskbar,       %fileIni%, init,   hideTaskbar,  _
+	IniRead, hideMouse,         %fileIni%, init,   hideMouse,    _
+  IniRead, symlink,           %fileIni%, init,   symlink,      _
+	IniRead, hideConsole,       %fileIni%, init,   hideConsole,  false
+	IniRead, isRunWait,         %fileIni%, init,   runwait,      true
+  IniRead, exitAltF4,         %fileIni%, init,   exitAltF4,    true
+	IniRead, windowTarget,      %fileIni%, window, target,       _
+	IniRead, windowSearchDelay, %fileIni%, window, searchDelay,  0
+	IniRead, windowStart,       %fileIni%, window, start,        _
+	IniRead, windowSize,        %fileIni%, window, size,         _
+	IniRead, windowBorderless,  %fileIni%, window, borderless,   false
 
-	IniRead, windowTarget,             %fileIni%, window, target,       _
-	IniRead, windowSearchDelay,        %fileIni%, window, searchDelay,  0
-	IniRead, windowStart,              %fileIni%, window, start,        _
-	IniRead, windowSize,               %fileIni%, window, size,         _
-	IniRead, windowBorderless,         %fileIni%, window, borderless,   true
+  executor          := removeComment(executor)
+  unblockPath       := removeComment(unblockPath)
+  executorDir       := removeComment(executorDir)
+  resolution        := removeComment(resolution)
+  hideTaskbar       := removeComment(hideTaskbar)
+  hideMouse         := removeComment(hideMouse)
+  symlink           := removeComment(symlink)
+  hideConsole       := removeComment(hideConsole)
+  isRunWait         := removeComment(isRunWait)
+  exitAltF4         := removeComment(exitAltF4)
+  windowTarget      := removeComment(windowTarget)
+  windowSearchDelay := removeComment(windowSearchDelay)
+  windowStart       := removeComment(windowStart)
+  windowSize        := removeComment(windowSize)
+  windowBorderless  := removeComment(windowBorderless)
 
 	hideConsole := hideConsole == "true" ? "Hide" : ""
 
@@ -179,7 +188,7 @@ runProgram( fileIni, properties ) {
 	}
 
 	if ( executor != "_" ) {
-		
+
 		executor := bindValue( executor, properties )
 		; executorDir 변수에 executor의 경로만 담는다.
 		if ( executorDir == "_" ) {
@@ -193,9 +202,9 @@ runProgram( fileIni, properties ) {
 		debug( "isRunWait    : " isRunWait    )
 
 		if ( windowTarget != "_" ) {
+
 			SetTimer, runMidThread, 500
 			Run, %executor%, %executorDir%,%hideConsole%,applicationPid
-			debug( "windowSearchDelay : " windowSearchDelay )
 			Sleep, %windowSearchDelay%
 			WinWait, %windowTarget%,, 20
 
@@ -203,19 +212,22 @@ runProgram( fileIni, properties ) {
 				MsgBox % "There is no window to wait.(" windowTarget ")"
 				Process, Close, %applicationPid%
 			} else {
+
 			  startX := Trim( RegExReplace( windowStart, "i)^\D*?(\d*?)\D*?,\D*?(\d*?)\D*?$", "$1" ) )
 			  startY := Trim( RegExReplace( windowStart, "i)^\D*?(\d*?)\D*?,\D*?(\d*?)\D*?$", "$2" ) )
-		    width  := Trim( RegExReplace( windowSize, "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$1" ) )
-		    height := Trim( RegExReplace( windowSize, "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$2" ) )
-		    debug( "target : " windowTarget ", borderless : " windowBorderless ", start : (" startX "," startY "), resolution : " width " x " height )
+		    width  := Trim( RegExReplace( windowSize,  "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$1" ) )
+		    height := Trim( RegExReplace( windowSize,  "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$2" ) )
+
+				debug( "target : " windowTarget ", borderless : " windowBorderless ", start : (" startX "," startY "), resolution : " width " x " height )
 
 		    if ( windowBorderless == "true" ) {
-		    	debug( "set borderless" )
 					WinSet, Style, -0xC40000, %windowTarget% ; remove the titlebar and border(s)
 		    }
 
-				WinMove, %windowTarget%,, %startX%, %startY%, %width%, %height%  ; move the window to 0,0 and reize to width x height 
-				MouseMove, %width% + startY, %height% + startX
+		    if( startX != "" || startY != "" || width != "" || height != "" )  {
+					WinMove, %windowTarget%,, %startX%, %startY%, %width%, %height%  ; move the window to 0,0 and reize to width x height
+					MouseMove, %width% + startY, %height% + startX
+		    }
 
 				WinWaitClose, %windowTarget%
 
@@ -265,8 +277,10 @@ readProperties( file ) {
 			}
 		}
 
-    key := RegExReplace( A_LoopReadLine, "^(.*?)=.*?$", "$1" )
-    val := RegExReplace( A_LoopReadLine, "^.*?=(.*?)$", "$1" )
+		line := removeComment(A_LoopReadLine)
+
+    key := RegExReplace( line, "^(.*?)=.*?$", "$1" )
+    val := RegExReplace( line, "^.*?=(.*?)$", "$1" )
 
 		prop[ Trim(key) ] := Trim(val)
 	}
@@ -283,10 +297,14 @@ readProperties( file ) {
 
 }
 
+removeComment(text) {
+	return Trim(RegExReplace( text, "#.*$", "" ))
+}
+
 setEnvVariable( fileIni, properties ) {
 
 	IniRead, env, %fileIni%, init, env, _
-	
+
 	if( env == "_" )
 	  return
 	envs := StrSplit( "" env, ";" )
@@ -345,7 +363,7 @@ setEnvVariable( fileIni, properties ) {
 }
 
 /**
-* Set Registry from file 
+* Set Registry from file
 *
 * @param file       {String} filePath contains data formatted Windows Registry
 * @param properties {Array}  properties to bind
@@ -361,7 +379,7 @@ setRegistry( file, properties ) {
 }
 
 /**
-* Write Registry from file 
+* Write Registry from file
 *
 * @param file       {String} filePath contains data formatted Windows Registry
 * @param properties {Array}  properties to bind
@@ -391,7 +409,7 @@ writeRegistryFrom( file, properties ) {
 		if ( readNextLine == true ) {
 			regVal := regVal line
 		} else {
-	
+
 			regName := RegExReplace( line, "^(@|"".+?"")=.*$", "$1" )
 			regName := RegExReplace( regName, "^""(.+?)""$","$1" )
 			regName := RegExReplace( regName, "\\""", """" )
@@ -434,7 +452,7 @@ writeRegistryFrom( file, properties ) {
 				regVal  := RegExReplace( regVal, "^hex:(.*)$", "$1" )
 				isHex   := true
 			}
-			
+
 		}
 
 		if ( RegExMatch(line, "^.*\\$") ) {
@@ -459,7 +477,7 @@ writeRegistryFrom( file, properties ) {
 		} else if( regType == "REG_BINARY" ) {
 			StringReplace, regVal, regVal, % ",", , All
 		}
-		
+
 		regName := bindValue( regName, properties )
 
 		; debug( "[" regKey "] " regName " - " regType ":" regVal )
@@ -478,7 +496,7 @@ writeRegistryFrom( file, properties ) {
 
 bindValue( value, properties ) {
 	For key, val in properties
-		value := StrReplace( value, "#{" key "}", val )
+		value := StrReplace( value, "${" key "}", val )
 	return value
 }
 
@@ -547,7 +565,7 @@ makeSymlink( symlink, properties ) {
 			debug( "   sourceDir : " sourceDir )
 			debug( "   targetDir : " targetDir )
 			FileUtil.makeLink( sourceDir, targetDir )
-		}	
+		}
 	}
 
 }
@@ -585,7 +603,7 @@ restartAsAdmin() {
 debug( message ) {
  if( A_IsCompiled == 1 )
    return
-  message .= "`n" 
+  message .= "`n"
   FileAppend %message%, * ; send message to stdout
 }
 
@@ -598,7 +616,7 @@ class ResolutionChanger {
         this.srcWidth  := A_ScreenWidth
         this.srcHeight := A_ScreenHeight
     }
-  
+
     change( width, height, colorDepth := 32, refreshRate := 60 ) {
 
     	If ( RegExMatch(width, "^\d+$") == false || RegExMatch(height, "^\d+$") == false ) {
@@ -607,9 +625,9 @@ class ResolutionChanger {
     	}
 
 			VarSetCapacity( deviceMode, 156, 0 )
-			NumPut( 156, deviceMode, 36 ) 
+			NumPut( 156, deviceMode, 36 )
 			DllCall( "EnumDisplaySettingsA", UInt, 0, UInt, -1, UInt, &deviceMode )
-			NumPut( 0x5c0000,    deviceMode,  40 ) 
+			NumPut( 0x5c0000,    deviceMode,  40 )
 			NumPut( colorDepth,  deviceMode, 104 )
 			NumPut( width,       deviceMode, 108 )
 			NumPut( height,      deviceMode, 112 )
@@ -619,7 +637,7 @@ class ResolutionChanger {
 			ResolutionChanger.changed := true
 
     }
-  
+
     restore() {
     	;MsgBox, % A_ScreenWidth "x" A_ScreenHeight " -> " this.srcWidth "x" this.srcHeight
       if ( ResolutionChanger.changed == true && (A_ScreenWidth != this.srcWidth || A_ScreenHeight != this.srcHeight) ) {
@@ -633,39 +651,39 @@ class ResolutionChanger {
 
 class Taskbar {
 	static void := Taskbar._init()
+  __New() {
+      throw Exception( "TaskbarChanger is a static class, dont instante it!", -1 )
+  }
   _init() {
+  	this.allTray := false
+  }
+
+  /**
+	* set working tray target to all or main (for Windows 10)
+  * @param {boolean} yn 	true for all, false for main only.
+  */
+  setAllTray( yn) {
+  	this.allTray := ( yn == true )
   }
 
   toggle() {
-		IfWinExist ahk_class Shell_TrayWnd
+		IfWinNotExist ahk_class Shell_TrayWnd
 		{
-			NumPut( ( ABS_AUTOHIDE := 0x1 ), APPBARDATA, 32, "UInt" )            ;Disable "Always on top" (& enable auto-hide to hide Start button)
-	    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
-
-	    WinHide ahk_class Shell_TrayWnd
-	    WinHide ahk_class Shell_SecondaryTrayWnd
-			WinHide, Start ahk_class Button
-
-		} Else {
-			NumPut( (ABS_ALWAYSONTOP := 0x2), APPBARDATA, 32, "UInt" )           ;Enable "Always on top" (& disable auto-hide)
-	    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
-
-	    WinShow ahk_class Shell_TrayWnd
-	    WinShow ahk_class Shell_SecondaryTrayWnd
-			WinShow, Start ahk_class Button
+			this.show()
+		} else {
+			this.hide()
 		}
   }
 
   show() {
-		IfWinNotExist ahk_class Shell_TrayWnd
-		{
-			;Enable "Always on top" (& disable auto-hide)
-			NumPut( (ABS_ALWAYSONTOP := 0x2), APPBARDATA, 32, "UInt" )
-	    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
-	    WinShow ahk_class Shell_TrayWnd
-	    WinShow ahk_class Shell_SecondaryTrayWnd
-			WinShow, Start ahk_class Button
-		}
+		;Enable "Always on top" (& disable auto-hide)
+		NumPut( (ABS_ALWAYSONTOP := 0x2), APPBARDATA, 32, "UInt" )
+    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
+    WinShow ahk_class Shell_TrayWnd
+    if ( this.allTray == true ) {
+			WinHide ahk_class Shell_SecondaryTrayWnd
+    }
+		WinShow, Start ahk_class Button
   }
 
   hide() {
@@ -675,9 +693,11 @@ class Taskbar {
 			NumPut( ( ABS_AUTOHIDE := 0x1 ), APPBARDATA, 32, "UInt" )
 	    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
 	    WinHide ahk_class Shell_TrayWnd
-	    WinHide ahk_class Shell_SecondaryTrayWnd
+	    if ( this.allTray == true ) {
+	    	WinShow ahk_class Shell_SecondaryTrayWnd
+	    }
 			WinHide, Start ahk_class Button
-		}    	
+		}
   }
 }
 
@@ -765,7 +785,7 @@ class FileUtil {
   * File extention is matched width extentionPattern
   *
   * @param {string} filePath
-  * @param {string} extentionPattern 
+  * @param {string} extentionPattern
   * @exmaple
   *   FileUtil.isExt("cue|mdx")
   */
@@ -781,7 +801,7 @@ class FileUtil {
 		}
 
 	}
-	
+
 	getFileName( filePath, withExt:=true ) {
 		filePath := RegExReplace( filePath, "^(.*?)\\$", "$1" )
 		SplitPath, filePath, fileName, fileDir, fileExtention, fileNameWithoutExtension, DriveName
@@ -789,9 +809,9 @@ class FileUtil {
 			return fileName
 		return fileNameWithoutExtension
 	}
-	
+
 	getFiles( path, pattern=".*", includeDir=false, recursive=false ) {
-		
+
 		files := []
 
 		if ( this.isFile(path) ) {
@@ -805,15 +825,15 @@ class FileUtil {
 			{
 					if not RegExMatch( A_LoopFileFullPath, pattern )
 						continue
-					files.Insert( A_LoopFileFullPath )        	
+					files.Insert( A_LoopFileFullPath )
 			}
 
 			this._sortArray( files )
 
 		}
-		
+
 		return files
-		
+
 	}
 
 	getFile( pathDirOrFile, pattern=".*" ) {
@@ -831,14 +851,14 @@ class FileUtil {
         return ""
 
 	}
-	
+
 	isDir( path ) {
 		if( ! this.exist(path) )
 			return false
 		FileGetAttrib, attr, %path%
 		Return InStr( attr, "D" )
 	}
-	
+
 	isFile( path ) {
 		if( ! this.exist(path) )
 			return false
@@ -865,7 +885,7 @@ class FileUtil {
 				key := SubStr( A_LoopReadLine, 1, splitPosition - 1 )
 				val := SubStr( A_LoopReadLine, splitPosition + 1 )
 			}
-			
+
 			prop[ Trim(key) ] := Trim(val)
 
 		}
@@ -970,7 +990,7 @@ class FileUtil {
 		} else {
 			return false
 		}
-	
+
 	}
 
   /**
@@ -987,7 +1007,7 @@ class FileUtil {
 
 		this.makeParentDir( trg, this.isDir(src) )
 		if ( this.isDir(src) ) {
-			cmd := "/c mklink /d """ trg """ """ src """"
+			cmd := "/c mklink /d /j """ trg """ """ src """"
 		} else {
 			cmd := "/c mklink """ trg """ """ src """"
 		}

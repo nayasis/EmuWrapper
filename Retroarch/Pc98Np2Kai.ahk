@@ -4,20 +4,21 @@
 imageDir := %0%
 ; imageDir := "\\NAS\emul\image\PC98\Hana to Chiruran (dott plan)(ja)"
 ; imageDir := "\\NAS\emul\image\PC98\Policenauts (ja)"
-; imageDir := "\\NAS\emul\image\PC98\Sacchan no Daibouken (agumix)(ja)"
+; imageDir := "\\NAS2\emul\image\PC98\Night Seep (gray)(ja)"
+; imageDir := "\\NAS2\emul\image\PC98\Dragon Knight 3 (ja)"
+; imageDir := "\\NAS2\emul\image\PC98\Dragon Knight 4 (T-ko by Edenlock)"
+; imageDir := "\\NAS2\emul\image\PC98\Uncharted Water - New Horizons (ja)"
 
 option := getOption( imageDir )
-config := setConfig( "np2kai_libretro", option, true )
+config := setConfig( "np2kai_libretro", option, false )
+
+; config.np2kai_cpu_feature := "Intel i486DX"
+; config.np2kai_drive := "FDD1"
 
 setNpConfig( config )
 applyCustomFont( imageDir, config )
 makeCmd( imageDir )
 
-; setCdRom( imageDir, config )
-; setHdd( imageDir, config )
-; setFdd( imageDir, config )
-
-; imageFile := getRomPath( imageDir, option, "cmd|m3u|d88|fdi|fdd|hdm|nfd|xdf|tfd" )
 imageFile := getRomPath( imageDir, option, "cmd" )
 writeConfig( config )
 
@@ -103,16 +104,6 @@ setNpConfig( config ) {
     
   IniWrite, % MEMswitch, %NekoIniFile%, cfg.section, MEMswtch
 
-  ; seekSnd := config.np2kai_Seek_Snd == "ON" ? "true" : "false"
-
-  debug( ">> seek snd : " (config.np2kai_Seek_Snd == "ON" ? "true" : "false") )
-  debug( ">> seek vol : " config.np2kai_Seek_Vol )
-
-  IniWrite, % " " (config.np2kai_Seek_Snd == "ON" ? "true" : "false"), %NekoIniFile%, cfg.section, Seek_Snd
-  ; IniWrite, % " " config.np2kai_Seek_Vol, %NekoIniFile%, cfg.section, Seek_Vol
-
-  ; ExitApp
-
 }
 
 getCfg( config ) {
@@ -128,7 +119,7 @@ getCfg( config ) {
 
 makeCmd( imageDir ) {
 
-  files := FileUtil.getFiles( imageDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
+  files := FileUtil.getFiles( imageDir, "i).*\.(d88|d98|fdi|fdd|hdm|nfd|xdf|tfd)$" )
   hdd   := FileUtil.getFile( imageDir, "i).*\.(hdi|hdd)$" )
   cdrom := getCdrom( imageDir )
   if( hdd != "" )
@@ -153,23 +144,6 @@ getCdrom( imageDir ) {
   if( cdRom == "" )
     cdRom := FileUtil.getFile( dir, "i).*\.(iso|bin|img)$" )  
   return cdRom
-}
-
-setHdd( imageDir, config ) {
- 	cfg := getCfg( config )
-	hdd := FileUtil.getFile( imageDir, "i).*\.(hdi|hdd)$" )
-  IniWrite, % hdd, % cfg.path, % cfg.section, HDD1FILE
-}
-
-setFdd( imageDir, config ) {
-	cfg := getCfg( config ) 
-	files := FileUtil.getFiles( imageDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
-	Loop, % 2
-	{
-		if( A_Index > 2 )
-			break
-		IniWrite, % files[a_index], % cfg.path, % cfg.section, FDD%a_index%FILE
-	}
 }
 
 #include %A_ScriptDir%\script\AbstractHotkey.ahk

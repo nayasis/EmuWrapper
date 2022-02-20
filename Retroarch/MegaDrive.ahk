@@ -2,7 +2,7 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS\emul\image\MegaDrive\puzzle & etc-Virtua Fighter 32X (en)"
+; imageDir := "\\NAS2\emul\image\MegaDrive\action\Sonic the Hedgehog (En)"
 
 option    := getOption( imageDir )
 config    := setConfig( "genesis_plus_gx_libretro", option )
