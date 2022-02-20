@@ -28,7 +28,7 @@ class VirtualDisk {
       ;this.daemonPath := "c:\Program Files (x86)\DAEMON Tools Lite\DTLite.exe"
       ; this.daemonPath   := "c:\Program Files\DAEMON Tools Lite\DTAgent.exe"
       this.daemonPath   := "c:\Program Files\DAEMON Tools Lite\DTCommandLine.exe"
-      this.DRIVE_LETTER := "G"
+      this.DRIVE_LETTER := "F"
   }
 
   __New() {
