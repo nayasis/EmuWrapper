@@ -213,6 +213,8 @@ runProgram( fileIni, properties ) {
 				Process, Close, %applicationPid%
 			} else {
 
+				WinGet, applicationPid, PID, %windowTarget%
+
 			  startX := Trim( RegExReplace( windowStart, "i)^\D*?(\d*?)\D*?,\D*?(\d*?)\D*?$", "$1" ) )
 			  startY := Trim( RegExReplace( windowStart, "i)^\D*?(\d*?)\D*?,\D*?(\d*?)\D*?$", "$2" ) )
 		    width  := Trim( RegExReplace( windowSize,  "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$1" ) )
