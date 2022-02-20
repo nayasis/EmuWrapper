@@ -1,3 +1,8 @@
+; #NoEnv
+; #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
+; FileUtil.makeLink("C:\app\emulator\Retroarch\share\config","C:\app\emulator\Retroarch\1.9.7\config")
+; ExitApp
+
 class FileUtil {
 
 	static void := FileUtil._init()
@@ -82,7 +87,7 @@ class FileUtil {
 				{
 					if not RegExMatch( A_LoopFileFullPath, pattern )
 						continue
-					files.Insert( A_LoopFileFullPath )        	
+					files.Insert( A_LoopFileFullPath )
 				}
 				this._sortArray( files )
 		  }
@@ -125,6 +130,11 @@ class FileUtil {
 		FileGetAttrib, attr, %path%
 		Return ! InStr( attr, "D" )
 	}
+
+  read(path) {
+  	FileRead, text, %path%
+  	return text
+  }
 
 	readProperties( path ) {
 
@@ -281,7 +291,8 @@ class FileUtil {
 		} else {
 			cmd := "/c mklink """ trg """ """ src """"
 		}
-		; debug( cmd )
+		debug( cmd )
+		; run %ComSpec% %cmd%,,
 		run %ComSpec% %cmd%,, Hide
 		; this.cli( cmd )
 

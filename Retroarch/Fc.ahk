@@ -2,7 +2,7 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS\emul\image\Famicom\Contra (T-en 1.0)"
+; imageDir := "\\NAS2\emul\image\Famicom\Punisher (en)"
 ; imageDir := "\\NAS\emul\image\Famicom\Duck Hunt (en)"
 
 option    := getOption( imageDir )

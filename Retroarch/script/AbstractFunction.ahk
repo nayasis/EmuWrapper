@@ -1,18 +1,22 @@
 #NoEnv
+#WinActivateForce
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-global EMUL_ROOT     := A_ScriptDir "\1.9.0"
+; global EMUL_ROOT     := A_ScriptDir "\1.9.7"
+global EMUL_ROOT     := A_ScriptDir "\1.9.14"
 global diskContainer := new DiskContainer()
 
+makeLink()
+
 makeLink() {
-	for i,e in ["config","cores","saves","screenshots","system","states"] {
-		FileUtil.makeLink( A_ScriptDir "\share\" e, EMUL_ROOT "\" e )
+	for i,e in ["assets","autoconfig","bearer","cheats","config","cores","database","filters","iconengines","imageformats","info","layouts","overlays","platforms","recordings","saves","screenshots","shaders","states","styles","system","thumbnails","playlists","downloads"] {
+		src := A_ScriptDir "\share\" e
+		trg := EMUL_ROOT "\" e
+		FileUtil.makeLink( src, trg )
 	}
 }
 
 runEmulator( imageFile, config, appendCommand="", callback="", appendImageFile="" ) {
-
-  makeLink()
 
 	debug( "imageFile : " imageFile           )
 	debug( "core      : " config.core         )
@@ -66,7 +70,7 @@ getGameMeta( imageDirPath ) {
 	return {}
 }
 
-getRomPath( imageDir, option, filter ) {
+getRomPath( imageDir, option, filter, excludeBios=false ) {
 	if ( option.run.rom != "" ) {
 		romPath := FileUtil.getFile( imageDir, "i)" option.run.rom "\.(" filter ")$" )
 		if ( romPath != "" ) {
@@ -76,8 +80,18 @@ getRomPath( imageDir, option, filter ) {
 	filters := StrSplit( nvl(option.run.filter, filter), "|" )
 	for key, val in filters {
 		romPath := extractRomPath( imageDir, filter, val )
-		if ( romPath != "" )
-	  	return romPath		
+		if ( romPath != "" ) {
+			if( excludeBios == false ) {
+				return romPath		
+			} else {
+				if( Instr("neogeo|neocd",FileUtil.getName(romPath,false)) ) {
+					continue
+				} else {
+					return romPath
+				}
+			}
+	  	
+		}
 	}
 }
 
@@ -108,7 +122,7 @@ waitEmulator( delay:=15 ) {
 	WinWait, ahk_class RetroArch ahk_exe retroarch.exe,, % delay
 	IfWinExist
 	{
-	  activateEmulator()
+	  ; activateEmulator()
 	}
 }
 
@@ -167,10 +181,11 @@ getPathCoreConfig( core ) {
     "mednafen_psx_libretro"           : "Beetle PSX"
     "mednafen_psx_hw_libretro"        : "Beetle PSX HW"
     "pcsx_rearmed_libretro"           : "PCSX-ReARMed"
+    "pcsx2_libretro"                  : "pcsx2 (alpha)"
     "yabause_libretro"                : "Yabause"
     "yabasanshiro_libretro"           : "Yabasanshiro"
     "mednafen_saturn_libretro"        : "Beetle Saturn"
-    "mupen64plus_next_libretro"       : "Mupen64Plus-Next OpenGL"
+    "mupen64plus_next_libretro"       : "Mupen64Plus-Next"
     "mupen64plus_next_gles3_libretro" : "Mupen64Plus-Next GLES3"
     "parallel_n64_libretro"           : "Parallel N64"
     "flycast_libretro"                : "Flycast"
@@ -179,7 +194,8 @@ getPathCoreConfig( core ) {
     "fbalpha2012_libretro"            : "FB Alpha 2012"
     "fbalpha2012_cps1_libretro"       : "FB Alpha 2012 CPS-1"
     "fbalpha2012_cps2_libretro"       : "FB Alpha 2012 CPS-2"
-    "fbalpha2012_neogeo_libretro"     : "FB Alpha 2012 NEOGEO"
+    "fbalpha2012_cps3_libretro"       : "FB Alpha 2012 CPS-2"
+    "fbalpha2012_neogeo_libretro"     : "FB Alpha 2012 Neo Geo"
     "mednafen_ngp_libretro"           : "Beetle NeoPop"
     "mednafen_wswan_libretro"         : "Beetle WonderSwan"
   	"dolphin_libretro"                : "dolphin-emu"
@@ -192,8 +208,15 @@ getPathCoreConfig( core ) {
   	"mame2014_libretro"               : "MAME 2014"
   	"mame2015_libretro"               : "MAME 2015"
   	"mame2016_libretro"               : "MAME 2016"
+  	"dosbox_pure_libretro"            : "DOSBox-pure"
+  	"dosbox_svn_libretro"             : "DOSBox-SVN"
+  	"dosbox_core_libretro"            : "DOSBox-core"
   )})
+
   trgCore := map[core]
+
+	debug(">> core    : " core )
+  debug(">> trgCore : " trgCore )
 
   if( trgCore == "" ) {
 	  trgCore := RegExReplace( core, "i)_libretro", "" )
@@ -203,11 +226,17 @@ getPathCoreConfig( core ) {
 	dir  := EMUL_ROOT "\config\" trgCore
 	path := dir "\" trgCore
 	FileUtil.makeDir( dir )
+
+	debug(">> dir  : " dir )
+	debug(">> path : " path )
+
 	return path
 
 }
 
 writeConfig( config, imageFile="" ) {
+
+	; debug( ">> config`n" JSON.dump(config) )
 
   romName := FileUtil.getName( imageFile, false )
   debug( ">> romName : " romName )
@@ -230,6 +259,8 @@ writeConfig( config, imageFile="" ) {
 		debug( RegExReplace(key,"#{romname}",romName) ":" val )
 		buffer .= RegExReplace(key,"#{romname}",romName) " = """ val """`n"
 	}
+
+	debug( ">> config file : " fileConfig ".cfg" )
 
 	FileUtil.write( fileConfig ".cfg", buffer )
 	FileUtil.write( fileConfig ".opt", buffer )

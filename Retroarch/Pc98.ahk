@@ -2,7 +2,7 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS\emul\image\PC98\Hana to Chiruran (dott plan)(ja)"
+; imageDir := "\\NAS2\emul\image\PC98\Suiryuushi Gaiden (shanbara)(ja)"
 ; imageDir := "\\NAS\emul\image\PC98\Policenauts (ja)"
 ; imageDir := "\\NAS\emul\image\PC98\Sacchan no Daibouken (agumix)(ja)"
 
@@ -129,7 +129,7 @@ getCfg( config ) {
 
 makeCmd( imageDir ) {
 
-  files := FileUtil.getFiles( imageDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
+  files := FileUtil.getFiles( imageDir, "i).*\.(d88|d98|fdi|fdd|hdm|nfd|xdf|tfd)$" )
   hdd   := FileUtil.getFile( imageDir, "i).*\.(hdi|hdd)$" )
   cdrom := getCdrom( imageDir )
   if( hdd != "" )

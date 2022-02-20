@@ -216,3 +216,12 @@ WiiU/cemu_1.22.4/sharedFonts
 WiiU/cemu_1.22.4/hfiomlc01
 WiiU/cemu_1.22.4/screenshots
 WiiU/cemu_1.22.5/hfiomlc01
+PSX2/PCSX2 1.6.0/inis-software/*.tmp
+NSW/yuzu/yuzu_installer.log
+PSX2/PCSX2 1.7.0/inis-software/*.tmp
+PSX2/PCSX2 1.7.0/sstates
+NSW/yuzu/yuzu-windows-msvc
+NSW/yuzu/metadata.json
+PC88/ePC8801MA/etc/source
+Retroarch/1.9.7/downloads/core_backups
+PC88/ePC8801MA/etc

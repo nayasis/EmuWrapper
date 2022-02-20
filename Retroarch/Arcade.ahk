@@ -2,17 +2,19 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS\emul\image\LSI\Game & Watch - Mario The Juggler"
+; imageDir := "\\NAS2\emul\image\Neogeo\King of Fighters '98 - Dream match never ends (snk)(T-ko 1.0 by dsno)"
 
 ; EMUL_ROOT := A_ScriptDir "\1.9.0"
 
-option    := getOption( imageDir )
-config    := setConfig( "mame_libretro", option, false )
-imageFile := getRomPath( imageDir, option, "zip|7z" )
+option    := getOption(imageDir)
+config    := setConfig("mame_libretro",option,false)
+imageFile := getRomPath(imageDir,option,"zip|7z",true)
 
 ; config.core := "kronos_libretro"
-; config.core := "fbneo_libretro"
-; config.core := "fbalpha_libretro"
+; config.core := "fbalpha2012_libretro"
+; config.core := "fbalpha2012_cps1_libretro"
+; config.core := "fbalpha2012_cps2_libretro"
+; config.core := "fbalpha2012_neogeo_libretro"
 ; config.core := "mame_libretro"
 ; config.core := "mame2016_libretro"
 ; config.core := "mame2003_plus_libretro"

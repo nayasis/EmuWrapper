@@ -1,13 +1,20 @@
 #NoEnv
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDir := %0%
-; imageDir := "\\NAS\emul\image\Saturn\Grandia (T-ko)"
-; imageDir := "\\NAS\emul\image\Saturn\Daytona USA (en)"
-; imageDir := "d:\app\Downloader\TstoryUrlDownloader\temp\Grandia(K) Disc1"
+; global EMUL_ROOT := A_ScriptDir "\1.9.7"
 
-option    := getOption( imageDir )
-config    := setConfig( "mednafen_saturn_libretro", option )
+imageDir := %0%
+; imageDir := "\\NAS2\emul\image\Saturn\Grandia (T-ko)"
+; imageDir := "\\NAS2\emul\image\Saturn\Daytona USA (en)"
+; imageDir := "\\NAS2\emul\image\Saturn\FIFA Soccer 97 (ea)(en)"
+
+option := getOption( imageDir )
+
+if( option.core.common_core == "yabasanshiro_libretro" ) {
+	option.run.videoDriver := "gl"
+}
+
+config := setConfig( "mednafen_saturn_libretro", option )
 
 ; config.core := "mednafen_saturn_libretro"
 ; config.core := "kronos_libretro"
