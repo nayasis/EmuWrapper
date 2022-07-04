@@ -225,3 +225,32 @@ NSW/yuzu/metadata.json
 PC88/ePC8801MA/etc/source
 Retroarch/1.9.7/downloads/core_backups
 PC88/ePC8801MA/etc
+/Retroarch/share/downloads
+.idea/
+Mame/0.243/artwork/
+Mame/0.243/ui.ini
+Mame/0.243/COPYING
+nsw/ryujinx/emul/portable
+nsw/ryujinx/emul/lib
+nsw/ryujinx/entryStorage
+nsw/ryujinx/nodeStorage
+nsw/ryujinx/emul/share
+nsw/util/
+nsw/ryujinx/emul/etc/
+nsw/ryujinx/emul/alsoft.ini
+nsw/ryujinx/emul/LICENSE-Ryujinx.Audio.txt
+nsw/ryujinx/emul/Ryujinx.SDL2.Common.dll.config
+nsw/yuzu/emul/icudtl.dat
+nsw/yuzu/emul/qt.conf
+nsw/yuzu/emul/user/
+PC88/M88 2.19a/~
+xb/xemu 0.6.1/xemu.log
+xb/xemu 0.6.1/bios/xbox_hdd.qcow2
+xb/xemu 0.6.2.78/xbox_hdd_prebuilt.7z
+xb/xemu 0.6.2.78/xemu.log
+xb/xemu 0.6.2.78/bios/xbox_hdd.qcow2
+Retroarch/1.10.2/qt.conf
+nsw/yuzu/emul/qtwebengine_resources_100p.pak
+nsw/yuzu/emul/qtwebengine_devtools_resources.pak
+nsw/yuzu/emul/qtwebengine_resources.pak
+nsw/yuzu/emul/qtwebengine_resources_200p.pak
