@@ -2,7 +2,10 @@
 
 DetectHiddenWindows, On
 
-global applicationPid := ""
+global applicationPid       := ""
+global applicationCloseWait := ""
+global applicationCloseWin  := ""
+global applicationCloseProc := ""
 
 SplitPath, A_ScriptName, , , , NoextScriptFileName
 
@@ -23,7 +26,23 @@ runSub( "post", fileIni, prop )
 ExitApp
 
 closeApplication() {
-	Process, Close, % applicationPid
+	debug(">> close application")
+	if( applicationPid != "" ) {
+		debug("  - applicationId: " applicationPid)
+		Process, Close, % applicationPid
+	}
+	if( applicationCloseWait != "" ) {
+		debug("  - applicationCloseWait: " applicationCloseWait)
+		Process, Close, % applicationCloseWait
+	}
+	if( applicationCloseWin != "" ) {
+		debug("  - applicationCloseWin: " applicationCloseWin)
+		Process, Close, % applicationCloseWin
+	}
+	if( applicationCloseProc != "" ) {
+		debug("  - applicationCloseProc: " applicationCloseProc)
+		Process, Close, % applicationCloseProc
+	}
 }
 
 runAsAdmin( fileIni ) {
@@ -75,15 +94,21 @@ runSub( section, fileIni, properties ) {
 		}
 
 		if ( closeWait != "_" ) {
-			WinWaitClose, % closeWait,, % closeWaitSec
+			applicationCloseWait := RegExReplace(closeWait,"i)ahk_(exe|class) ","")
+			WinWait, % closeWait,, % closeWaitSec
+			WinWaitClose, % closeWait,,
 		}
 
 		if ( closeWin != "_" ) {
-			WinClose, % closeWin,, % closeWinSec
+			applicationCloseWin := RegExReplace(closeWin,"i)ahk_(exe|class) ","")
+			WinWait, % closeWin,, % closeWinSec
+			WinClose, % closeWin,,
 		}
 
 		if ( closeProc != "_" ) {
-			Process, Close, %closeProc%
+			applicationCloseProc := RegExReplace(closeProc,"i)ahk_(exe|class) ","")
+			Process, Wait, % closeProc, % closeProcSec 
+			Process, Close, % closeProc
 		}
 
   }
@@ -145,6 +170,7 @@ runProgram( fileIni, properties ) {
   windowStart       := removeComment(windowStart)
   windowSize        := removeComment(windowSize)
   windowBorderless  := removeComment(windowBorderless)
+  windowNeedResize  := ( windowStart != "_" || windowSize != "_" )
 
 	hideConsole := hideConsole == "true" ? "Hide" : ""
 
@@ -174,7 +200,7 @@ runProgram( fileIni, properties ) {
 	}
 
 	if ( windowSize == "_" ) {
-		windowSize := A_ScreenWidth x A_ScreenHeight
+		windowSize := A_ScreenWidth "x" A_ScreenHeight
 	}
 
 	makeSymlink( symlink, properties )
@@ -220,13 +246,13 @@ runProgram( fileIni, properties ) {
 		    width  := Trim( RegExReplace( windowSize,  "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$1" ) )
 		    height := Trim( RegExReplace( windowSize,  "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$2" ) )
 
-				debug( "target : " windowTarget ", borderless : " windowBorderless ", start : (" startX "," startY "), resolution : " width " x " height )
+				debug( "target:" windowTarget ", borderless:" windowBorderless ", need resize:" windowNeedResize ", start:(" startX "," startY "), resolution:" width "x" height )
 
 		    if ( windowBorderless == "true" ) {
 					WinSet, Style, -0xC40000, %windowTarget% ; remove the titlebar and border(s)
 		    }
 
-		    if( startX != "" || startY != "" || width != "" || height != "" )  {
+		    if( windowNeedResize == true )  {
 					WinMove, %windowTarget%,, %startX%, %startY%, %width%, %height%  ; move the window to 0,0 and reize to width x height
 					MouseMove, %width% + startY, %height% + startX
 		    }
