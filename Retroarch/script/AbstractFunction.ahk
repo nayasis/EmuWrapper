@@ -2,8 +2,8 @@
 #WinActivateForce
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-; global EMUL_ROOT     := A_ScriptDir "\1.9.7"
 global EMUL_ROOT     := A_ScriptDir "\1.9.14"
+; global EMUL_ROOT     := A_ScriptDir "\1.10.3"
 global diskContainer := new DiskContainer()
 
 makeLink()
@@ -165,63 +165,67 @@ setConfig( core, option, log:=false ) {
 
 }
 
+getCoreName(core) {
+
+	map := ({
+	(join,
+	  "4do_libretro"                    : "4DO"
+	  "bluemsx_libretro"                : "blueMSX"
+	  "fmsx_libretro"                   : "FMSX"
+	  "nekop2_libretro"                 : "Neko Project II"
+	  "np2kai_libretro"                 : "Neko Project II kai"
+	  "genesis_plus_gx_libretro"        : "Genesis Plus GX"
+	  "picodrive_libretro"              : "PicoDrive"
+	  "fceumm_libretro"                 : "FCEUmm"
+	  "mednafen_pce_fast_libretro"      : "Beetle PCE Fast"
+	  "mednafen_psx_libretro"           : "Beetle PSX"
+	  "mednafen_psx_hw_libretro"        : "Beetle PSX HW"
+	  "pcsx_rearmed_libretro"           : "PCSX-ReARMed"
+	  "pcsx2_libretro"                  : "pcsx2 (alpha)"
+	  "yabause_libretro"                : "Yabause"
+	  "yabasanshiro_libretro"           : "Yabasanshiro"
+	  "mednafen_saturn_libretro"        : "Beetle Saturn"
+	  "mupen64plus_next_libretro"       : "Mupen64Plus-Next"
+	  "mupen64plus_next_gles3_libretro" : "Mupen64Plus-Next GLES3"
+	  "parallel_n64_libretro"           : "Parallel N64"
+	  "flycast_libretro"                : "Flycast"
+	  "fbneo_libretro"                  : "FinalBurn Neo"
+	  "fbalpha_libretro"                : "FB Alpha"
+	  "fbalpha2012_libretro"            : "FB Alpha 2012"
+	  "fbalpha2012_cps1_libretro"       : "FB Alpha 2012 CPS-1"
+	  "fbalpha2012_cps2_libretro"       : "FB Alpha 2012 CPS-2"
+	  "fbalpha2012_cps3_libretro"       : "FB Alpha 2012 CPS-2"
+	  "fbalpha2012_neogeo_libretro"     : "FB Alpha 2012 Neo Geo"
+	  "mednafen_ngp_libretro"           : "Beetle NeoPop"
+	  "mednafen_wswan_libretro"         : "Beetle WonderSwan"
+		"dolphin_libretro"                : "dolphin-emu"
+		"play_libretro"                   : "Play!"
+		"gambatte_libretro"               : "GAMBATTE"
+		"mame_libretro"                   : "MAME"
+		"mame2000_libretro"               : "MAME 2000"
+		"mame2003_plus_libretro"          : "MAME 2003-Plus"
+		"mame2010_libretro"               : "MAME 2010"
+		"mame2014_libretro"               : "MAME 2014"
+		"mame2015_libretro"               : "MAME 2015"
+		"mame2016_libretro"               : "MAME 2016"
+		"dosbox_pure_libretro"            : "DOSBox-pure"
+		"dosbox_svn_libretro"             : "DOSBox-SVN"
+		"dosbox_core_libretro"            : "DOSBox-core"
+	)})
+
+  coreName := map[core]
+  if( coreName == "" ) {
+	  coreName := RegExReplace( core, "i)_libretro", "" )
+	  StringUpper, coreName, coreName
+  }
+
+  return coreName
+
+}
+
 getPathCoreConfig( core ) {
 
-  map := ({
-  (join,
-    "4do_libretro"                    : "4DO"
-    "bluemsx_libretro"                : "blueMSX"
-    "fmsx_libretro"                   : "FMSX"
-    "nekop2_libretro"                 : "Neko Project II"
-    "np2kai_libretro"                 : "Neko Project II kai"
-    "genesis_plus_gx_libretro"        : "Genesis Plus GX"
-    "picodrive_libretro"              : "PicoDrive"
-    "fceumm_libretro"                 : "FCEUmm"
-    "mednafen_pce_fast_libretro"      : "Beetle PCE Fast"
-    "mednafen_psx_libretro"           : "Beetle PSX"
-    "mednafen_psx_hw_libretro"        : "Beetle PSX HW"
-    "pcsx_rearmed_libretro"           : "PCSX-ReARMed"
-    "pcsx2_libretro"                  : "pcsx2 (alpha)"
-    "yabause_libretro"                : "Yabause"
-    "yabasanshiro_libretro"           : "Yabasanshiro"
-    "mednafen_saturn_libretro"        : "Beetle Saturn"
-    "mupen64plus_next_libretro"       : "Mupen64Plus-Next"
-    "mupen64plus_next_gles3_libretro" : "Mupen64Plus-Next GLES3"
-    "parallel_n64_libretro"           : "Parallel N64"
-    "flycast_libretro"                : "Flycast"
-    "fbneo_libretro"                  : "FinalBurn Neo"
-    "fbalpha_libretro"                : "FB Alpha"
-    "fbalpha2012_libretro"            : "FB Alpha 2012"
-    "fbalpha2012_cps1_libretro"       : "FB Alpha 2012 CPS-1"
-    "fbalpha2012_cps2_libretro"       : "FB Alpha 2012 CPS-2"
-    "fbalpha2012_cps3_libretro"       : "FB Alpha 2012 CPS-2"
-    "fbalpha2012_neogeo_libretro"     : "FB Alpha 2012 Neo Geo"
-    "mednafen_ngp_libretro"           : "Beetle NeoPop"
-    "mednafen_wswan_libretro"         : "Beetle WonderSwan"
-  	"dolphin_libretro"                : "dolphin-emu"
-  	"play_libretro"                   : "Play!"
-  	"gambatte_libretro"               : "GAMBATTE"
-  	"mame_libretro"                   : "MAME"
-  	"mame2000_libretro"               : "MAME 2000"
-  	"mame2003_plus_libretro"          : "MAME 2003-Plus"
-  	"mame2010_libretro"               : "MAME 2010"
-  	"mame2014_libretro"               : "MAME 2014"
-  	"mame2015_libretro"               : "MAME 2015"
-  	"mame2016_libretro"               : "MAME 2016"
-  	"dosbox_pure_libretro"            : "DOSBox-pure"
-  	"dosbox_svn_libretro"             : "DOSBox-SVN"
-  	"dosbox_core_libretro"            : "DOSBox-core"
-  )})
-
-  trgCore := map[core]
-
-	debug(">> core    : " core )
-  debug(">> trgCore : " trgCore )
-
-  if( trgCore == "" ) {
-	  trgCore := RegExReplace( core, "i)_libretro", "" )
-	  StringUpper, trgCore, trgCore
-  }
+  trgCore := getCoreName(core)
 
 	dir  := EMUL_ROOT "\config\" trgCore
 	path := dir "\" trgCore
