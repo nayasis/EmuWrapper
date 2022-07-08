@@ -92,26 +92,24 @@ runSub( section, fileIni, properties ) {
 			executorWait  := executorWait == "true"
 			runSubHelper( executor, executorDir, executorDelay, executorWait, properties )
 		}
-
-		if ( closeWait != "_" ) {
-			applicationCloseWait := RegExReplace(closeWait,"i)ahk_(exe|class) ","")
-			WinWait, % closeWait,, % closeWaitSec
-			WinWaitClose, % closeWait,,
-		}
-
-		if ( closeWin != "_" ) {
-			applicationCloseWin := RegExReplace(closeWin,"i)ahk_(exe|class) ","")
-			WinWait, % closeWin,, % closeWinSec
-			WinClose, % closeWin,,
-		}
-
-		if ( closeProc != "_" ) {
-			applicationCloseProc := RegExReplace(closeProc,"i)ahk_(exe|class) ","")
-			Process, Wait, % closeProc, % closeProcSec 
-			Process, Close, % closeProc
-		}
-
   }
+	if ( closeWait != "_" ) {
+		applicationCloseWait := RegExReplace(closeWait,"i)ahk_(exe|class) ","")
+		WinWait, % closeWait,, % closeWaitSec
+		WinWaitClose, % closeWait,,
+	}
+
+	if ( closeWin != "_" ) {
+		applicationCloseWin := RegExReplace(closeWin,"i)ahk_(exe|class) ","")
+		WinWait, % closeWin,, % closeWinSec
+		WinClose, % closeWin,,
+	}
+
+	if ( closeProc != "_" ) {
+		applicationCloseProc := RegExReplace(closeProc,"i)ahk_(exe|class) ","")
+		Process, Wait, % closeProc, % closeProcSec 
+		Process, Close, % closeProc
+	}
 }
 
 runSubHelper( executor, executorDir, executorDelay, executorWait, properties ) {
