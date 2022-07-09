@@ -1,5 +1,4 @@
 #NoEnv
-
 DetectHiddenWindows, On
 
 global applicationPid       := ""
@@ -20,13 +19,23 @@ setEnvVariable( fileIni, prop )
 setRegistry( fileReg, prop )
 
 runSub( "pre", fileIni, prop )
-runProgram( fileIni, prop )
+runMain( fileIni, prop )
 runSub( "post", fileIni, prop )
+
+closeApp()
 
 ExitApp
 
-closeApplication() {
-	debug(">> close application")
+closeApp() {
+	closeProcess()
+	ResolutionChanger.restore()
+	Taskbar.show()
+	MouseCursor.show()
+	ExitApp
+}
+
+closeProcess() {
+	debug(">> close process")
 	if( applicationPid != "" ) {
 		debug("  - applicationId: " applicationPid)
 		Process, Close, % applicationPid
@@ -58,32 +67,14 @@ runMidThread:
   return
 
 runSub( section, fileIni, properties ) {
+	debug(">> run " section)
   indices = ,0,1,2,3,4,5,6,7,8,9
   loop, parse, indices, `,
   {
-		IniRead, executor,      %fileIni%, %section%, executor%a_loopfield%,      _
-		IniRead, executorDir,   %fileIni%, %section%, executor%a_loopfield%Dir,   _
-		IniRead, executorDelay, %fileIni%, %section%, executor%a_loopfield%Delay, _
-		IniRead, executorWait,  %fileIni%, %section%, executor%a_loopfield%Wait,  _
-		IniRead, closeWait,     %fileIni%, %section%, closeWait%a_loopfield%,      _
-		IniRead, closeWaitSec,  %fileIni%, %section%, closeWait%a_loopfield%Sec,   _
-		IniRead, closeWin,      %fileIni%, %section%, closeWin%a_loopfield%,      _
-		IniRead, closeWinSec,   %fileIni%, %section%, closeWin%a_loopfield%Sec,   _
-		IniRead, closeProc,     %fileIni%, %section%, closeProc%a_loopfield%,      _
-		IniRead, closeProcSec,  %fileIni%, %section%, closeProc%a_loopfield%Sec,   _
-
-	  executor      := removeComment(executor)
-	  executorDir   := removeComment(executorDir)
-	  executorDelay := removeComment(executorDelay)
-	  executorWait  := removeComment(executorWait)
-	  closeWait     := removeComment(closeWait)
-	  closeWaitSec  := removeComment(closeWaitSec)
-	  closeWin      := removeComment(closeWin)
-	  closeWinSec   := removeComment(closeWinSec)
-	  closeProc     := removeComment(closeProc)
-	  closeProcSec  := removeComment(closeProcSec)
-
-		StringLower, executorWait, executorWait
+		executor      := readIni(fileIni, section, "executor" a_loopfield,         properties, "_")
+		executorDir   := readIni(fileIni, section, "executor" a_loopfield "Dir",   properties, "_")
+		executorDelay := readIni(fileIni, section, "executor" a_loopfield "Delay", properties, "_")
+		executorWait  := readIni(fileIni, section, "executor" a_loopfield "Wait",  properties, "_")
 
 		if ( executor != "_" ) {
 			executor      := RegExReplace( executor,      "\\",     "\\" )
@@ -93,94 +84,90 @@ runSub( section, fileIni, properties ) {
 			runSubHelper( executor, executorDir, executorDelay, executorWait, properties )
 		}
   }
+
+  resolution      := readIni(fileIni, section, "resolution",    properties, "_")
+  resolutionDelay := readIni(fileIni, section, "resolutionSec", properties, "_")
+  closeWait       := readIni(fileIni, section, "closeWait",     properties, "_")
+  closeWaitSec    := readIni(fileIni, section, "closeWaitSec",  properties, "_")
+  closeWin        := readIni(fileIni, section, "closeWin",      properties, "_")
+  closeWinSec     := readIni(fileIni, section, "closeWinSec",   properties, "_")
+  closeProc       := readIni(fileIni, section, "closeProc",     properties, "_")
+  closeProcSec    := readIni(fileIni, section, "closeProcSec",  properties, "_")
+
+  if( resolution != "_" ) {
+    if( resolutionDelay != "_" ) {
+    	sleep, % resolutionDelay
+    }
+    changeResolution(resolution)
+  }
+
 	if ( closeWait != "_" ) {
 		applicationCloseWait := RegExReplace(closeWait,"i)ahk_(exe|class) ","")
+		debug("- closeWait : " closeWait )
 		WinWait, % closeWait,, % closeWaitSec
 		WinWaitClose, % closeWait,,
 	}
 
 	if ( closeWin != "_" ) {
 		applicationCloseWin := RegExReplace(closeWin,"i)ahk_(exe|class) ","")
+		debug("- closeWin : " closeWin )
 		WinWait, % closeWin,, % closeWinSec
 		WinClose, % closeWin,,
 	}
 
 	if ( closeProc != "_" ) {
 		applicationCloseProc := RegExReplace(closeProc,"i)ahk_(exe|class) ","")
+		debug("- closeProc : " closeProc )
 		Process, Wait, % closeProc, % closeProcSec 
 		Process, Close, % closeProc
 	}
+
 }
 
 runSubHelper( executor, executorDir, executorDelay, executorWait, properties ) {
 	if ( executor == "_" )
 		return
-	if ( executorDelay != "_" )
-		Sleep, %executorDelay%
-	if ( executor == "!RESOLUTION" ) {
-		debug( "executorDir in resolution : " executorDir )
-		changeResolution( executorDir )
+
+	executor      := RegExReplace( executor,      "\\",     "\\" )
+	executorDir   := RegExReplace( executorDir,   "\\",     "\\" )
+	executorDelay := RegExReplace( executorDelay, "[^0-9]", ""   )
+	executorWait  := executorWait == "true"
+
+	Sleep, %executorDelay%
+	if ( executorDir == "_" ) {
+		SplitPath, executor, , executorDir
+	}
+	if ( executorWait == "true" ) {
+		runWait(executor, executorDir)
 	} else {
-		executor := bindValue( executor, properties )
-		if ( executorDir == "_" ) {
-			SplitPath, executor, , executorDir
-		}
-		executorDir := bindValue( executorDir, properties )
-		if ( executorWait == "true" ) {
-			RunWait, %executor%, %executorDir%, Hide
-			debug( "closed ??")
-		} else {
-			Run, %executor%, %executorDir%, Hide
-		}
+		run(executor, executorDir)
 	}
 }
 
-runProgram( fileIni, properties ) {
+runMain( fileIni, properties ) {
 
-	IniRead, executor,          %fileIni%, init,   executor,     _
-	IniRead, unblockPath,       %fileIni%, init,   unblockPath,  _
-	IniRead, executorDir,       %fileIni%, init,   executorDir,  _
-	IniRead, resolution,        %fileIni%, init,   resolution,   _
-	IniRead, hideTaskbar,       %fileIni%, init,   hideTaskbar,  _
-	IniRead, hideMouse,         %fileIni%, init,   hideMouse,    _
-  IniRead, symlink,           %fileIni%, init,   symlink,      _
-	IniRead, hideConsole,       %fileIni%, init,   hideConsole,  false
-	IniRead, isRunWait,         %fileIni%, init,   runwait,      true
-  IniRead, exitAltF4,         %fileIni%, init,   exitAltF4,    true
-	IniRead, windowTarget,      %fileIni%, window, target,       _
-	IniRead, windowSearchDelay, %fileIni%, window, searchDelay,  0
-	IniRead, windowStart,       %fileIni%, window, start,        _
-	IniRead, windowSize,        %fileIni%, window, size,         _
-	IniRead, windowBorderless,  %fileIni%, window, borderless,   false
+  debug(">> run main")
 
-  executor          := removeComment(executor)
-  unblockPath       := removeComment(unblockPath)
-  executorDir       := removeComment(executorDir)
-  resolution        := removeComment(resolution)
-  hideTaskbar       := removeComment(hideTaskbar)
-  hideMouse         := removeComment(hideMouse)
-  symlink           := removeComment(symlink)
-  hideConsole       := removeComment(hideConsole)
-  isRunWait         := removeComment(isRunWait)
-  exitAltF4         := removeComment(exitAltF4)
-  windowTarget      := removeComment(windowTarget)
-  windowSearchDelay := removeComment(windowSearchDelay)
-  windowStart       := removeComment(windowStart)
-  windowSize        := removeComment(windowSize)
-  windowBorderless  := removeComment(windowBorderless)
+  executor          := readIni(fileIni, "init",   "executor",    properties, "_")
+  unblockPath       := readIni(fileIni, "init",   "unblockPath", properties, "_")
+  executorDir       := readIni(fileIni, "init",   "executorDir", properties, "_")
+  resolution        := readIni(fileIni, "init",   "resolution",  properties, "_")
+  hideTaskbar       := readIni(fileIni, "init",   "hideTaskbar", properties, "_")
+  hideMouse         := readIni(fileIni, "init",   "hideMouse",   properties, "_")
+  symlink           := readIni(fileIni, "init",   "symlink",     properties, "_")
+  isRunWait         := readIni(fileIni, "init",   "runwait",     properties, true)
+  exitAltF4         := readIni(fileIni, "init",   "exitAltF4",   properties, true)
+  windowTarget      := readIni(fileIni, "window", "target",      properties, "_")
+  windowSearchDelay := readIni(fileIni, "window", "searchDelay", properties, 0)
+  windowStart       := readIni(fileIni, "window", "start",       properties, "_")
+  windowSize        := readIni(fileIni, "window", "size",        properties, "_")
+  windowBorderless  := readIni(fileIni, "window", "borderless",  properties, false)
   windowNeedResize  := ( windowStart != "_" || windowSize != "_" )
 
-	hideConsole := hideConsole == "true" ? "Hide" : ""
+  makeSymlink(symlink)
 
-	; executor    := RegExReplace( executor,    "\\", "\\" )
-	; executorDir := RegExReplace( executorDir, "\\", "\\" )
-
-  if ( unblockPath != "_" ) {
-  	unblockPath := bindValue( unblockPath, properties )
-  	command := "powershell unblock-file ""-path \""" unblockPath "\"""""
-  	debug( command )
-  	RunWait, % command,,Hide
-  }
+  if ( unblockPath != "_" )
+  	runWait("powershell unblock-file ""-path \""" unblockPath "\""""", "")
 
 	if ( resolution != "_" ) {
 		changeResolution( resolution )
@@ -189,36 +176,27 @@ runProgram( fileIni, properties ) {
 		}
 	}
 
-  if ( exitAltF4 == "true" ) {
-  	Hotkey, !F4, closeApplication
-  }
+  if ( exitAltF4 == "true" )
+  	Hotkey, !F4, closeApp
 
-	if ( windowStart == "_" ) {
+	if ( windowStart == "_" )
 	  windowStart := "0,0"
-	}
 
-	if ( windowSize == "_" ) {
+	if ( windowSize == "_" )
 		windowSize := A_ScreenWidth "x" A_ScreenHeight
-	}
 
-	makeSymlink( symlink, properties )
-
-	if ( hideTaskbar != "_" && hideTaskbar == "true" ) {
+	if ( hideTaskbar == "true" )
 		Taskbar.hide()
-	}
 
-	if ( hideMouse != "_" && hideMouse == "true" ) {
+	if ( hideMouse == "true" )
 		MouseCursor.hide()
-	}
 
 	if ( executor != "_" ) {
 
-		executor := bindValue( executor, properties )
-		; executorDir 변수에 executor의 경로만 담는다.
-		if ( executorDir == "_" ) {
-			SplitPath, executor, , executorDir
-		}
-		executorDir := bindValue( executorDir, properties )
+    SetTimer, runMidThread, 500
+
+		if ( executorDir == "_" )
+		  executorDir := getRunDir(executor)
 
 		debug( "executor     : " executor     )
 		debug( "executorDir  : " executorDir  )
@@ -227,71 +205,60 @@ runProgram( fileIni, properties ) {
 
 		if ( windowTarget != "_" ) {
 
-			SetTimer, runMidThread, 500
-			Run, %executor%, %executorDir%,%hideConsole%,applicationPid
-			Sleep, %windowSearchDelay%
-			WinWait, %windowTarget%,, 20
-
-			If ErrorLevel {
-				MsgBox % "There is no window to wait.(" windowTarget ")"
-				Process, Close, %applicationPid%
+			applicationPid := run(executor,executorDir)
+			If(applicationPid == "")
+				return
+			sleep, % windowSearchDelay
+			WinWait, %windowTarget%,, 10
+			IfWinNotExist
+			{
+				MsgBox % "There is no window to wait.`n`n - " windowTarget
+				return
 			} else {
-
 				WinGet, applicationPid, PID, %windowTarget%
-
 			  startX := Trim( RegExReplace( windowStart, "i)^\D*?(\d*?)\D*?,\D*?(\d*?)\D*?$", "$1" ) )
 			  startY := Trim( RegExReplace( windowStart, "i)^\D*?(\d*?)\D*?,\D*?(\d*?)\D*?$", "$2" ) )
 		    width  := Trim( RegExReplace( windowSize,  "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$1" ) )
 		    height := Trim( RegExReplace( windowSize,  "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$2" ) )
-
 				debug( "target:" windowTarget ", borderless:" windowBorderless ", need resize:" windowNeedResize ", start:(" startX "," startY "), resolution:" width "x" height )
 
+				WinActivate
 		    if ( windowBorderless == "true" ) {
-					WinSet, Style, -0xC40000, %windowTarget% ; remove the titlebar and border(s)
+		    	debug("- set borderless")
+					WinSet, Style, -0xC40000
 		    }
-
 		    if( windowNeedResize == true )  {
-					WinMove, %windowTarget%,, %startX%, %startY%, %width%, %height%  ; move the window to 0,0 and reize to width x height
+		    	debug("- resize")
+					WinMove,,, %startX%, %startY%, %width%, %height%
 					MouseMove, %width% + startY, %height% + startX
 		    }
 
-				WinWaitClose, %windowTarget%
+				WinWaitClose, % windowTarget
 
 			}
 
-      ResolutionChanger.restore()
-			Taskbar.show()
-			MouseCursor.show()
-
-		} else if ( isRunWait == "true" ) {
-
-			SetTimer, runMidThread, 500
-			RunWait, %executor%, %executorDir%, %hideConsole%, applicationPid
-
-			ResolutionChanger.restore()
-			Taskbar.show()
-			MouseCursor.show()
-
+		} else if ( isRunWait == true ) {
+			runWait(executor,executorDir)
+			; applicationPid := run(executor,executorDir)
+			; Process, Wait, % applicationPid
 		} else {
-			SetTimer, runMidThread, 500
-			Run, %executor%, %executorDir%,Hide
+			debug("??? in here ??")
+			run(executor,executorDir)
 		}
 
 	}
 
 }
 
-readProperties( file ) {
+readProperties(file) {
 
 	prop     := []
 	readMode := false
 
 	Loop, Read, %file%
 	{
-
 		if RegExMatch(A_LoopReadLine, "^#.*" )
 			continue
-
 		if ( readMode == false ) {
 			if RegExMatch(A_LoopReadLine, "i)^\[properties\]" )
 				readMode = true
@@ -304,7 +271,6 @@ readProperties( file ) {
 		}
 
 		line := removeComment(A_LoopReadLine)
-
     key := RegExReplace( line, "^(.*?)=.*?$", "$1" )
     val := RegExReplace( line, "^.*?=(.*?)$", "$1" )
 
@@ -386,6 +352,33 @@ setEnvVariable( fileIni, properties ) {
 
 	}
 
+}
+
+run(executor, executorDir) {
+	debug("run: " executor)
+	Run, % executor, % executorDir, UseErrorLevel, processId
+	If ErrorLevel
+     MsgBox % "There is no application to run.`n`n - " executor 
+	return processId
+}
+
+runWait(executor, executorDir) {
+	debug("runWait: " executor)
+  RunWait, % executor, % executorDir, UseErrorLevel, processId
+	If ErrorLevel
+     MsgBox % "There is no application to run.`n`n - " executor 
+	return processId
+}
+
+getRunDir(executor) {
+	SplitPath, executor, , executorDir
+	return executorDir
+}
+
+readIni(fileIni, section, key, properties, defaultValue := "_") {
+	IniRead, value, % fileIni, % section, % key, % defaultValue
+	value := removeComment(value)
+	return bindValue(value,properties)
 }
 
 /**
@@ -573,7 +566,7 @@ toNumberFromHex( hexValue ) {
 
 }
 
-makeSymlink( symlink, properties ) {
+makeSymlink( symlink ) {
 
 	if ( symlink == "_" )
 		return
@@ -581,7 +574,6 @@ makeSymlink( symlink, properties ) {
 	links := StrSplit( symlink, ";" )
 
 	for i, link in links {
-		link := bindValue( link, properties )
 		debug( "link : " link )
 		path := StrSplit( link, "->" )
 		if ( path.MaxIndex() == 2 ) {
@@ -650,8 +642,10 @@ class ResolutionChanger {
         return
     	}
 
+    	debug("change resolution : " width "x" height )
+
 			VarSetCapacity( deviceMode, 156, 0 )
-			NumPut( 156, deviceMode, 36 )
+			NumPut( 156, &deviceMode, 36 )
 			DllCall( "EnumDisplaySettingsA", UInt, 0, UInt, -1, UInt, &deviceMode )
 			NumPut( 0x5c0000,    deviceMode,  40 )
 			NumPut( colorDepth,  deviceMode, 104 )
@@ -669,7 +663,9 @@ class ResolutionChanger {
       if ( ResolutionChanger.changed == true && (A_ScreenWidth != this.srcWidth || A_ScreenHeight != this.srcHeight) ) {
         this.change( this.srcWidth, this.srcHeight )
         ResolutionChanger.changed := false
+        debug("restore resolution : " this.srcWidth "x" this.srcHeight )
       }
+
     }
 
 
