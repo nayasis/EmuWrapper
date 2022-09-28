@@ -4,26 +4,23 @@
 ; debug( "Hwasu" )
 ; ExitApp
 
-debug( message="" ) {
 
+; Gui, GuiSimpleLogger:+LastFoundExist
+; if ( ! WinExist() ) {
+;   global GuiSimpleLoggerEdit
+;   Gui, GuiSimpleLogger:Margin, 0, 0
+;   Gui, GuiSimpleLogger:Add, Edit, vGuiSimpleLoggerEdit VScroll W340 H100
+;   Gui, GuiSimpleLogger:+AlwaysOnTop +Resize -MaximizeBox +Minsize360x120
+;   Gui, GuiSimpleLogger:Show, x100 y100 w420 h270, AHK Logger
+; }
+; Gui, GuiSimpleLogger:Show
+; GuiControlGet, GuiSimpleLoggerEdit, GuiSimpleLogger:
+; GuiControl, GuiSimpleLogger:, GuiSimpleLoggerEdit, %GuiSimpleLoggerEdit%%message%
+debug( message="" ) {
   if( A_IsCompiled == 1 )
     return
-
   message .= "`r`n" 
   FileAppend %message%, *
-
-  ; Gui, GuiSimpleLogger:+LastFoundExist
-  ; if ( ! WinExist() ) {
-  ;   global GuiSimpleLoggerEdit
-  ;   Gui, GuiSimpleLogger:Margin, 0, 0
-  ;   Gui, GuiSimpleLogger:Add, Edit, vGuiSimpleLoggerEdit VScroll W340 H100
-  ;   Gui, GuiSimpleLogger:+AlwaysOnTop +Resize -MaximizeBox +Minsize360x120
-  ;   Gui, GuiSimpleLogger:Show, x100 y100 w420 h270, AHK Logger
-  ; }
-  ; Gui, GuiSimpleLogger:Show
-  ; GuiControlGet, GuiSimpleLoggerEdit, GuiSimpleLogger:
-  ; GuiControl, GuiSimpleLogger:, GuiSimpleLoggerEdit, %GuiSimpleLoggerEdit%%message%
-
 }
 
 ; GuiSimpleLoggerGuiClose:
@@ -166,7 +163,6 @@ class MouseCursor {
 
 /**
 * Environment
-*
 */
 class Environment {
 
@@ -197,4 +193,35 @@ class Environment {
         }
     }
 
+}
+
+
+/**
+* Range
+*/
+range(start, stop:="", step:=1) {
+    static range := { _NewEnum: Func("_RangeNewEnum") }
+    if !step
+        throw "range(): Parameter 'step' must not be 0 or blank"
+    if (stop == "")
+        stop := start, start := 0
+    ; Formula: r[i] := start + step*i ; r = range object, i = 0-based index
+    ; For a postive 'step', the constraints are i >= 0 and r[i] < stop
+    ; For a negative 'step', the constraints are i >= 0 and r[i] > stop
+    ; No result is returned if r[0] does not meet the value constraint
+    if (step > 0 ? start < stop : start > stop) ;// start == start + step*0
+        return { base: range, start: start, stop: stop, step: step }
+}
+
+_RangeNewEnum(r) {
+    static enum := { "Next": Func("_RangeEnumNext") }
+    return { base: enum, r: r, i: 0 }
+}
+
+_RangeEnumNext(enum, ByRef k, ByRef v:="") {
+    stop := enum.r.stop, step := enum.r.step
+    , k := enum.r.start + step*enum.i
+    if (ret := step > 0 ? k < stop : k > stop)
+        enum.i += 1
+    return ret
 }
