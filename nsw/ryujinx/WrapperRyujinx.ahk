@@ -10,7 +10,7 @@ imageDir := %0%
 
 makeLink(imageDir)
 
-container := new DiskContainer( imageDir, "i).*\.(nsp|xci)$" )
+container := new DiskContainer( imageDir, "i).*\.(nsp|nsz|xci)$" )
 container.initSlot( 1 )
 
 config := getConfig( imageDir, container )
