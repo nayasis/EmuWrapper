@@ -2,7 +2,7 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS2\emul\image\Handheld\ra_mariosba"
+; imageDir := "\\NAS2\emul\image\Handheld\Game & Watch - Mario Bros"
 
 option    := getOption( imageDir )
 config    := setConfig( "gw_libretro", option, false )
