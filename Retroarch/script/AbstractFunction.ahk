@@ -184,6 +184,7 @@ getCoreName(core) {
 	  "pcsx2_libretro"                  : "pcsx2 (alpha)"
 	  "yabause_libretro"                : "Yabause"
 	  "yabasanshiro_libretro"           : "Yabasanshiro"
+	  "mesen_libretro"                  : "Mesen"
 	  "mednafen_saturn_libretro"        : "Beetle Saturn"
 	  "mupen64plus_next_libretro"       : "Mupen64Plus-Next"
 	  "mupen64plus_next_gles3_libretro" : "Mupen64Plus-Next GLES3"
