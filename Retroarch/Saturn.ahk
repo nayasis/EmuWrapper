@@ -12,6 +12,9 @@ option := getOption( imageDir )
 
 if( option.core.common_core == "yabasanshiro_libretro" ) {
 	option.run.videoDriver := "gl"
+	extension := "chd|bin"
+} else {
+	extension := "m3u|chd|bin"
 }
 
 config := setConfig( "mednafen_saturn_libretro", option )
@@ -22,7 +25,7 @@ config := setConfig( "mednafen_saturn_libretro", option )
 ; config.core := "yabause_libretro"
 
 ; imageFile := getRomPath( imageDir, option, "chd|cue" )
-imageFile := getRomPath( imageDir, option, "m3u|chd|bin" )
+imageFile := getRomPath( imageDir, option, extension )
 
 writeConfig( config, imageFile )
 runEmulator( imageFile, config )
