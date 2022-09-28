@@ -3,7 +3,7 @@
 
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\Neogeo\King of Fighters '98 - Dream match never ends (snk)(T-ko 1.0 by dsno)"
-imageDir := "\\NAS2\emul\image\ArcadeMame\Aero Fighters Special (en)\"
+; imageDir := "\\NAS2\emul\image\FBA\Gunbird (psikyo)(T-ko 1.0 by dsno)"
 
 ; EMUL_ROOT := A_ScriptDir "\1.9.0"
 
@@ -29,8 +29,9 @@ if( RegExMatch(config.core, "i)^mame.*") ) {
 	linkResource( config, imageFile )
 }
 
-writeConfig( config, imageFile )
-runEmulator( imageFile, config )
+setBezel(config,imageDir)
+writeConfig(config, imageFile)
+runEmulator(imageFile, config)
 waitCloseEmulator()
 
 loop, % option.core.wait_subprocess
@@ -45,7 +46,17 @@ loop, % option.core.wait_subprocess
 
 ExitApp
 
-toCliArgument( imageFile ) {
+setBezel(config, imageDir) {
+	bezel := FileUtil.getFile( imageDir "\_EL_CONFIG\bezel", "i).*\.(cfg)$" )
+	debug("target : " imageDir "\_EL_CONFIG\bezel" )
+	debug("bezel  : " bezel)
+	if(bezel != "") {
+	; config.input_overlay := "\\NAS2\emul\image\FBA\Gunbird (psikyo)(T-ko 1.0 by dsno)\_EL_CONFIG\bezel\gunbird.cfg"
+		config.input_overlay := bezel
+	}
+}
+
+toCliArgument(imageFile) {
 	romName := FileUtil.getName(imageFile,false)
 	dir     := FileUtil.getDir(imageFile)
 	args    := romName " -rp \""" dir "\"""
@@ -54,7 +65,7 @@ toCliArgument( imageFile ) {
 	return args
 }
 
-linkResource( config, imageFile ) {
+linkResource(config, imageFile) {
 	pathSystem := EMUL_ROOT "\system\mame"
 	FileUtil.makeDir( pathSystem )
 	imageDir := FileUtil.getDir(imageFile)
