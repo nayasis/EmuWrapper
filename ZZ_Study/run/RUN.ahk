@@ -155,6 +155,7 @@ runMain( fileIni, properties ) {
   hideTaskbar       := readIni(fileIni, "init",   "hideTaskbar", properties, "_")
   hideMouse         := readIni(fileIni, "init",   "hideMouse",   properties, "_")
   symlink           := readIni(fileIni, "init",   "symlink",     properties, "_")
+  installFont       := readIni(fileIni, "init",   "installFont", properties, "_")
   isRunWait         := readIni(fileIni, "init",   "runwait",     properties, true)
   exitAltF4         := readIni(fileIni, "init",   "exitAltF4",   properties, true)
   windowTarget      := readIni(fileIni, "window", "target",      properties, "_")
@@ -173,6 +174,16 @@ runMain( fileIni, properties ) {
 		changeResolution( resolution )
 		if ( windowSize == "_" ) {
 		    windowSize := resolution
+		}
+	}
+
+	if ( installFont != "_" ) {
+		installedPath := properties["windir"] "\Fonts\" FileUtil.getFileName(installFont)
+		debug("installedPath : " installedPath)
+		if( ! FileUtil.isFile(installedPath) ) {
+			debug("install font : " installFont)
+			DllCall( "AddFontResource", Str, installFont )
+			SendMessage,  0x1D,,,, ahk_id 0xFFFF
 		}
 	}
 
@@ -285,6 +296,9 @@ readProperties(file) {
 	EnvGet, userHome, userprofile
 	prop[ "home" ] := userHome
 
+  EnvGet, windir, SystemRoot
+  prop["windir"] := windir
+
 	return prop
 
 }
@@ -358,7 +372,10 @@ run(executor, executorDir) {
 	debug("run: " executor)
 	Run, % executor, % executorDir, UseErrorLevel, processId
 	If ErrorLevel
-     MsgBox % "There is no application to run.`n`n - " executor 
+		debug("Error Level : " ErrorLevel)
+	If(ErrorLevel == "ERROR") {
+    MsgBox % "There is no application to run.`n`n - " executor 
+	}
 	return processId
 }
 
@@ -366,7 +383,10 @@ runWait(executor, executorDir) {
 	debug("runWait: " executor)
   RunWait, % executor, % executorDir, UseErrorLevel, processId
 	If ErrorLevel
-     MsgBox % "There is no application to run.`n`n - " executor 
+		debug("Error Level : " ErrorLevel)
+	If(ErrorLevel == "ERROR") {
+    MsgBox % "There is no application to run.`n`n - " executor 
+	}
 	return processId
 }
 
@@ -499,14 +519,16 @@ writeRegistryFrom( file, properties ) {
 
 		regName := bindValue( regName, properties )
 
-		; debug( "[" regKey "] " regName " - " regType ":" regVal )
+    RegRead, oldVal, % regKey, % regName
+    if(regVal == oldVal)
+    	continue
+
+    debug( "[" regKey "] " regName " - " regType ":" regVal )
 
 		; if it needs to run as admin, restart itself
 		if ( ! RegExMatch(regKey, "^(HKEY_CURRENT_USER|HKEY_USERS)\\.*$") ) {
 			restartAsAdmin()
 		}
-
-
 		RegWrite, % regType, % regKey, % regName, % regVal
 
 	}
