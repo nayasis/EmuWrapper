@@ -131,6 +131,18 @@ class FileUtil {
 		Return ! InStr( attr, "D" )
 	}
 
+  readJson(path) {
+  	if( ! this.exist(path) )
+  		return {}
+  	return JSON.load(this.read(path))
+  }
+
+  readXml(path) {
+  	if( ! this.exist(path) )
+  		return new XML()
+  	return new XML(this.read(path))
+  }
+
   read(path) {
   	FileRead, text, %path%
   	return text
