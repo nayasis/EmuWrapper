@@ -293,3 +293,22 @@ xb/xemu/xemu.toml
 xb/xemu/bios/xbox_hdd.qcow2
 xb/xemu/bak/
 WiiU/cemu_1.24.0/settings.xml
+Mame/0.248/COPYING
+Mame/0.248/artwork/
+nsw/ryujinx LDN 2.5/emul/etc
+nsw/ryujinx LDN 2.5/emul/lib/
+nsw/ryujinx LDN 2.5/emul/Logs/
+nsw/ryujinx LDN 2.5/emul/portable/screenshots
+nsw/ryujinx LDN 2.5/emul/portable/bis/system/
+nsw/ryujinx LDN 2.5/emul/portable/bis/user/
+nsw/ryujinx LDN 2.5/emul/share/icons/
+nsw/ryujinx LDN 2.5/emul/portable/system/
+nsw/ryujinx LDN 2.5/emul/share/glib-2.0/schemas/gschemas.compiled
+nsw/ryujinx LDN 2.5/emul/share/themes/Breath-Dark/gtk-3.20/gtk.css
+nsw/ryujinx LDN 2.5/emul/portable/games
+nsw/ryujinx LDN 2.5/emul/alsoft.ini
+nsw/ryujinx LDN 2.5/emul/portable/mods/contents
+nsw/ryujinx LDN 2.5/emul/portable/profiles/controller/8bitdo.json
+nsw/ryujinx LDN 2.5/emul/libsoundio.so
+nsw/ryujinx LDN 2.5/emul/libsoundio.dylib
+nsw/ryujinx LDN 2.5/emul/Ryujinx.SDL2.Common.dll.config
