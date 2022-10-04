@@ -9,7 +9,7 @@ imageDir  := %0%
 ; imageDir  := "\\NAS\emul\image\Apple2\Shooting\Wings of Fury (en)"
 ; imageDir  := "\\NAS2\emul\image\Apple2\RPG-Bard's Tale III - The Thief of Fate"
 
-fddContainer := new DiskContainer( imageDir, "i).*\.zip" )
+fddContainer := new DiskContainer( imageDir, "i).*\.dsk\.zip" )
 fddContainer.initSlot( 2 )
 
 option := setConfig( imageDir, fddContainer )
@@ -31,7 +31,7 @@ IfWinExist
   reset()
   waitCloseEmulator()
 }
-  
+
 ExitApp
 
 waitEmulator() {
