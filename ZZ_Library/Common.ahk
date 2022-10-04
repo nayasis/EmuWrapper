@@ -199,12 +199,12 @@ class Environment {
 /**
 * Range
 */
-range(start, stop:="", step:=1) {
+range(start:=0, stop:="", step:=1) {
     static range := { _NewEnum: Func("_RangeNewEnum") }
     if !step
         throw "range(): Parameter 'step' must not be 0 or blank"
     if (stop == "")
-        stop := start, start := 0
+        stop := start
     ; Formula: r[i] := start + step*i ; r = range object, i = 0-based index
     ; For a postive 'step', the constraints are i >= 0 and r[i] < stop
     ; For a negative 'step', the constraints are i >= 0 and r[i] > stop
