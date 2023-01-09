@@ -312,3 +312,20 @@ nsw/ryujinx LDN 2.5/emul/portable/profiles/controller/8bitdo.json
 nsw/ryujinx LDN 2.5/emul/libsoundio.so
 nsw/ryujinx LDN 2.5/emul/libsoundio.dylib
 nsw/ryujinx LDN 2.5/emul/Ryujinx.SDL2.Common.dll.config
+nsw/ryujinx LDN 3.0/emul/portable/bis/system/Contents/registered
+nsw/ryujinx LDN 3.0/emul/portable/bis/system/save
+nsw/ryujinx LDN 3.0/emul/portable/bis/user/save
+nsw/ryujinx LDN 3.0/emul/share/icons
+Retroarch/1.9.14/logs/
+nsw/ryujinx LDN 3.0/emul/lib/
+nsw/ryujinx LDN 3.0/emul/Logs/Ryujinx_1.1.0-ldn3.0.1_2022-12-02_22-47-53.log
+nsw/ryujinx LDN 3.0/emul/portable/system/
+nsw/ryujinx LDN 3.0/emul/Logs/
+Mame/0.251/artwork/
+Mame/0.251/COPYING
+nsw/ryujinx LDN 3.0/emul/alsoft.ini
+nsw/ryujinx LDN 3.0/emul/share/
+nsw/ryujinx LDN 3.0/emul/portable/
+nsw/ryujinx LDN 3.0/emul/Ryujinx.SDL2.Common.dll.config
+nsw/ryujinx LDN 3.0/emul/etc/gtk-3.0/settings.ini
+ZZ_Study/run/etc/install font/*.ttf
