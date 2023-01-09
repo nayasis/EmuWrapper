@@ -11,7 +11,7 @@ imageDir := %0%
 
 option := getOption( imageDir )
 config := setConfig( "pcsx2_libretro", option, true )
-imageFile := getRomPath( imageDir, option, "m3u|cso|bin|iso|cso" )
+imageFile := getRomPath( imageDir, option, "m3u|cso|bin|iso|chd" )
 
 ; config.core := "pcsx2_libretro"
 ; config.core := "mednafen_psx_libretro"

@@ -6,6 +6,7 @@ imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\MSX\Illusion City (micro cabin)(T-ko 20220112 by kkitty5425)"
 ; imageDir := "\\NAS2\emul\image\MSX\MSX2 Various\AshGuine 2 (T-ko)"
 ; imageDir := "\\NAS2\emul\image\MSX\Aleste 2 (compile)(T-ko)"
+imageDir := "\\NAS2\emul\image\MSX\Zatsugaku Olympic Watanabe Wataru Hen (hard)(ja)"
 
 option    := getOption( imageDir )
 config    := setConfig( "bluemsx_libretro", option )

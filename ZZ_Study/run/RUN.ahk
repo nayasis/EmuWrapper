@@ -1,4 +1,5 @@
 #NoEnv
+FileEncoding, UTF-8
 DetectHiddenWindows, On
 
 global applicationPid       := ""
@@ -57,7 +58,8 @@ closeProcess() {
 runAsAdmin( fileIni ) {
 	IniRead, value, % fileIni, init, runAsAdmin, false
 	if ( value == "true" ) {
-		restartAsAdmin()
+		if not A_IsAdmin
+			restartAsAdmin()
 	}
 }
 
@@ -74,25 +76,29 @@ runSub( section, fileIni, properties ) {
 		executor      := readIni(fileIni, section, "executor" a_loopfield,         properties, "_")
 		executorDir   := readIni(fileIni, section, "executor" a_loopfield "Dir",   properties, "_")
 		executorDelay := readIni(fileIni, section, "executor" a_loopfield "Delay", properties, "_")
-		executorWait  := readIni(fileIni, section, "executor" a_loopfield "Wait",  properties, "_")
+		executorWait  := readIni(fileIni, section, "executor" a_loopfield "Wait",  properties, "true")
+
+    executorDelay := RegExReplace( executorDelay, "[^0-9]", "" )
+    if ( executor != "_" ) {
+    	Sleep, %executorDelay%
+    }
 
 		if ( executor != "_" ) {
 			executor      := RegExReplace( executor,      "\\",     "\\" )
 			executorDir   := RegExReplace( executorDir,   "\\",     "\\" )
-			executorDelay := RegExReplace( executorDelay, "[^0-9]", ""   )
-			executorWait  := executorWait == "true"
-			runSubHelper( executor, executorDir, executorDelay, executorWait, properties )
+			executorWait  := (executorWait == "true" || executorWait == "_")
+			runSubHelper( executor, executorDir, executorWait, properties )
 		}
   }
 
   resolution      := readIni(fileIni, section, "resolution",    properties, "_")
   resolutionDelay := readIni(fileIni, section, "resolutionSec", properties, "_")
   closeWait       := readIni(fileIni, section, "closeWait",     properties, "_")
-  closeWaitSec    := readIni(fileIni, section, "closeWaitSec",  properties, "_")
+  closeWaitSec    := readIni(fileIni, section, "closeWaitSec",  properties, "3")
   closeWin        := readIni(fileIni, section, "closeWin",      properties, "_")
-  closeWinSec     := readIni(fileIni, section, "closeWinSec",   properties, "_")
+  closeWinSec     := readIni(fileIni, section, "closeWinSec",   properties, "3")
   closeProc       := readIni(fileIni, section, "closeProc",     properties, "_")
-  closeProcSec    := readIni(fileIni, section, "closeProcSec",  properties, "_")
+  closeProcSec    := readIni(fileIni, section, "closeProcSec",  properties, "3")
 
   if( resolution != "_" ) {
     if( resolutionDelay != "_" ) {
@@ -124,20 +130,17 @@ runSub( section, fileIni, properties ) {
 
 }
 
-runSubHelper( executor, executorDir, executorDelay, executorWait, properties ) {
+runSubHelper( executor, executorDir, executorWait, properties ) {
 	if ( executor == "_" )
 		return
 
 	executor      := RegExReplace( executor,      "\\",     "\\" )
 	executorDir   := RegExReplace( executorDir,   "\\",     "\\" )
-	executorDelay := RegExReplace( executorDelay, "[^0-9]", ""   )
-	executorWait  := executorWait == "true"
 
-	Sleep, %executorDelay%
 	if ( executorDir == "_" ) {
 		SplitPath, executor, , executorDir
 	}
-	if ( executorWait == "true" ) {
+	if ( executorWait == true ) {
 		runWait(executor, executorDir)
 	} else {
 		run(executor, executorDir)
@@ -289,18 +292,40 @@ readProperties(file) {
 	}
 
 	; set default
-	prop[ "cd" ]     := A_ScriptDir
-	prop[ "cdWin" ]  := RegExReplace( A_ScriptDir, "\\", "\\" ) ; double file seperator slash
-	prop[ "cdUnix" ] := RegExReplace( A_ScriptDir, "\\", "/" ) ; normal file seperator
+	prop["cd"    ] := A_ScriptDir
+	prop["cdWin" ] := RegExReplace( A_ScriptDir, "\\", "\\" ) ; double file seperator slash
+	prop["cdUnix"] := RegExReplace( A_ScriptDir, "\\", "/" ) ; normal file seperator
 
 	EnvGet, userHome, userprofile
-	prop[ "home" ] := userHome
+	prop["home"  ] := userHome
 
   EnvGet, windir, SystemRoot
   prop["windir"] := windir
 
+  prop["sid"   ] := readSID()
+  prop["drive" ] := readDrive()
+
 	return prop
 
+}
+
+readSID() {
+	Loop , HKLM , SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList, 1, 1
+  {
+    if A_LoopRegName = ProfileImagePath
+    {
+      RegRead , OutputVar
+      if outputvar contains %A_UserName%
+        StringReplace , SID, A_LoopRegSubKey, SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\ ,,
+    }
+  }
+  return SID
+}
+
+readDrive() {
+	EnvGet, root, SystemDrive
+	StringReplace, root, root, :,,
+	return root
 }
 
 removeComment(text) {
@@ -444,6 +469,8 @@ writeRegistryFrom( file, properties ) {
 		} else if ( regKey == "" ) {
 			continue
 		}
+
+		regKey := bindValue( regKey, properties )
 
 		if ( readNextLine == true ) {
 			regVal := regVal line
@@ -1045,9 +1072,7 @@ class FileUtil {
   */
   makeLink( src, trg ) {
 
-  	if this.isSymlink( trg ) {
-  		this.delete( trg )
-  	}
+  	this.delete( trg )
 
 		this.makeParentDir( trg, this.isDir(src) )
 		if ( this.isDir(src) ) {

@@ -1,7 +1,7 @@
 #NoEnv
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-global EMUL_ROOT := A_ScriptDir "\0.243"
+global EMUL_ROOT := A_ScriptDir "\0.251"
 global emulPid   := ""
 
 romName    := %0%

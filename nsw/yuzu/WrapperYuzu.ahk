@@ -2,6 +2,7 @@
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 global emulatorPid := ""
+global ROOT := A_ScriptDir "\yuzu-windows-msvc"
 
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\NSW\Monster Hunter XX (capcom)(T-ko 1.5 by dudaos1123)"
@@ -16,7 +17,7 @@ container.initSlot( 1 )
 
 config := getConfig( imageDir, container )
 
-command := A_ScriptDir "\emul\yuzu.exe" config
+command := ROOT "\yuzu.exe" config
 debug(command)
 RunWait, % command,,,emulatorPid
 
@@ -24,12 +25,13 @@ ExitApp
 
 makeLink(imageDir) {
 	makeSnapshotLink()
-	makeContentLink(imageDir "\emul\mods",A_ScriptDir "\emul\user\load")
+	makeContentLink(imageDir "\emul\mods", ROOT "\user\load")
+	; makeContentLink(imageDir "\emul\mods", ROOT "\user\sdmc\atmosphere\contents")
 }
 
 makeSnapshotLink() {
 	src := "c:\app\emulator\ZZ_snapshot"
-	trg := A_ScriptDir "\emul\user\screenshots"
+	trg := ROOT "\user\screenshots"
 	debug(src " -> " trg)
 	FileUtil.makeLink( src, trg )
 }

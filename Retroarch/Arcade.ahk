@@ -3,7 +3,7 @@
 
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\Neogeo\King of Fighters '98 - Dream match never ends (snk)(T-ko 1.0 by dsno)"
-; imageDir := "\\NAS2\emul\image\FBA\Gunbird (psikyo)(T-ko 1.0 by dsno)"
+imageDir := "\\NAS2\emul\image\ArcadeMame\Outlaws of the Lost Dynasty (en)"
 
 ; EMUL_ROOT := A_ScriptDir "\1.9.0"
 
@@ -11,7 +11,7 @@ option    := getOption(imageDir)
 config    := setConfig("mame_libretro",option,false)
 imageFile := getRomPath(imageDir,option,"zip|7z",true)
 
-; config.core := "kronos_libretro"
+config.core := "kronos_libretro"
 ; config.core := "fbalpha2012_libretro"
 ; config.core := "fbalpha2012_cps1_libretro"
 ; config.core := "fbalpha2012_cps2_libretro"
