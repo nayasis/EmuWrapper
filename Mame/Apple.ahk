@@ -5,7 +5,7 @@
 
 ;https://wiki.mamedev.org/index.php/Driver:Apple_II
 
-global EMUL_ROOT := A_ScriptDir "\0.248"
+global EMUL_ROOT := A_ScriptDir "\0.251"
 global BIOS_ROOT := "\\NAS2\emul\image\Mame"
 global emulPid   := ""
 
@@ -212,14 +212,14 @@ getConfig(imageDir, fddContainer) {
     ; https://wiki.mamedev.org/index.php/Driver:Apple_II
   }
 
-  setMameConfig(option)
+  setMameConfig(option,fddContainer)
   ; ExitApp
 
   return config
 
 }
 
-setMameConfig(option) {
+setMameConfig(option, fddContainer) {
 
   cfgFile := EMUL_ROOT "\cfg\apple2ee.cfg"
 
@@ -230,8 +230,6 @@ setMameConfig(option) {
 <mameconfig version="10">
     <system name="apple2ee">
         <image_directories>
-            <device instance="floppydisk1" directory="" />
-            <device instance="floppydisk2" directory="" />
             <device instance="cassette" directory="" />
         </image_directories>
         <input>
@@ -251,6 +249,7 @@ setMameConfig(option) {
 
   cfgXml    := FileUtil.readXml(cfgFile)
   nodeInput := cfgXml.selectSingleNode("/mameconfig/system/input")
+  nodeImage := cfgXml.selectSingleNode("/mameconfig/system/image_directories")
 
   ; >> Video
   ; Color : 0
@@ -285,9 +284,22 @@ setMameConfig(option) {
   }
   node.setAttribute("value", option.core.bootupSpeed)
 
-  ; debug(cfgXml.xml)
-  ; ExitApp
+  ; >> set disk directory
+  ; diskCnt := fddContainer.size()
+  ; fddCnt  := Min(option.core.fdd * 1,diskCnt)
+  ; for i in range(1, Min(fddCnt,diskCnt) + 1) {
+  ;   instanceName := "floopydisk" i
+  ;   node := nodeImage.selectSingleNode("/mameconfig/system/image_directories/device[contains(@tag,'" instanceName "')]")
+  ;   if(node == "") {
+  ;     node := cfgXml.addChild("/mameconfig/system/image_directories","e", "device")
+  ;     cfgXml.setAtt(node,{instance:instanceName})
+  ;   }
+  ;   node.setAttribute("directory", FileUtil.getDir(fddContainer.getFile(i)))
+  ; }
 
   cfgXml.save(cfgFile)
+
+  ; debug(cfgXml.xml)
+  ExitApp
 
 }

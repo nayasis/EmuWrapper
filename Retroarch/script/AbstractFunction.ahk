@@ -178,6 +178,7 @@ getCoreName(core) {
 	  "picodrive_libretro"              : "PicoDrive"
 	  "fceumm_libretro"                 : "FCEUmm"
 	  "mednafen_pce_fast_libretro"      : "Beetle PCE Fast"
+	  "mednafen_supergrafx_libretro"    : "Beetle SuperGrafx"
 	  "mednafen_psx_libretro"           : "Beetle PSX"
 	  "mednafen_psx_hw_libretro"        : "Beetle PSX HW"
 	  "pcsx_rearmed_libretro"           : "PCSX-ReARMed"

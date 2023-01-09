@@ -7,6 +7,8 @@ imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\NSW\Monster Hunter XX (capcom)(T-ko 1.5 by dudaos1123)"
 ; imageDir := "\\NAS2\emul\image\NSW\Mega Man 11 (capcom)(T-ko)"
 ; imageDir := "\\NAS2\emul\image\NSW\Captain Toad - Treasure Tracker (nintendo)(T-ko)"
+imageDir := "d:\app\Switch Army Knife\SAK_64bit"
+imageDir := "e:\download\LA Noire full\"
 
 makeLink(imageDir)
 

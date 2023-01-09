@@ -248,38 +248,19 @@ class FileUtil {
 		return var
 	}
 
-    /**
-    * Get Symbolic Link Information
-    *
-    * @param  filePath   path to check if it is symbolic link
-    * @param  srcPath    path to linked by filePath
-    * @param  linkType   link type ( file or directory )
-    * @return true if filepath is symbolic link
-    */
-	isSymlink( filePath, ByRef srcPath="", ByRef linkType="" ) {
-
-		IfNotExist, % filePath
-			return false
-
-		if RegExMatch(filePath,"^\w:\\?$") ; false if it is a root directory
-			return false
-
-		SplitPath, filePath, fn, parentDir
-
-		result := this.cli( "/c dir /al """ (InStr(FileExist(filePath),"D") ? parentDir "\" : filePath) """" )
-
-		if RegExMatch(result,"<(.+?)>.*?\b" fn "\b.*?\[(.+?)\]",m) {
-			linkType:= m1, srcPath := m2
-			if ( linkType == "SYMLINK" )
-  			linkType := "file"
-			else if ( linkType == "SYMLINKD" )
-  			linkType := "directory"
-			return true
-		} else {
-			return false
-		}
-	
-	}
+  /**
+  * check symlink
+  *
+  * @param {path} file path
+  * @return true if path is symlink
+  */
+  isSymlink(path) {
+  	FileGetAttrib, attr, % path
+  	if( InStr(attr,"D") )
+  		return true
+  	else
+  		return false
+  }
 
   /**
   * make symbolic link
@@ -288,7 +269,7 @@ class FileUtil {
   * @param trg        target path (path to used as link)
   * @param deleteTrg  delete trg forcidly
   */
-  makeLink( src, trg, deleteTrg=false ) {
+  makeLink( src, trg, deleteTrg:=false ) {
 
     if( ! this.exist(src) )
     	return false

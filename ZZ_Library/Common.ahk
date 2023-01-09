@@ -60,6 +60,14 @@ sortArray( Array ) {
   return Array
 }
 
+getArguments() {
+    array := []
+    for i, param in A_Args {
+        array[i - 1] := param
+    }
+    return array
+}
+
 /**
 * Os Detector
 *

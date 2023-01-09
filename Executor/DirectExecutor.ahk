@@ -2,33 +2,44 @@
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
 imageDir := %0%
-; imageDir := "G:\emuloader-decompress\PC\PC-001168"
+; imageDir := "G:\emuloader\PC\PC001044"
 
-file := getExecutableFile( imageDir )
+option := getOption(imageDir)
+; debug( ">> option`n" JSON.dump(option) )
+
+file := option.execution.executable
+runAdmin := option.execution.runAdmin
+
 debug("file:" file)
+debug("runAdmin:" runAdmin)
 if( file == "" )
 	ExitApp
+if( ! FileUtil.isFile(imageDir "\" file) )
+	ExitApp
 
-if( FileUtil.isFile(imageDir "\" file) ) {
-	RunWait, % imageDir "\" file, % imageDir,, processId		
+cmd := wrap(imageDir "\" file)
+
+if( runAdmin == "true" ) {
+	RunWait *RunAs %cmd%
+} else {
+	RunWait %cmd%
 }
 
 ExitApp	
 
-getExecutableFile( imageDir ) {
-	
-	dirConf := imageDir "\_EL_CONFIG"
-	debug(dirConf)
 
-	; read json option
+getOption(imageDir) {
+	dirConf := imageDir "\_EL_CONFIG"
 	IfExist %dirConf%\option\option.json
 	{
 		FileRead, jsonText, %dirConf%\option\option.json
-		debug(jsonText)
-		jsonObj := JSON.load(jsonText)
-		debug(jsonObj.execution.executable)
-		return jsonObj.execution.executable
+		return JSON.load(jsonText)
 	}
-	return ""
+	return {}
+}
 
+
+getExecutableFile(imageDir) {
+  option := getOption(imageDir)
+  return option.execution.executable
 }

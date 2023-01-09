@@ -4,7 +4,7 @@
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\GameCube\Super Mario Sunshine (en)"
 ; imageDir := "\\NAS2\emul\image\GameCube\Tengai Makyou 2 - Manji Maru (ja)"
-; imageDir := "\\NAS2\emul\image\Wii\Pikmin 1 for Wii (nintendo)(ko)"
+; imageDir := "\\NAS2\emul\image\Wii\Case Closed - The Mirapolis Investigation (image epoch)(ko)\"
 
 option    := getOption( imageDir )
 config    := setConfig( "dolphin_libretro", option )
