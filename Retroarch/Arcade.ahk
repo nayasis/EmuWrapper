@@ -3,7 +3,7 @@
 
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\Neogeo\King of Fighters '98 - Dream match never ends (snk)(T-ko 1.0 by dsno)"
-imageDir := "\\NAS2\emul\image\ArcadeMame\Outlaws of the Lost Dynasty (en)"
+; imageDir := "\\NAS2\emul\image\ArcadeMame\Outlaws of the Lost Dynasty (en)"
 
 ; EMUL_ROOT := A_ScriptDir "\1.9.0"
 
@@ -47,6 +47,8 @@ loop, % option.core.wait_subprocess
 ExitApp
 
 setBezel(config, imageDir) {
+	if(config.input_overlay == "")
+		return
 	bezel := FileUtil.getFile( imageDir "\_EL_CONFIG\bezel", "i).*\.(cfg)$" )
 	debug("target : " imageDir "\_EL_CONFIG\bezel" )
 	debug("bezel  : " bezel)

@@ -329,3 +329,16 @@ nsw/ryujinx LDN 3.0/emul/portable/
 nsw/ryujinx LDN 3.0/emul/Ryujinx.SDL2.Common.dll.config
 nsw/ryujinx LDN 3.0/emul/etc/gtk-3.0/settings.ini
 ZZ_Study/run/etc/install font/*.ttf
+psx2/PCSX2 1.7.3941/docs/
+psx2/PCSX2 1.7.3941/resources/
+psx2/PCSX2 1.7.3941/translations/
+psx2/share/bios/
+psx2/PCSX2 1.7.3941/snaps
+psx2/PCSX2 1.7.3941/sstates
+psx2/PCSX2 1.7.3941/cache/
+psx2/PCSX2 1.7.3941/inis/playtime.dat
+psx2/PCSX2 1.7.3941/qt.conf
+psx2/PCSX2 1.7.3941/portable.ini
+psx2/PCSX2 1.7.3941/bios
+Retroarch/Apple.cmd
+psx2/PCSX2 1.7.3941/memcards

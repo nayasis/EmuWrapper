@@ -77,15 +77,11 @@ runSub( section, fileIni, properties ) {
 		executorDir   := readIni(fileIni, section, "executor" a_loopfield "Dir",   properties, "_")
 		executorDelay := readIni(fileIni, section, "executor" a_loopfield "Delay", properties, "_")
 		executorWait  := readIni(fileIni, section, "executor" a_loopfield "Wait",  properties, "true")
-
     executorDelay := RegExReplace( executorDelay, "[^0-9]", "" )
     if ( executor != "_" ) {
     	Sleep, %executorDelay%
     }
-
 		if ( executor != "_" ) {
-			executor      := RegExReplace( executor,      "\\",     "\\" )
-			executorDir   := RegExReplace( executorDir,   "\\",     "\\" )
 			executorWait  := (executorWait == "true" || executorWait == "_")
 			runSubHelper( executor, executorDir, executorWait, properties )
 		}
@@ -133,10 +129,14 @@ runSub( section, fileIni, properties ) {
 runSubHelper( executor, executorDir, executorWait, properties ) {
 	if ( executor == "_" )
 		return
+  if( InStr(executor, ":scriptEnter\", true) ) {
+  	param := StrReplace(executor, ":scriptEnter\","")
+  	scriptEnter(param)
+  	return
+  }
 
 	executor      := RegExReplace( executor,      "\\",     "\\" )
 	executorDir   := RegExReplace( executorDir,   "\\",     "\\" )
-
 	if ( executorDir == "_" ) {
 		SplitPath, executor, , executorDir
 	}
@@ -424,6 +424,15 @@ readIni(fileIni, section, key, properties, defaultValue := "_") {
 	IniRead, value, % fileIni, % section, % key, % defaultValue
 	value := removeComment(value)
 	return bindValue(value,properties)
+}
+
+scriptEnter(waitCmd) {
+	WinWait, % waitCmd
+	IfWinExist
+	{
+		WinActivate
+		Send, {Enter}
+	}
 }
 
 /**

@@ -10,10 +10,12 @@ global BIOS_ROOT := "\\NAS2\emul\image\Mame"
 global emulPid   := ""
 
 imageDir := %0%
-imageDir := "\\NAS2\emul\image\Apple2\Action\Karateka"
+; imageDir := "\\NAS2\emul\image\Apple2\Action\Karateka"
+; imageDir := "\\NAS2\emul\image\Apple2\RPG-Times of Lore (en)"
+imageDir := "\\NAS2\emul\image\Apple2\Wings of Fury (en)"
+; imageDir := "\\NAS2\emul\image\Apple2\Bard's Tale III - The Thief of Fate (interplay)(en)\"
 
-
-fddContainer := new DiskContainer( imageDir, "i).*\.dsk\.zip" )
+fddContainer := new DiskContainer( imageDir, "i).*\.(dsk)$" )
 fddContainer.initSlot(2)
 
 romPath .= BIOS_ROOT "\chd;"
@@ -40,9 +42,9 @@ optionMame .= " -priority 1"
 ; optionMame .= " -filter 0"
 ; optionMame .= " -hlsl_enable 0"
 
-option := getConfig(imageDir, fddContainer)
 
-debug(option)
+option := getConfig(imageDir, fddContainer)
+debug(">> here ??")
 
 command := wrap(EMUL_ROOT "\mame.exe") " " optionMame " -rompath " wrap(romPath)
 command .= option
@@ -213,8 +215,7 @@ getConfig(imageDir, fddContainer) {
   }
 
   setMameConfig(option,fddContainer)
-  ; ExitApp
-
+  
   return config
 
 }
@@ -300,6 +301,5 @@ setMameConfig(option, fddContainer) {
   cfgXml.save(cfgFile)
 
   ; debug(cfgXml.xml)
-  ExitApp
-
+  
 }

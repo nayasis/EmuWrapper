@@ -3,12 +3,12 @@
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 cuefile := %0%
-; cuefile := "e:\iso\pcecd\Ginga Ojousama Densetsu Yuna 2 (English v1.0).cue"
+cuefile := "e:\download\Private Eye Dol (English v1.0)\Private Eye Dol (English v1.0)\Private Eye Dol (English v1.0).cue"
 
 modeSize := "2352"
 
 debug( "1. Rip disk" )
-ripDisk(cuefile,modeSize)
+; ripDisk(cuefile,modeSize)
 
 debug( "2. convert wav to ogg" )
 toOggs(cueFile)
@@ -37,8 +37,8 @@ ripDisk(cuefile, modeSize="2352") {
 	; RunWait, % command, % tmpDir,, pid
 	Run, % command, % tmpDir
 
-  ; waitTurboRipClosed()
-  ; renameTempfiles(cuefile)
+  waitTurboRipClosed()
+  renameTempfiles(cuefile)
 
 	; VirtualDisk.close()
 

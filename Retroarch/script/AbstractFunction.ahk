@@ -182,7 +182,7 @@ getCoreName(core) {
 	  "mednafen_psx_libretro"           : "Beetle PSX"
 	  "mednafen_psx_hw_libretro"        : "Beetle PSX HW"
 	  "pcsx_rearmed_libretro"           : "PCSX-ReARMed"
-	  "pcsx2_libretro"                  : "pcsx2 (alpha)"
+	  "pcsx2_libretro"                  : "LRPS2 (alpha)"
 	  "yabause_libretro"                : "Yabause"
 	  "yabasanshiro_libretro"           : "Yabasanshiro"
 	  "mesen_libretro"                  : "Mesen"
