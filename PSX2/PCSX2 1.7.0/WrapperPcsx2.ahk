@@ -3,10 +3,12 @@
 
 emulatorPid := ""
 
+makeLink()
+
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\PSX2\Fight Night Round 3 (en)"
 
-container := new DiskContainer( imageDir, "i).*\.(cso|iso|7z|bin)$" )
+container := new DiskContainer( imageDir, "i).*\.(chd|cso|iso|7z|bin)$" )
 container.initSlot( 1 )
 
 config := getConfig( imageDir, container )
@@ -35,15 +37,7 @@ activateEmulator() {
 	WinActivate, ahk_exe pcsx2.exe,, 10
 }
 
-
 !F4:: ; ALT + F4
-	; Tray.showMessage( "Close" )
-  ;SetWinDelay, 50
-	;PostMessage, 0x111, 40007,,,ahk_class EPSX	; Exit ePSXe ; ControlSend,, {Esc down}{Esc up}, ePSXe ahk_class EPSX
-	;RunWait, taskkill /im ePSXe.exe /f
-  ;ResolutionChanger.restore()
-  ; openMainGui()
-	; Send !{F}{E}
 	Process, Close, %emulatorPid%
   return
 	
@@ -89,14 +83,14 @@ changeCdRom( slotNo, file ) {
 	openMainGui()
 	if ( FileUtil.isExt(file, "mdx") )
 	{
-		Send !{F}{C}{C}
-		if ( VirtualDisk.open(file) == true ) {
-			WinActivate, ahk_exe ePSXe.exe ahk_class #32770
-			Send {Enter}
-		} else {
-			WinActivate, ahk_exe ePSXe.exe ahk_class #32770
-			Send {Escape}
-		}
+		; Send !{F}{C}{C}
+		; if ( VirtualDisk.open(file) == true ) {
+		; 	WinActivate, ahk_exe ePSXe.exe ahk_class #32770
+		; 	Send {Enter}
+		; } else {
+		; 	WinActivate, ahk_exe ePSXe.exe ahk_class #32770
+		; 	Send {Escape}
+		; }
 	} else {
 		Send !{F}{C}{I}
 		Clipboard := file
@@ -140,4 +134,12 @@ getOption( imageDir ) {
 		option := {}
 	}
 	return option
+}
+
+makeLink() {
+	for i,e in ["bios","memcards","snaps","ssates"] {
+		src := A_ScriptDir "\..\share\" e
+		trg := A_ScriptDir "\" e
+		FileUtil.makeLink( src, trg )
+	}
 }

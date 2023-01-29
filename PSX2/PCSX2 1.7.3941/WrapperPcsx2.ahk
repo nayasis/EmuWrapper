@@ -3,22 +3,22 @@
 
 emulatorPid := ""
 
-imageDir := %0%
-; imageDir := "\\NAS2\emul\image\PSX2\Jak 2 (naughty dog)(ko)"
+makeLink()
 
-container := new DiskContainer( imageDir, "i).*\.(cso|iso|7z|bin)$" )
+imageDir := %0%
+; imageDir := "\\NAS2\emul\image\PSX2\Crash - Twin Sanity (traveller's tales)(en)"
+
+container := new DiskContainer( imageDir, "i).*\.(chd|cso|iso|bin)$" )
 container.initSlot( 1 )
 
-config := getConfig( imageDir, container )
+; config := getConfig( imageDir, container )
 
 if ( container.hasDisk() ) {
-
-	command := "pcsx2.exe " wrap(container.getFile(1)) config
+	command := "pcsx2-qtx64-avx2.exe " wrap(container.getFile(1)) config
 	debug(command)
 	RunWait, % command,,,emulatorPid
-
 } else {
-	command := "pcsx2.exe " config
+	command := "pcsx2-qtx64-avx2.exe " config
 	debug(command)
 	RunWait, % command,,,emulatorPid
 }
@@ -35,15 +35,7 @@ activateEmulator() {
 	WinActivate, ahk_exe pcsx2.exe,, 10
 }
 
-
 !F4:: ; ALT + F4
-	; Tray.showMessage( "Close" )
-  ;SetWinDelay, 50
-	;PostMessage, 0x111, 40007,,,ahk_class EPSX	; Exit ePSXe ; ControlSend,, {Esc down}{Esc up}, ePSXe ahk_class EPSX
-	;RunWait, taskkill /im ePSXe.exe /f
-  ;ResolutionChanger.restore()
-  ; openMainGui()
-	; Send !{F}{E}
 	Process, Close, %emulatorPid%
   return
 	
@@ -89,14 +81,14 @@ changeCdRom( slotNo, file ) {
 	openMainGui()
 	if ( FileUtil.isExt(file, "mdx") )
 	{
-		Send !{F}{C}{C}
-		if ( VirtualDisk.open(file) == true ) {
-			WinActivate, ahk_exe ePSXe.exe ahk_class #32770
-			Send {Enter}
-		} else {
-			WinActivate, ahk_exe ePSXe.exe ahk_class #32770
-			Send {Escape}
-		}
+		; Send !{F}{C}{C}
+		; if ( VirtualDisk.open(file) == true ) {
+		; 	WinActivate, ahk_exe ePSXe.exe ahk_class #32770
+		; 	Send {Enter}
+		; } else {
+		; 	WinActivate, ahk_exe ePSXe.exe ahk_class #32770
+		; 	Send {Escape}
+		; }
 	} else {
 		Send !{F}{C}{I}
 		Clipboard := file
@@ -113,9 +105,7 @@ getConfig( imageDir, diskContainer ) {
 	option  := getOption(imageDir)
 
 	config := " "
-	config .= " --portable"
-	config .= " --fullscreen"
-
+	
 	if( diskContainer.hasDisk() ) {
 		if( diskContainer.size() == 1 ) {
 			; config .= " --nogui"
@@ -140,4 +130,12 @@ getOption( imageDir ) {
 		option := {}
 	}
 	return option
+}
+
+makeLink() {
+	for i,e in ["bios","memcards","snaps","sstates"] {
+		src := A_ScriptDir "\..\share\" e
+		trg := A_ScriptDir "\" e
+		FileUtil.makeLink( src, trg )
+	}
 }

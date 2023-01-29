@@ -4,9 +4,9 @@
 global emulatorPid := ""
 
 imageDir := %0%
-imageDir := "\\NAS2\emul\image\xb\Star Wars - Knights of the Old Republic\"
+; imageDir := "\\NAS2\emul\image\xb\WWE Raw 2 (anchor)(en)"
 
-container := new DiskContainer( imageDir, "i).*\.(iso)$" )
+container := new DiskContainer( imageDir, "i).*\.(xiso|iso)$" )
 container.initSlot( 1 )
 
 config := getConfig( imageDir, container )
