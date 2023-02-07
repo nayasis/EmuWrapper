@@ -19,11 +19,11 @@ makeLink() {
 runEmulator( imageFile, config, appendCommand="", callback="", appendImageFile="" ) {
 
 	debug( "imageFile : " imageFile           )
-	debug( "core      : " config.core         )
+	debug( "core      : " config.common_core  )
 	debug( "shader    : " config.video_shader )
 
 	emulator := wrap( EMUL_ROOT "\retroarch.exe" )
-  core     := wrap( EMUL_ROOT "\cores\" config.core ".dll" )
+  core     := wrap( EMUL_ROOT "\cores\" config.common_core ".dll" )
 
 	command := emulator " -L " core
 	command .= " --set-shader " wrap( config.video_shader )
@@ -48,8 +48,8 @@ runEmulator( imageFile, config, appendCommand="", callback="", appendImageFile="
 
 }
 
-getOption( imageDirPath ) {
-	dirConf := imageDirPath "\_EL_CONFIG"
+getOption(imageDir) {
+	dirConf := imageDir "\_EL_CONFIG"
 	IfExist %dirConf%\option\option.json
 	{
 		FileRead, jsonText, %dirConf%\option\option.json
@@ -57,7 +57,17 @@ getOption( imageDirPath ) {
 	} else {
 		option := {}
 	}
-	return option
+	return flattenJson(option)
+}
+
+flattenJson(jsonObj) {
+	res := {}
+	for i, obj in jsonObj {
+		for key, val in obj {
+			res[key] := val
+		}
+	}
+	return res
 }
 
 getGameMeta( imageDirPath ) {
@@ -71,13 +81,13 @@ getGameMeta( imageDirPath ) {
 }
 
 getRomPath( imageDir, option, filter, excludeBios=false ) {
-	if ( option.run.rom != "" ) {
-		romPath := FileUtil.getFile( imageDir, "i)" option.run.rom "\.(" filter ")$" )
+	if ( option.rom != "" ) {
+		romPath := FileUtil.getFile( imageDir, "i)" option.rom "\.(" filter ")$" )
 		if ( romPath != "" ) {
 			return romPath
 		}
 	}
-	filters := StrSplit( nvl(option.run.filter, filter), "|" )
+	filters := StrSplit( nvl(option.filter, filter), "|" )
 	for key, val in filters {
 		romPath := extractRomPath( imageDir, filter, val )
 		if ( romPath != "" ) {
@@ -154,7 +164,7 @@ setConfig( core, option, log:=false ) {
   	fn.( config, option )
   }
 
-  config.core := nvl( nvl(option.core.common_core,option.run.core), core )
+  config.common_core := nvl( option.common_core, core )
   config._overwrite := option.extra["option-overwrite"]
 
   if( log ) {
@@ -247,7 +257,7 @@ writeConfig( config, imageFile="" ) {
   romName := FileUtil.getName( imageFile, false )
   debug( ">> romName : " romName )
 
-	fileConfig := getPathCoreConfig( config.core )
+	fileConfig := getPathCoreConfig( config.common_core )
 
 	; overwrite option
 	overwrite := config._overwrite
@@ -294,9 +304,12 @@ toMapFromProperties( properties ) {
 
 setDefaultConfig( config, option ) {
 
+  for key, val in option
+  	config[key] := val
+
 	config.cache_directory            := FileUtil.getHomeDir() "\retroarch"
-	config.video_driver               := nvl( option.run.videoDriver, "vulkan" )
-	config.video_shader               := nvl( option.run.videoShader, "\\ntsc\\ntsc-320px-svideo-gauss-scanline" )
+	config.video_driver               := nvl( option.videoDriver, "vulkan" )
+	config.video_shader               := nvl( option.videoShader, "\\ntsc\\ntsc-320px-svideo-gauss-scanline" )
 	config.systemfiles_in_content_dir := nvl( option.systemfiles_in_content_dir, "false" )
 
   config.input_enable_hotkey       := "menu"
@@ -306,11 +319,6 @@ setDefaultConfig( config, option ) {
   config.input_disk_prev           := "comma"
   config.input_toggle_fast_forward := "space"
   config.input_toggle_fullscreen   := "f"
-
-  for key, val in option.run
-  	config[key] := val
-  for key, val in option.core
-  	config[key] := val
 
   setVideoShader( config )
   setResolution( config )
