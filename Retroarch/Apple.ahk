@@ -6,7 +6,7 @@
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\Apple2\Action\Karateka"
 ; imageDir := "\\NAS2\emul\image\Apple2\RPG-Times of Lore (en)"
-; imageDir := "\\NAS2\emul\image\Apple2\RPG\Ultima V - Warriors of Destiny"
+imageDir := "\\NAS2\emul\image\Apple2\Ultima V - Warriors of Destiny"
 ; imageDir := "\\NAS2\emul\image\Apple2\Action\Black Magic"
 ; imageDir := "\\NAS2\emul\image\Apple2\Space Rogue (en)"
 ; imageDir := "\\NAS2\emul\image\Apple2\Wings of Fury (en)"
@@ -14,7 +14,7 @@ imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\Apple2\Action-Aliens (en)"
 ; imageDir := "\\NAS2\emul\image\Apple2\2400 A.D"
 ; imageDir := "\\NAS2\emul\image\Apple2\One on One (ea)(en)"
-imageDir := "\\NAS2\emul\image\Apple2\Pitfall 2 - Lost Caverns (activision)(en)"
+; imageDir := "\\NAS2\emul\image\Apple2\Pitfall 2 - Lost Caverns (activision)(en)"
 ; imageDir := "\\NAS2\emul\image\Apple2\Bard's Tale III - The Thief of Fate (interplay)(en)\"
 
 ; EMUL_ROOT := A_ScriptDir "\1.9.0"
@@ -60,14 +60,26 @@ setBezel(config, imageDir) {
 
 makeCmd(imageDir, imageFile) {
 
+  ; cmd .= " apple2ee"
+  ; cmd .= " -listmidi"
+  ; FileUtil.write(imageFile, cmd)
+  ; return
+
 	cmd .= " apple2ee"
 	; cmd .= " apple2e"
 	; cmd .= " apple2c"
+
 	cmd .= " -waitvsync"
 	cmd .= " -rewind"
 	cmd .= " -skip_gameinfo"
-
-	cmd .= " -sl4 mockingboard"
+	; cmd .= " -midiout default"
+	cmd .= " -sl3 midi"
+	; cmd .= " -midiout ""winmm"""
+  ; cmd .= " -sl3:midi:mdout:midiout default" 	
+  cmd .= " -midiout default"
+  ; cmd .= " -midiout default"
+	cmd .= " -sl4 phasor"
+	; cmd .= " -sl5 phasor"
 	; cmd .= " -sl5 mockingboard"
   cmd .= " -gameio joy"
   cmd .= " -rp"

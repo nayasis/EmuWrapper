@@ -12,8 +12,9 @@ global emulPid   := ""
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\Apple2\Action\Karateka"
 ; imageDir := "\\NAS2\emul\image\Apple2\RPG-Times of Lore (en)"
-imageDir := "\\NAS2\emul\image\Apple2\Wings of Fury (en)"
+; imageDir := "\\NAS2\emul\image\Apple2\Wings of Fury (en)"
 ; imageDir := "\\NAS2\emul\image\Apple2\Bard's Tale III - The Thief of Fate (interplay)(en)\"
+imageDir := "\\NAS2\emul\image\Apple2\Ultima V - Warriors of Destiny"
 
 fddContainer := new DiskContainer( imageDir, "i).*\.(dsk)$" )
 fddContainer.initSlot(2)
@@ -28,6 +29,7 @@ optionMame .= " -rewind"
 optionMame .= " -skip_gameinfo"
 ; optionMame .= " -no_lag"
 optionMame .= " -priority 1"
+; optionMame .= " -midiout ""Microsoft MIDI Mapper (default)"""
 ; optionMame .= " -gamma 0.80"
 
 ; optionMame .= " -screen ""\\.\DISPLAY1"""
@@ -196,15 +198,14 @@ getConfig(imageDir, fddContainer) {
   }
 
   ; hdd
-  hdd    := FileUtil.getFiles( currDir, "i).*\.(po|hdd)\.zip$" )
-  hddCnt := hdd.MaxIndex()
-  if(hddCnt > 0) {
+  hdds  := FileUtil.getFiles(imageDir, "i).*\.(po)$")
+  if(hdds.MaxIndex() >= 1)
     config .= " -sl7 cffa2"
-  }
-  for i in range(1, Min(2,hddCnt) + 1) {
-    ; debug("hdd index:" i)
-  	config .= " -hard" i " " wrap(hdd[i])
-  }
+  for i, disk in hdds {
+    config .= " -hard" i " " wrap(disk)
+    if(i >= 2)
+      break
+  }  
 
   if(option.core.joystick == "") {
     config .= " -gameio joy"
@@ -213,6 +214,14 @@ getConfig(imageDir, fddContainer) {
     ; gizmo
     ; https://wiki.mamedev.org/index.php/Driver:Apple_II
   }
+
+  ; config .= " -sl3 midi ""Microsoft MIDI Mapper"""
+  config .= " -sl3 midi"
+  ; config .= " -sl3:midi:out ""Microsoft MIDI Mapper"""
+  ; config .= " -sl3:midi:midiout mpu401"
+  config .= " -midiout default"
+  ; config .= " -midiout mpu401"
+  ; config .= " -mdout mpu401"
 
   setMameConfig(option,fddContainer)
   
