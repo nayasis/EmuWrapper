@@ -3,6 +3,7 @@
 
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\PlayStation\R4 Ridge Racer Type 4 (en)"
+; imageDir := "\\NAS2\emul\image\PlayStation\Super Robot Taisen Alpha - Limited Edition (T-ko)"
 
 option := getOption( imageDir )
 setCustomFont( imageDir, option )
