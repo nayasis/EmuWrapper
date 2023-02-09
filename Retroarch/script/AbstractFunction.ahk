@@ -19,23 +19,23 @@ makeLink() {
 runEmulator( imageFile, config, appendCommand="", callback="", appendImageFile="" ) {
 
 	debug( "imageFile : " imageFile           )
-	debug( "core      : " config.common_core  )
+	debug( "core      : " config.core         )
 	debug( "shader    : " config.video_shader )
 
 	emulator := wrap( EMUL_ROOT "\retroarch.exe" )
-  core     := wrap( EMUL_ROOT "\cores\" config.common_core ".dll" )
+  core     := wrap( EMUL_ROOT "\cores\" config.core ".dll" )
 
 	command := emulator " -L " core
-	command .= " --set-shader " wrap( config.video_shader )
-	if ( appendCommand != "" )
+	command .= " --set-shader " wrap(config.video_shader)
+	if( appendCommand != "" )
 		command .= " " appendCommand
-	if ( imageFile != "" )
+	if( imageFile != "" )
 		command .= " " wrap( imageFile )
-	if ( appendImageFile != "" )
+	if( appendImageFile != "" )
 		command .= " " wrap( appendImageFile )
 
   debug( "command   : " command )
-	Run, % command, % EMUL_ROOT,Hide, emulPid
+	Run, % command, % EMUL_ROOT, Hide, emulPid
 
 	waitEmulator()
 	IfWinExist
@@ -124,19 +124,14 @@ readM3U( path ) {
 			Continue
 		diskContainer.addPath( disc )
 		diskContainer.slot[0] := 1
-
 	}
 }
 
-waitEmulator( delay:=15 ) {
+waitEmulator(delay:=15) {
 	WinWait, ahk_class RetroArch ahk_exe retroarch.exe,, % delay
-	IfWinExist
-	{
-	  ; activateEmulator()
-	}
 }
 
-activateEmulator( delay:="" ) {
+activateEmulator(delay:="") {
 	loop, 50
 	{
 		WinActivate, ahk_class RetroArch ahk_exe retroarch.exe
@@ -148,26 +143,36 @@ activateEmulator( delay:="" ) {
 	}
 }
 
-waitCloseEmulator( emulPid:="" ) {
+waitCloseEmulator(emulPid:="") {
 	WinWaitClose, ahk_class RetroArch ahk_exe retroarch.exe,,
 	if( emulPid != "" )
 	  Process, WaitClose, emulPid
 }
 
-setConfig( core, option, log:=false ) {
+setConfig(defaultCore, option, log:=false) {
 
 	config := {}
+  for key, val in option
+  	config[key] := val
 
-  setDefaultConfig( config, option )
-  fn := Func( "setCoreConfig" )
+  config.core := nvl(option.core, defaultCore)
+  setDefaultConfig(config, option)
+
+  fn := Func("setCoreConfig")
   if( IsFunc(fn) ) {
-  	fn.( config, option )
+  	fn.(config, option)
   }
 
-  config.common_core := nvl( option.common_core, core )
-  config._overwrite := option.extra["option-overwrite"]
+  ; overwrite option
+  if(option.option_overwrite != "") {
+  	overwrite := toMapFromProperties(option.option_overwrite)
+  	; if(log)
+  	; 	debug( ">> overwrite option`n" JSON.dump(overwrite) )
+		for key, val in overwrite
+			config[key] := val
+  }
 
-  if( log ) {
+  if(log) {
 	  debug( ">> FROM option`n" JSON.dump(option) )
 	  debug( ">> TO config`n" JSON.dump(config) )
   }
@@ -176,7 +181,6 @@ setConfig( core, option, log:=false ) {
 }
 
 getCoreName(core) {
-
 	map := ({
 	(join,
 	  "4do_libretro"                    : "4DO"
@@ -224,69 +228,51 @@ getCoreName(core) {
 		"dosbox_svn_libretro"             : "DOSBox-SVN"
 		"dosbox_core_libretro"            : "DOSBox-core"
 	)})
-
   coreName := map[core]
   if( coreName == "" ) {
 	  coreName := RegExReplace( core, "i)_libretro", "" )
 	  StringUpper, coreName, coreName
   }
-
   return coreName
-
 }
 
-getPathCoreConfig( core ) {
-
-  trgCore := getCoreName(core)
-
-	dir  := EMUL_ROOT "\config\" trgCore
-	path := dir "\" trgCore
-	FileUtil.makeDir( dir )
-
-	debug(">> dir  : " dir )
-	debug(">> path : " path )
-
-	return path
-
-}
-
-writeConfig( config, imageFile="" ) {
+writeConfig(config, imageFile="") {
 
 	; debug( ">> config`n" JSON.dump(config) )
-
-  romName := FileUtil.getName( imageFile, false )
+  romName := FileUtil.getName(imageFile, false)
   debug( ">> romName : " romName )
 
-	fileConfig := getPathCoreConfig( config.common_core )
+  coreName  := getCoreName(config.core)
 
-	; overwrite option
-	overwrite := config._overwrite
-	overwrite := toMapFromProperties( overwrite )
-	; debug( ">> overwrite option`n" JSON.dump(overwrite) )
-
-	config.Delete("_overwrite")
-	for key, val in overwrite {
-		config[ key ] := val
-	}
-
-	; write option to config file
-	buffer := ""
+	; write remap
+	remap := ""
+	opt   := ""
 	for key, val in config {
-		debug( RegExReplace(key,"#{romname}",romName) ":" val )
-		buffer .= RegExReplace(key,"#{romname}",romName) " = """ val """`n"
+		if( RegExMatch(key, "i)^input_libretro_device-p(\d)$" ||
+			  RegExMatch(key, "i)^input_player(\d)_analog_dpad_mode$"
+		) {
+			remap .= key " = " wrap(val) "`n"
+		} else {
+			opt   .= RegExReplace(key,"#{romname}",romName) " = wrap(val) "`n"
+		}
 	}
 
-	debug( ">> config file : " fileConfig ".cfg" )
-
-	FileUtil.write( fileConfig ".cfg", buffer )
-	FileUtil.write( fileConfig ".opt", buffer )
+	if(opt != "") {
+  	configDir := EMUL_ROOT "\config\" coreName
+  	FileUtil.makeDir(configDir)		
+		FileUtil.write( configDir "\" coreName ".cfg", buffer )
+		FileUtil.write( configDir "\" coreName ".opt", buffer )
+	}
+	if(remap != "") {
+		remapDir := EMUL_ROOT "\config\remaps\" coreName
+		FileUtil.makeDir(remapDir)
+		FileUtil.write(EMUL_ROOT "\config\remaps\" coreName "\" coreName ".rmp", remap)
+	}
 
 }
 
 toMapFromProperties( properties ) {
-
 	map := {}
-
 	Loop, parse, properties, `n
 	{
 		words := StrSplit( A_LoopField, "=" )
@@ -294,22 +280,16 @@ toMapFromProperties( properties ) {
 		val   := Trim(words[2])
 		val   := RegExReplace( val, "^""", "" )
 		val   := RegExReplace( val, """$", "" )
-
-    map[ key ] := val
+    map[key] := val
 	}
-
 	return map
-
 }
 
 setDefaultConfig( config, option ) {
 
-  for key, val in option
-  	config[key] := val
-
 	config.cache_directory            := FileUtil.getHomeDir() "\retroarch"
-	config.video_driver               := nvl( option.videoDriver, "vulkan" )
-	config.video_shader               := nvl( option.videoShader, "\\ntsc\\ntsc-320px-svideo-gauss-scanline" )
+	config.video_driver               := nvl( option.video_driver, "vulkan" )
+	config.video_shader               := nvl( option.video_shader, "\\ntsc\\ntsc-320px-svideo-gauss-scanline" )
 	config.systemfiles_in_content_dir := nvl( option.systemfiles_in_content_dir, "false" )
 
   config.input_enable_hotkey       := "menu"
@@ -333,7 +313,7 @@ setVideoShader( config ) {
 	} else {
 		config.video_shader := "shaders_slang\" config.video_shader ".slangp"
 	}
-	config.video_shader := FileUtil.normalizePath( config.video_shader )
+	config.video_shader := FileUtil.normalizePath(config.video_shader)
 }
 
 setResolution( config ) {
