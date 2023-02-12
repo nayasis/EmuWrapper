@@ -41,8 +41,8 @@ sendKey( key ) {
   Sleep, 50
 }
 
-wrap( command ) {
-    return """" command """"
+wrap( command, escapeChar:="" ) {
+    return escapeChar """" command escapeChar """"
 }
 
 nvl( val, defaultVal ) {
