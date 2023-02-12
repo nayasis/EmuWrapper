@@ -2,17 +2,20 @@
 #WinActivateForce
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-global EMUL_ROOT     := A_ScriptDir "\1.9.14"
+; global EMUL_ROOT     := A_ScriptDir "\1.9.14"
 ; global EMUL_ROOT     := A_ScriptDir "\1.10.3"
+global EMUL_ROOT     := A_ScriptDir "\1.14.0"
 global diskContainer := new DiskContainer()
 
 makeLink()
 
 makeLink() {
-	for i,e in ["assets","autoconfig","bearer","cheats","config","cores","database","filters","iconengines","imageformats","info","layouts","overlays","platforms","recordings","saves","screenshots","shaders","states","styles","system","thumbnails","playlists","downloads"] {
+	for i,e in ["assets","autoconfig","bearer","cheats","config","cores","database","filters","iconengines","imageformats","info","layouts","overlays","platforms","recordings","saves","screenshots","shaders","states","styles","system","thumbnails","playlists","downloads", "logs"] {
 		src := A_ScriptDir "\share\" e
 		trg := EMUL_ROOT "\" e
-		FileUtil.makeLink( src, trg )
+		if(FileUtil.isSymlink(trg))
+			continue
+		FileUtil.makeLink(src, trg, true)
 	}
 }
 
@@ -248,26 +251,23 @@ writeConfig(config, imageFile="") {
 	remap := ""
 	opt   := ""
 	for key, val in config {
-		if( RegExMatch(key, "i)^input_libretro_device-p(\d)$" ||
-			  RegExMatch(key, "i)^input_player(\d)_analog_dpad_mode$"
-		) {
+		if( RegExMatch(key, "i)^input_libretro_device_p(\d)$") || RegExMatch(key, "i)^input_player(\d)_analog_dpad_mode$") ) {
 			remap .= key " = " wrap(val) "`n"
 		} else {
-			opt   .= RegExReplace(key,"#{romname}",romName) " = wrap(val) "`n"
+			opt   .= RegExReplace(key,"#{romname}",romName) " = " wrap(val) "`n"
 		}
 	}
 
-	if(opt != "") {
-  	configDir := EMUL_ROOT "\config\" coreName
-  	FileUtil.makeDir(configDir)		
-		FileUtil.write( configDir "\" coreName ".cfg", buffer )
-		FileUtil.write( configDir "\" coreName ".opt", buffer )
-	}
-	if(remap != "") {
-		remapDir := EMUL_ROOT "\config\remaps\" coreName
-		FileUtil.makeDir(remapDir)
-		FileUtil.write(EMUL_ROOT "\config\remaps\" coreName "\" coreName ".rmp", remap)
-	}
+  ; debug( ">> remap`n" remap)
+
+	configDir := EMUL_ROOT "\config\" coreName
+	FileUtil.makeDir(configDir)		
+	FileUtil.write( configDir "\" coreName ".cfg", opt )
+	FileUtil.write( configDir "\" coreName ".opt", opt )
+
+	remapDir := EMUL_ROOT "\config\remaps\" coreName
+	FileUtil.makeDir(remapDir)
+	FileUtil.write(EMUL_ROOT "\config\remaps\" coreName "\" coreName ".rmp", remap)
 
 }
 
