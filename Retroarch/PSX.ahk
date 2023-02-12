@@ -3,11 +3,11 @@
 
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\PlayStation\R4 Ridge Racer Type 4 (en)"
-; imageDir := "\\NAS2\emul\image\PlayStation\Super Robot Taisen Alpha - Limited Edition (T-ko)"
+; imageDir := "\\NAS2\emul\image\PlayStation\Super Robot Taisen Alpha (banpresto)(T-ko 230204 by solony)"
 
 option := getOption( imageDir )
 setCustomFont( imageDir, option )
-config := setConfig( "mednafen_psx_libretro", option, true )
+config := setConfig( "pcsx_rearmed_libretro", option, true )
 imageFile := getRomPath( imageDir, option, "m3u|chd|cue|pbp" )
 
 ; config.core := "pcsx_rearmed_libretro"
