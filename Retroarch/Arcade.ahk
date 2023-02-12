@@ -11,7 +11,7 @@ option    := getOption(imageDir)
 config    := setConfig("mame_libretro",option,false)
 imageFile := getRomPath(imageDir,option,"zip|7z",true)
 
-config.core := "kronos_libretro"
+; config.core := "kronos_libretro"
 ; config.core := "fbalpha2012_libretro"
 ; config.core := "fbalpha2012_cps1_libretro"
 ; config.core := "fbalpha2012_cps2_libretro"
@@ -26,12 +26,14 @@ config.core := "kronos_libretro"
 ; 	imageFile := toCliArgument( imageFile )
 ; } else
 if( RegExMatch(config.core, "i)^mame.*") ) {
-	linkResource( config, imageFile )
+	config.mame_boot_from_cli := "enabled"
+	appendConfig := toCliArgument(imageFile)
+	; linkResource( config, imageFile )
 }
 
 setBezel(config,imageDir)
 writeConfig(config, imageFile)
-runEmulator(imageFile, config)
+runEmulator(imageFile, config, appendConfig)
 waitCloseEmulator()
 
 loop, % option.core.wait_subprocess
@@ -59,11 +61,10 @@ setBezel(config, imageDir) {
 }
 
 toCliArgument(imageFile) {
-	romName := FileUtil.getName(imageFile,false)
-	dir     := FileUtil.getDir(imageFile)
-	args    := romName " -rp \""" dir "\"""
-	args    .= " -artpath \""" dir "\artwork\"""
-	args    .= " -samplepath \""" dir "\samples\"""
+	dir  := FileUtil.getDir(imageFile)
+	args := " -rp " wrap(dir, "\")
+	args .= " -artpath " wrap( dir "\artwork", "\")
+  args .= " -samplepath " wrap( dir "\samples", "\")	
 	return args
 }
 
