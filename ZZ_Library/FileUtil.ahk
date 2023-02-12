@@ -274,7 +274,7 @@ class FileUtil {
     if( ! this.exist(src) )
     	return false
 
-  	if( deleteTrg == true && this.isSymlink(trg) ) {
+  	if( deleteTrg == true ) {
   		this.delete( trg )
   	}
 
@@ -286,7 +286,7 @@ class FileUtil {
 		}
 		debug( cmd )
 		; run %ComSpec% %cmd%,,
-		run %ComSpec% %cmd%,, Hide
+		runWait %ComSpec% %cmd%,, Hide
 		; this.cli( cmd )
 
 		return true
