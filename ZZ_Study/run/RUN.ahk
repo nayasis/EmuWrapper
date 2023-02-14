@@ -78,7 +78,7 @@ runSub( section, fileIni, properties ) {
 		executorDelay := readIni(fileIni, section, "executor" a_loopfield "Delay", properties, "_")
 		executorWait  := readIni(fileIni, section, "executor" a_loopfield "Wait",  properties, "true")
     executorDelay := RegExReplace( executorDelay, "[^0-9]", "" )
-    if ( executor != "_" ) {
+    if ( executorDelay != "_" ) {
     	Sleep, %executorDelay%
     }
 		if ( executor != "_" ) {
