@@ -309,8 +309,3 @@ EucEncode( p_data, p_reserved=true, p_encode=true ) {
 EucDecode( p_data ) {
    return, EucEncode( p_data, true, false )
 }
-
-getRawParameter() {
-   cli := DllCall("GetCommandLine", "Str")
-   return Trim(Substr(cli, (Instr(cli , A_ScriptName) + StrLen(A_ScriptName) + 2) ))
-}
