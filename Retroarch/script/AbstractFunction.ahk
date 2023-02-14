@@ -2,10 +2,9 @@
 #WinActivateForce
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-; global EMUL_ROOT     := A_ScriptDir "\1.9.14"
-; global EMUL_ROOT     := A_ScriptDir "\1.10.3"
 global EMUL_ROOT     := A_ScriptDir "\1.14.0"
 global diskContainer := new DiskContainer()
+global CFG_RA_APPEND := EMUL_ROOT "\retroarch.append.cfg"
 
 makeLink()
 
@@ -19,7 +18,7 @@ makeLink() {
 	}
 }
 
-runEmulator( imageFile, config, appendCommand="", callback="", appendImageFile="" ) {
+runEmulator(imageFile, config, appendCommand="", callback="", appendImageFile="") {
 
 	debug( "imageFile : " imageFile           )
 	debug( "core      : " config.core         )
@@ -29,6 +28,7 @@ runEmulator( imageFile, config, appendCommand="", callback="", appendImageFile="
   core     := wrap( EMUL_ROOT "\cores\" config.core ".dll" )
 
 	command := emulator " -L " core
+	command .= " --appendconfig " wrap(CFG_RA_APPEND)
 	command .= " --set-shader " wrap(config.video_shader)
 	if( appendCommand != "" )
 		command .= " " appendCommand
@@ -52,6 +52,7 @@ runEmulator( imageFile, config, appendCommand="", callback="", appendImageFile="
 }
 
 getOption(imageDir) {
+	setAppendConfig(imageDir)
 	dirConf := imageDir "\_EL_CONFIG"
 	IfExist %dirConf%\option\option.json
 	{
@@ -71,6 +72,19 @@ flattenJson(jsonObj) {
 		}
 	}
 	return res
+}
+
+setAppendConfig(imageDir) {
+	dirRoot  := imageDir "\_EL_CONFIG\save\ra"
+	dirSave  := dirRoot "\save"
+	dirState := dirRoot "\states"
+
+	FileUtil.makeDir(dirSave)
+	FileUtil.makeDir(dirState)
+
+	cfg := "savefile_directory = " wrap(dirSave) "`n"
+	cfg .= "savestate_directory = " wrap(dirState) "`n"
+	FileUtil.write(CFG_RA_APPEND, cfg)
 }
 
 getGameMeta( imageDirPath ) {
