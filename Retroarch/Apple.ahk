@@ -19,31 +19,24 @@ imageDir := "\\NAS2\emul\image\Apple2\Ultima V - Warriors of Destiny"
 
 ; EMUL_ROOT := A_ScriptDir "\1.9.0"
 
-option    := getOption(imageDir)
-config    := setConfig("mame_libretro",option,false)
-
-imageFile := A_ScriptDir "\Apple.cmd"
-
-makeCmd(imageDir, imageFile)
-config.input_overlay := "c:\app\emulator\Retroarch\share\overlays\apple_iie.cfg"
-
-
-linkResource()
+option  := getOption(imageDir)
+config  := setConfig("mame_libretro",option,false)
+fileCmd := makeCmd(imageDir, config)
 
 setBezel(config,imageDir)
 writeConfig(config, imageFile)
-runEmulator(imageFile, config)
+runEmulator(fileCmd, config)
 waitCloseEmulator()
 
-loop, % option.core.wait_subprocess
-{
-	debug( "wait sub process : " A_Index )
-	waitEmulator(1)
-	IfWinExist
-	{
-		waitCloseEmulator()
-	}
-}
+; loop, % option.core.wait_subprocess
+; {
+; 	debug( "wait sub process : " A_Index )
+; 	waitEmulator(1)
+; 	IfWinExist
+; 	{
+; 		waitCloseEmulator()
+; 	}
+; }
 
 ExitApp
 
@@ -58,59 +51,65 @@ setBezel(config, imageDir) {
 	}
 }
 
-makeCmd(imageDir, imageFile) {
+makeCmd(imageDir, config) {
 
-  ; cmd .= " apple2ee"
-  ; cmd .= " -listmidi"
-  ; FileUtil.write(imageFile, cmd)
-  ; return
+	fileCmd := A_ScriptDir "\Apple.cmd"
 
-	cmd .= " apple2ee"
-	; cmd .= " apple2e"
-	; cmd .= " apple2c"
+	cmd .= nvl(config.machine, "apple2ee")
 
 	cmd .= " -waitvsync"
 	cmd .= " -rewind"
 	cmd .= " -skip_gameinfo"
-	; cmd .= " -midiout default"
-	cmd .= " -sl3 midi"
-	; cmd .= " -midiout ""winmm"""
-  ; cmd .= " -sl3:midi:mdout:midiout default" 	
-  cmd .= " -midiout default"
-  ; cmd .= " -midiout default"
-	cmd .= " -sl4 phasor"
-	; cmd .= " -sl5 phasor"
-	; cmd .= " -sl5 mockingboard"
-  cmd .= " -gameio joy"
-  cmd .= " -rp"
-	cmd .= " " wrap( A_ScriptDir "\share\system\mame\bios\apple")
+
+  cmd .= bindOption("samplepath", wrap(EMUL_ROOT "\system\mame\sample-dsk") )
+
+  cmd .= bindOption("ramsize", config.ramsize)
+  cmd .= bindOption("gameio",  config.gameio)
+  cmd .= bindOption("aux",     config.aux)
+  cmd .= bindOption("sl0",     config.sl0)
+  cmd .= bindOption("sl1",     config.sl1)
+  cmd .= bindOption("sl2",     config.sl2)
+  cmd .= bindOption("sl3",     config.sl3)
+  cmd .= bindOption("sl4",     config.sl4)
+  cmd .= bindOption("sl5",     config.sl5)
+  cmd .= bindOption("sl6",     config.sl6)
+  cmd .= bindOption("sl7",     config.sl7)
+
+  cmd .= bindOption("rp", wrap( A_ScriptDir "\share\system\mame\bios\apple"))
 
   disks := FileUtil.getFiles(imageDir, "i).*\.(dsk)$")
+  if(config.single_fdd == "Y") {
+  	diskCnt := 1
+  } else {
+  	diskCnt := min(4, disks.maxIndex())
+  }
+
   for i, disk in disks {
-    cmd .= " -flop" i " " wrap(disk)
-    if(i >= 2)
+  	cmd .= bindOption("flop" i, wrap(disk))
+    if(i >= diskCnt)
     	break
   }
 
-  ; hdds  := FileUtil.getFiles(imageDir, "i).*\.(hdd|po)\.zip$")
   hdds  := FileUtil.getFiles(imageDir, "i).*\.(po)$")
   if(hdds.MaxIndex() >= 1)
   	cmd .= " -sl7 cffa2"
   for i, disk in hdds {
-    cmd .= " -hard" i " " wrap(disk)
+  	cmd .= bindOption("hard" i, wrap(disk))
     if(i >= 2)
     	break
   }
 
   debug(">> cmd : " cmd)
-  FileUtil.write(imageFile, cmd)
+  FileUtil.write(fileCmd, cmd)
+  return fileCmd
 
 }
 
-linkResource() {
-	pathSystem := EMUL_ROOT "\system\mame"
-	FileUtil.makeLink( pathSystem "\samples-origin",  pathSystem "\samples", true )
+bindOption(key,value) {
+	if(value == "")
+		return ""
+	else
+		return " -" key " " value
 }
-
 
 #include %A_ScriptDir%\script\AbstractHotkey.ahk

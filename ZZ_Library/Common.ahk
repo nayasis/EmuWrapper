@@ -51,6 +51,22 @@ nvl( val, defaultVal:="" ) {
   return defaultVal
 }
 
+min(a, b) {
+  if( a > b ) {
+    return b
+  } else {
+    return a
+  }
+}
+
+max(a, b) {
+  if( a > b ) {
+    return a
+  } else {
+    return b
+  }
+}
+
 sortArray( Array ) {
   t := Object()
   for k, v in Array
