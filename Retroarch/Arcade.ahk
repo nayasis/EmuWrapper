@@ -20,19 +20,19 @@ imageFile := getRomPath(imageDir,option,"zip|7z",true)
 ; config.core := "mame2016_libretro"
 ; config.core := "mame2003_plus_libretro"
 
-; modify command argument : imageFile
-; if( config.core == "mame_libretro" ) {
-; 	config.mame_boot_from_cli := "enabled"
-; 	imageFile := toCliArgument( imageFile )
-; } else
-if( RegExMatch(config.core, "i)^mame.*") ) {
+isMame := RegExMatch(config.core, "i)^mame.*")
+
+if(isMame) {
 	config.mame_boot_from_cli := "enabled"
-	appendConfig := toCliArgument(imageFile)
-	; linkResource( config, imageFile )
 }
 
 setBezel(config,imageDir)
 writeConfig(config, imageFile)
+
+if( isMame ) {
+	imageFile := toCliArgument(imageFile)
+}
+
 runEmulator(imageFile, config, appendConfig)
 waitCloseEmulator()
 
@@ -52,29 +52,37 @@ setBezel(config, imageDir) {
 	if(config.input_overlay == "")
 		return
 	bezel := FileUtil.getFile( imageDir "\_EL_CONFIG\bezel", "i).*\.(cfg)$" )
-	debug("target : " imageDir "\_EL_CONFIG\bezel" )
-	debug("bezel  : " bezel)
 	if(bezel != "") {
-	; config.input_overlay := "\\NAS2\emul\image\FBA\Gunbird (psikyo)(T-ko 1.0 by dsno)\_EL_CONFIG\bezel\gunbird.cfg"
 		config.input_overlay := bezel
 	}
 }
 
 toCliArgument(imageFile) {
-	dir  := FileUtil.getDir(imageFile)
-	args := " -rp " wrap(dir, "\")
-	args .= " -artpath " wrap( dir "\artwork", "\")
-  args .= " -samplepath " wrap( dir "\samples", "\")	
-	return args
+
+	dirRom     := FileUtil.getDir(imageFile)
+	dirArtwork := dirRom "\artwork"
+	dirSample  := dirRom "\samples"
+	pathCmd    := A_ScriptDir "\Arcade.cmd"
+
+	args := " -rp " wrap(dirRom)
+	if( FileUtil.exist(dirArtwork) )
+		args .= " -artpath " wrap(dirArtwork)
+	if( FileUtil.exist(dirSample) )
+		args .= " -samplepath " wrap(dirSample)
+	args .= wrap(imageFile)
+
+	FileUtil.write(pathCmd, args)
+	return pathCmd
+
 }
 
-linkResource(config, imageFile) {
-	pathSystem := EMUL_ROOT "\system\mame"
-	FileUtil.makeDir( pathSystem )
-	imageDir := FileUtil.getDir(imageFile)
-	for i,v in ["samples","artwork"] {
-		FileUtil.makeLink( imageDir "\" v,  pathSystem "\" v, true )
-	}
-}
+; linkResource(config, imageFile) {
+; 	pathSystem := EMUL_ROOT "\system\mame"
+; 	FileUtil.makeDir( pathSystem )
+; 	imageDir := FileUtil.getDir(imageFile)
+; 	for i,v in ["samples","artwork"] {
+; 		FileUtil.makeLink( imageDir "\" v,  pathSystem "\" v, true )
+; 	}
+; }
 
 #include %A_ScriptDir%\script\AbstractHotkey.ahk
