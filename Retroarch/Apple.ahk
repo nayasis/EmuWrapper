@@ -6,7 +6,8 @@
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\Apple2\Action\Karateka"
 ; imageDir := "\\NAS2\emul\image\Apple2\RPG-Times of Lore (en)"
-imageDir := "\\NAS2\emul\image\Apple2\Ultima V - Warriors of Destiny"
+; imageDir := "\\NAS2\emul\image\Apple2\Ultima V - Warriors of Destiny"
+; imageDir := "\\NAS2\emul\image\Apple2\Ultima III - Exodus (en)"
 ; imageDir := "\\NAS2\emul\image\Apple2\Action\Black Magic"
 ; imageDir := "\\NAS2\emul\image\Apple2\Space Rogue (en)"
 ; imageDir := "\\NAS2\emul\image\Apple2\Wings of Fury (en)"
@@ -16,8 +17,7 @@ imageDir := "\\NAS2\emul\image\Apple2\Ultima V - Warriors of Destiny"
 ; imageDir := "\\NAS2\emul\image\Apple2\One on One (ea)(en)"
 ; imageDir := "\\NAS2\emul\image\Apple2\Pitfall 2 - Lost Caverns (activision)(en)"
 ; imageDir := "\\NAS2\emul\image\Apple2\Bard's Tale III - The Thief of Fate (interplay)(en)\"
-
-; EMUL_ROOT := A_ScriptDir "\1.9.0"
+; imageDir := "\\NAS2\emul\image\Apple2\Wings of Fury (en)"
 
 option  := getOption(imageDir)
 config  := setConfig("mame_libretro",option,false)
@@ -27,16 +27,6 @@ setBezel(config,imageDir)
 writeConfig(config, imageFile)
 runEmulator(fileCmd, config)
 waitCloseEmulator()
-
-; loop, % option.core.wait_subprocess
-; {
-; 	debug( "wait sub process : " A_Index )
-; 	waitEmulator(1)
-; 	IfWinExist
-; 	{
-; 		waitCloseEmulator()
-; 	}
-; }
 
 ExitApp
 
@@ -61,7 +51,8 @@ makeCmd(imageDir, config) {
 	cmd .= " -rewind"
 	cmd .= " -skip_gameinfo"
 
-  cmd .= bindOption("samplepath", wrap(EMUL_ROOT "\system\mame\sample-dsk") )
+  cmd .= bindOption("samplepath", wrap(EMUL_ROOT "\system\mame\console\common\samples") )
+  cmd .= bindOption("cfg_directory", wrap(EMUL_ROOT "\system\mame\console\common\cfg") )
 
   cmd .= bindOption("ramsize", config.ramsize)
   cmd .= bindOption("gameio",  config.gameio)
@@ -75,13 +66,13 @@ makeCmd(imageDir, config) {
   cmd .= bindOption("sl6",     config.sl6)
   cmd .= bindOption("sl7",     config.sl7)
 
-  cmd .= bindOption("rp", wrap( A_ScriptDir "\share\system\mame\bios\apple"))
+  cmd .= bindOption("rp", wrap( EMUL_ROOT "\system\mame\console\apple\bios"))
 
-  disks := FileUtil.getFiles(imageDir, "i).*\.(dsk)$")
+  disks := FileUtil.getFiles(imageDir, "i).*\.(dsk|woz|nib)$")
   if(config.single_fdd == "Y") {
   	diskCnt := 1
   } else {
-  	diskCnt := min(4, disks.maxIndex())
+  	diskCnt := min(2, disks.maxIndex())
   }
 
   for i, disk in disks {
@@ -90,9 +81,7 @@ makeCmd(imageDir, config) {
     	break
   }
 
-  hdds  := FileUtil.getFiles(imageDir, "i).*\.(po)$")
-  if(hdds.MaxIndex() >= 1)
-  	cmd .= " -sl7 cffa2"
+  hdds  := FileUtil.getFiles(imageDir, "i).*\.(po|2mg)$")
   for i, disk in hdds {
   	cmd .= bindOption("hard" i, wrap(disk))
     if(i >= 2)
