@@ -7,9 +7,9 @@ imageDir  := %0%
 ; imageDir  := "\\NAS2\emul\image\Apple2\Threshold (on-line)(en)"
 ; imageDir  := "\\NAS\emul\image\Apple2\RPG\Times of Lore (en)"
 ; imageDir  := "\\NAS\emul\image\Apple2\Shooting\Wings of Fury (en)"
-; imageDir  := "\\NAS2\emul\image\Apple2\RPG-Bard's Tale III - The Thief of Fate"
+; imageDir  := "\\NAS2\emul\image\Apple2\Deathlord"
 
-fddContainer := new DiskContainer( imageDir, "i).*\.dsk\.zip" )
+fddContainer := new DiskContainer( imageDir, "i).*\.(dsk|woz|nib)$" )
 fddContainer.initSlot( 2 )
 
 option := setConfig( imageDir, fddContainer )
@@ -244,7 +244,7 @@ setConfig(imageDir, fddContainer) {
   }
 
   ; hdd
-  hdd := FileUtil.getFiles( currDir, "i).*\.(po|hdd)\.zip$" )
+  hdd := FileUtil.getFiles( currDir, "i).*\.(po|2mg)$" )
   Loop, % hdd.MaxIndex()
   {
     if( a_index > 2 )
