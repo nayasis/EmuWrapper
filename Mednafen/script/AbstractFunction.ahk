@@ -1,42 +1,59 @@
 #NoEnv
+#WinActivateForce
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-global EMUL_ROOT     := A_ScriptDir "\1.24.3"
+global EMUL_ROOT     := A_ScriptDir "\1.14.0"
 global diskContainer := new DiskContainer()
+global CFG_RA_APPEND := EMUL_ROOT "\retroarch.append.cfg"
 
-runEmulator( imageFile, config, appendCommand="", callback="" ) {
+makeLink()
+
+makeLink() {
+	for i,e in ["assets","autoconfig","bearer","cheats","config","cores","database","filters","iconengines","imageformats","info","layouts","overlays","platforms","recordings","saves","screenshots","shaders","states","styles","system","thumbnails","playlists","downloads", "logs"] {
+		src := A_ScriptDir "\share\" e
+		trg := EMUL_ROOT "\" e
+		if(FileUtil.isSymlink(trg))
+			continue
+		FileUtil.makeLink(src, trg, true)
+	}
+}
+
+runEmulator(imageFile, config, appendCommand="", callback="", appendImageFile="") {
 
 	debug( "imageFile : " imageFile           )
 	debug( "core      : " config.core         )
 	debug( "shader    : " config.video_shader )
 
-	emulator := wrap( EMUL_ROOT "\mednafen.exe" )
-  
-  command := emulator
-  ; if( config.core != "" )
-    ; command .= " -force_module " config.core
-	if ( appendCommand != "" )
+	emulator := wrap( EMUL_ROOT "\retroarch.exe" )
+  core     := wrap( EMUL_ROOT "\cores\" config.core ".dll" )
+
+	command := emulator " -L " core
+	; command .= " --appendconfig " wrap(CFG_RA_APPEND)
+	command .= " --set-shader " wrap(config.video_shader)
+	if( appendCommand != "" )
 		command .= " " appendCommand
-	if ( imageFile != "" )
+	if( imageFile != "" )
 		command .= " " wrap( imageFile )
+	if( appendImageFile != "" )
+		command .= " " wrap( appendImageFile )
 
   debug( "command   : " command )
-	Run, % command, % EMUL_ROOT,Hide, emulPid
+	Run, % command, % EMUL_ROOT, Hide, emulPid
 
 	waitEmulator()
 	IfWinExist
 	{
-		activateEmulator()
 		if ( imageFile != "" && isFunc(callback) ) {
 			Func(callback).( emulPid, core, imageFile, option )
 		}
-		closeEmulator( emulPid )
+		waitCloseEmulator( emulPid )
 	}
 
 }
 
-getOption( imageDirPath ) {
-	dirConf := imageDirPath "\_EL_CONFIG"
+getOption(imageDir) {
+	setAppendConfig(imageDir)
+	dirConf := imageDir "\_EL_CONFIG"
 	IfExist %dirConf%\option\option.json
 	{
 		FileRead, jsonText, %dirConf%\option\option.json
@@ -44,7 +61,30 @@ getOption( imageDirPath ) {
 	} else {
 		option := {}
 	}
-	return option
+	return flattenJson(option)
+}
+
+flattenJson(jsonObj) {
+	res := {}
+	for i, obj in jsonObj {
+		for key, val in obj {
+			res[key] := val
+		}
+	}
+	return res
+}
+
+setAppendConfig(imageDir) {
+	dirRoot  := imageDir "\_EL_CONFIG\save\ra"
+	dirSave  := dirRoot "\save"
+	dirState := dirRoot "\states"
+
+	FileUtil.makeDir(dirSave)
+	FileUtil.makeDir(dirState)
+
+	cfg := "savefile_directory = " wrap(dirSave) "`n"
+	cfg .= "savestate_directory = " wrap(dirState) "`n"
+	FileUtil.write(CFG_RA_APPEND, cfg)
 }
 
 getGameMeta( imageDirPath ) {
@@ -57,31 +97,36 @@ getGameMeta( imageDirPath ) {
 	return {}
 }
 
-getRomPath( imageDirPath, option, filter ) {
-	if ( option.run.rom != "" ) {
-		romPath := FileUtil.getFile( imageDirPath, "i)" option.run.rom "\.(" filter ")$" )
+getRomPath( imageDir, option, filter, excludeBios=false ) {
+	if ( option.rom != "" ) {
+		romPath := FileUtil.getFile( imageDir, "i)" option.rom "\.(" filter ")$" )
 		if ( romPath != "" ) {
 			return romPath
 		}
 	}
-	filter := nvl(option.run.filter,filter)
-	romPath := extractRomPath( imageDirPath, filter, "m3u" )
-	if ( romPath != "" )
-	  return romPath
-	romPath := extractRomPath( imageDirPath, filter, "chd" )
-	if ( romPath != "" )
-	  return romPath
-	romPath := extractRomPath( imageDirPath, filter, "cue" )
-	if ( romPath != "" )
-	  return romPath
-  return FileUtil.getFile( imageDirPath, "i).*\.(" filter ")$" )
+	filters := StrSplit( nvl(option.filter, filter), "|" )
+	for key, val in filters {
+		romPath := extractRomPath( imageDir, filter, val )
+		if ( romPath != "" ) {
+			if( excludeBios == false ) {
+				return romPath		
+			} else {
+				if( Instr("neogeo|neocd",FileUtil.getName(romPath,false)) ) {
+					continue
+				} else {
+					return romPath
+				}
+			}
+	  	
+		}
+	}
 }
 
 extractRomPath( dir, filter, extension ) {
 	if InStr(filter, extension) {
 	  romPath := FileUtil.getFile( dir, "i).*\." extension "$" )
 	  if ( romPath != "" ) {
-	  	if InStr(filter,"m3u")
+	  	if ( extension == "m3u" )
 	  	  readM3U( romPath )
 	    return romPath
 	  }
@@ -96,106 +141,170 @@ readM3U( path ) {
 			Continue
 		diskContainer.addPath( disc )
 		diskContainer.slot[0] := 1
-
 	}
 }
 
-waitEmulator() {
-	WinWait, ahk_class SDL_app ahk_exe mednafen.exe,, 60
-	IfWinExist
+waitEmulator(delay:=15) {
+	WinWait, ahk_class RetroArch ahk_exe retroarch.exe,, % delay
+}
+
+activateEmulator(delay:="") {
+	loop, 50
 	{
-	  activateEmulator()
+		WinActivate, ahk_class RetroArch ahk_exe retroarch.exe
+		; debug( ">> activate emulator ... " A_Index )
+		sleep 20
 	}
-}
-
-activateEmulator( delay:="" ) {
-	WinActivate, ahk_class SDL_app ahk_exe mednafen.exe,, 60
 	if ( delay != "" && delay > 0 ) {
 		Sleep %delay%
 	}
 }
 
-closeEmulator( emulPid:="" ) {
-	WinWaitClose, ahk_class SDL_app ahk_exe mednafen.exe,, 60
+waitCloseEmulator(emulPid:="") {
+	WinWaitClose, ahk_class RetroArch ahk_exe retroarch.exe,,
 	if( emulPid != "" )
 	  Process, WaitClose, emulPid
 }
 
-setConfig( core, option ) {
+setConfig(defaultCore, option, log:=false) {
 
 	config := {}
+  for key, val in option
+  	config[key] := val
 
-  setDefaultConfig( config, option )
-  fn := Func( "setCoreConfig" )
+  config.core := nvl(option.core, defaultCore)
+  setDefaultConfig(config, option)
+
+  fn := Func("setCoreConfig")
   if( IsFunc(fn) ) {
-  	fn.( config, option )
+  	fn.(config, option)
   }
-  config.core := nvl( option.run.core, core )
 
-  writeConfig( getPathCoreConfig(config.core), config )
+  ; overwrite option
+  if(option.option_overwrite != "") {
+  	overwrite := toMapFromProperties(option.option_overwrite)
+  	; if(log)
+  	; 	debug( ">> overwrite option`n" JSON.dump(overwrite) )
+		for key, val in overwrite
+			config[key] := val
+  }
 
-  debug( ">> FROM option`n" JSON.dump(option) )
-  debug( ">> TO config`n" JSON.dump(config) )
+  if(log) {
+	  debug( ">> FROM option`n" JSON.dump(option) )
+	  debug( ">> TO config`n" JSON.dump(config) )
+  }
   return config
 
 }
 
-getPathCoreConfig( core ) {
-
-  map := ({
-  (join,
-    "mednafen_saturn_libretro" : "Beetle Saturn"
-    "4do_libretro"             : "4DO"
-    "bluemsx_libretro"         : "blueMSX"
-    "nekop2_libretro"          : "Neko Project II"
-    "np2kai_libretro"          : "Neko Project II kai"
-    "genesis_plus_gx_libretro" : "Genesis Plus GX"
-    "fceumm_libretro"          : "FCEUmm"
-    "mednafen_psx_libretro"    : "Beetle PSX"
-    "mednafen_psx_hw_libretro" : "Beetle PSX HW"
-    "pcsx_rearmed_libretro"    : "PCSX-ReARMed"
-    "yabause_libretro"         : "Yabause"
-    "mednafen_saturn_libretro" : "Beetle Saturn"
-  )})
-  trgCore := map[core]
-
-  if( trgCore == "" ) {
-	  trgCore := RegExReplace( core, "i)_libretro", "" )
-	  StringUpper, trgCore, trgCore
+getCoreName(core) {
+	map := ({
+	(join,
+	  "4do_libretro"                    : "4DO"
+	  "bluemsx_libretro"                : "blueMSX"
+	  "fmsx_libretro"                   : "FMSX"
+	  "nekop2_libretro"                 : "Neko Project II"
+	  "np2kai_libretro"                 : "Neko Project II kai"
+	  "genesis_plus_gx_libretro"        : "Genesis Plus GX"
+	  "picodrive_libretro"              : "PicoDrive"
+	  "fceumm_libretro"                 : "FCEUmm"
+	  "mednafen_pce_fast_libretro"      : "Beetle PCE Fast"
+	  "mednafen_supergrafx_libretro"    : "Beetle SuperGrafx"
+	  "mednafen_psx_libretro"           : "Beetle PSX"
+	  "mednafen_psx_hw_libretro"        : "Beetle PSX HW"
+	  "pcsx_rearmed_libretro"           : "PCSX-ReARMed"
+	  "pcsx2_libretro"                  : "LRPS2 (alpha)"
+	  "yabause_libretro"                : "Yabause"
+	  "yabasanshiro_libretro"           : "Yabasanshiro"
+	  "mesen_libretro"                  : "Mesen"
+	  "mednafen_saturn_libretro"        : "Beetle Saturn"
+	  "mupen64plus_next_libretro"       : "Mupen64Plus-Next"
+	  "mupen64plus_next_gles3_libretro" : "Mupen64Plus-Next GLES3"
+	  "parallel_n64_libretro"           : "Parallel N64"
+	  "flycast_libretro"                : "Flycast"
+	  "fbneo_libretro"                  : "FinalBurn Neo"
+	  "fbalpha_libretro"                : "FB Alpha"
+	  "fbalpha2012_libretro"            : "FB Alpha 2012"
+	  "fbalpha2012_cps1_libretro"       : "FB Alpha 2012 CPS-1"
+	  "fbalpha2012_cps2_libretro"       : "FB Alpha 2012 CPS-2"
+	  "fbalpha2012_cps3_libretro"       : "FB Alpha 2012 CPS-2"
+	  "fbalpha2012_neogeo_libretro"     : "FB Alpha 2012 Neo Geo"
+	  "mednafen_ngp_libretro"           : "Beetle NeoPop"
+	  "mednafen_wswan_libretro"         : "Beetle WonderSwan"
+		"dolphin_libretro"                : "dolphin-emu"
+		"play_libretro"                   : "Play!"
+		"gambatte_libretro"               : "GAMBATTE"
+		"mame_libretro"                   : "MAME"
+		"mame2000_libretro"               : "MAME 2000"
+		"mame2003_plus_libretro"          : "MAME 2003-Plus"
+		"mame2010_libretro"               : "MAME 2010"
+		"mame2014_libretro"               : "MAME 2014"
+		"mame2015_libretro"               : "MAME 2015"
+		"mame2016_libretro"               : "MAME 2016"
+		"dosbox_pure_libretro"            : "DOSBox-pure"
+		"dosbox_svn_libretro"             : "DOSBox-SVN"
+		"dosbox_core_libretro"            : "DOSBox-core"
+	)})
+  coreName := map[core]
+  if( coreName == "" ) {
+	  coreName := RegExReplace( core, "i)_libretro", "" )
+	  StringUpper, coreName, coreName
   }
+  return coreName
+}
 
-	dir  := EMUL_ROOT "\config\" trgCore
-	path := dir "\" trgCore ".cfg"
-	FileUtil.makeDir( dir )
-	return path
+writeConfig(config, imageFile="") {
+
+	; debug( ">> config`n" JSON.dump(config) )
+  romName := FileUtil.getName(imageFile, false)
+  debug( ">> romName : " romName )
+
+  coreName  := getCoreName(config.core)
+
+	; write remap
+	remap := ""
+	opt   := ""
+	for key, val in config {
+		if( RegExMatch(key, "i)^input_libretro_device_p(\d)$") || RegExMatch(key, "i)^input_player(\d)_analog_dpad_mode$") ) {
+			remap .= key " = " wrap(val) "`n"
+		} else {
+			opt   .= RegExReplace(key,"#{romname}",romName) " = " wrap(val) "`n"
+		}
+	}
+
+  ; debug( ">> remap`n" remap)
+
+	configDir := EMUL_ROOT "\config\" coreName
+	FileUtil.makeDir(configDir)		
+	FileUtil.write( configDir "\" coreName ".cfg", opt )
+	FileUtil.write( configDir "\" coreName ".opt", opt )
+
+	remapDir := EMUL_ROOT "\config\remaps\" coreName
+	FileUtil.makeDir(remapDir)
+	FileUtil.write(EMUL_ROOT "\config\remaps\" coreName "\" coreName ".rmp", remap)
 
 }
 
-writeConfig( fileConfig, config ) {
-
-	overwrite := config._overwrite
-	config._overwrite := ""
-
-	debug( ">> Final config`n" JSON.dump(config) )
-
-	config.core_options_path := fileConfig
-	buffer := ""
-	for key, val in config {
-		buffer .= key " = """ val """`n"
+toMapFromProperties( properties ) {
+	map := {}
+	Loop, parse, properties, `n
+	{
+		words := StrSplit( A_LoopField, "=" )
+		key   := Trim(words[1])
+		val   := Trim(words[2])
+		val   := RegExReplace( val, "^""", "" )
+		val   := RegExReplace( val, """$", "" )
+    map[key] := val
 	}
-	FileUtil.delete( fileConfig )
-	FileAppend, % buffer, % fileConfig
+	return map
 }
 
 setDefaultConfig( config, option ) {
 
 	config.cache_directory            := FileUtil.getHomeDir() "\retroarch"
-	config.rewind_enable              := nvl( option.run.rewind, "false" )
-	config.video_driver               := nvl( option.run.videoDriver, "gl" )
-	config.video_shader               := nvl( option.run.videoShader, "\\ntsc\\ntsc-320px-svideo-gauss-scanline" )
+	config.video_driver               := nvl( option.video_driver, "vulkan" )
+	config.video_shader               := nvl( option.video_shader, "\\ntsc\\ntsc-320px-svideo-gauss-scanline" )
 	config.systemfiles_in_content_dir := nvl( option.systemfiles_in_content_dir, "false" )
-  setVideoShader( config )
-  FileUtil.makeDir( config.cache_directory )
 
   config.input_enable_hotkey       := "menu"
   config.input_reset               := "h"
@@ -205,10 +314,10 @@ setDefaultConfig( config, option ) {
   config.input_toggle_fast_forward := "space"
   config.input_toggle_fullscreen   := "f"
 
-  for key, val in option.core {
-  	config[key] := val
-  }
+  setVideoShader( config )
+  setResolution( config )
 
+	FileUtil.makeDir( config.cache_directory )
 
 }
 
@@ -218,5 +327,17 @@ setVideoShader( config ) {
 	} else {
 		config.video_shader := "shaders_slang\" config.video_shader ".slangp"
 	}
-	config.video_shader := FileUtil.normalizePath( config.video_shader )
+	config.video_shader := FileUtil.normalizePath(config.video_shader)
+}
+
+setResolution( config ) {
+  if( config.fullscreen_resolution == "" || config.fullscreen_resolution == "none" ) {
+  	config.video_windowed_fullscreen := "true"
+  } else {
+  	width  := RegExReplace( config.fullscreen_resolution, "^(\d*?)x(\d*?)$", "$1" )
+    height := RegExReplace( config.fullscreen_resolution, "^(\d*?)x(\d*?)$", "$2" )
+    config.video_windowed_fullscreen := "false"
+    config.video_fullscreen_x        := width
+		config.video_fullscreen_y        := height
+  }
 }
