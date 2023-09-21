@@ -4,6 +4,7 @@
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\Neogeo\King of Fighters '98 - Dream match never ends (snk)(T-ko 1.0 by dsno)"
 ; imageDir := "\\NAS2\emul\image\ArcadeMame\Outlaws of the Lost Dynasty (en)"
+; imageDir := "\\NAS2\emul\image\ArcadeMame\From TV Animation Slam Dunk - Super Slams (banpresto)(T-ko 1.1 by moopung)"
 
 ; EMUL_ROOT := A_ScriptDir "\1.9.0"
 
@@ -23,17 +24,12 @@ imageFile := getRomPath(imageDir,option,"zip|7z",true)
 isMame := RegExMatch(config.core, "i)^mame.*")
 
 if(isMame) {
-	config.mame_boot_from_cli := "enabled"
+	linkResource(config, imageFile)
 }
 
 setBezel(config,imageDir)
 writeConfig(config, imageFile)
-
-if( isMame ) {
-	imageFile := toCliArgument(imageFile)
-}
-
-runEmulator(imageFile, config, appendConfig)
+runEmulator(imageFile, config)
 waitCloseEmulator()
 
 loop, % option.core.wait_subprocess
@@ -57,32 +53,13 @@ setBezel(config, imageDir) {
 	}
 }
 
-toCliArgument(imageFile) {
-
-	dirRom     := FileUtil.getDir(imageFile)
-	dirArtwork := dirRom "\artwork"
-	dirSample  := dirRom "\samples"
-	pathCmd    := A_ScriptDir "\Arcade.cmd"
-
-	args := " -rp " wrap(dirRom)
-	if( FileUtil.exist(dirArtwork) )
-		args .= " -artpath " wrap(dirArtwork)
-	if( FileUtil.exist(dirSample) )
-		args .= " -samplepath " wrap(dirSample)
-	args .= wrap(imageFile)
-
-	FileUtil.write(pathCmd, args)
-	return pathCmd
-
+linkResource(config, imageFile) {
+	pathSystem := EMUL_ROOT "\system\mame"
+	FileUtil.makeDir( pathSystem )
+	imageDir := FileUtil.getDir(imageFile)
+	for i,v in ["samples","artwork"] {
+		FileUtil.makeLink( imageDir "\" v,  pathSystem "\" v, true )
+	}
 }
-
-; linkResource(config, imageFile) {
-; 	pathSystem := EMUL_ROOT "\system\mame"
-; 	FileUtil.makeDir( pathSystem )
-; 	imageDir := FileUtil.getDir(imageFile)
-; 	for i,v in ["samples","artwork"] {
-; 		FileUtil.makeLink( imageDir "\" v,  pathSystem "\" v, true )
-; 	}
-; }
 
 #include %A_ScriptDir%\script\AbstractHotkey.ahk

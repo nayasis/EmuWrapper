@@ -3,6 +3,7 @@
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
 global EMUL_ROOT     := A_ScriptDir "\1.14.0"
+; global EMUL_ROOT     := A_ScriptDir "\1.15.0"
 global diskContainer := new DiskContainer()
 global CFG_RA_APPEND := EMUL_ROOT "\retroarch.append.cfg"
 
@@ -46,7 +47,7 @@ runEmulator(imageFile, config, appendCommand="", callback="", appendImageFile=""
 		if ( imageFile != "" && isFunc(callback) ) {
 			Func(callback).( emulPid, core, imageFile, option )
 		}
-		waitCloseEmulator( emulPid )
+		waitCloseEmulator(emulPid)
 	}
 
 }
@@ -144,7 +145,7 @@ readM3U( path ) {
 	}
 }
 
-waitEmulator(delay:=15) {
+waitEmulator(delay:=95) {
 	WinWait, ahk_class RetroArch ahk_exe retroarch.exe,, % delay
 }
 
@@ -244,6 +245,12 @@ getCoreName(core) {
 		"dosbox_pure_libretro"            : "DOSBox-pure"
 		"dosbox_svn_libretro"             : "DOSBox-SVN"
 		"dosbox_core_libretro"            : "DOSBox-core"
+		"vice_x64sc_libretro"             : "VICE x64sc"
+		"vice_x64_libretro"               : "VICE x64"
+		"vice_x128_libretro"              : "VICE x128"
+		"vice_xplus4_libretro"            : "VICE xplus4"
+		"vice_xscpu64_libretro"           : "VICE xscpu64"
+		"vice_xvic_libretro"              : "VICE xvic"
 	)})
   coreName := map[core]
   if( coreName == "" ) {
@@ -305,6 +312,7 @@ setDefaultConfig( config, option ) {
 	config.video_driver               := nvl( option.video_driver, "vulkan" )
 	config.video_shader               := nvl( option.video_shader, "\\ntsc\\ntsc-320px-svideo-gauss-scanline" )
 	config.systemfiles_in_content_dir := nvl( option.systemfiles_in_content_dir, "false" )
+  config.input_overlay_show_mouse_cursor := "false"
 
   config.input_enable_hotkey       := "menu"
   config.input_reset               := "h"
@@ -322,6 +330,7 @@ setDefaultConfig( config, option ) {
 }
 
 setVideoShader( config ) {
+	debug(">> shader : " config.video_shader )
 	if ( config.video_driver == "gl" ) {
 		config.video_shader := "shaders_glsl\" config.video_shader ".glslp"
 	} else {

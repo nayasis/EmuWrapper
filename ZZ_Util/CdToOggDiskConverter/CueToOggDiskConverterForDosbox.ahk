@@ -7,7 +7,7 @@ pathWorkRoot := "e:\download\dos"
 ; pathRoot     := "\\NAS\emul\image\PcFx"
 ; pathRoot     := "\\NAS\emul\image\PlayStation"
 ; pathRoot     := "\\NAS\emul\image\3DO\Games\Guardian War"
-pathRoot     := "\\NAS\emul\image\DOS\Realms of Arkania 3 - Shadows over Riva (en)"
+pathRoot     := "\\NAS2\emul\image\DOS\Screamer Rally (en)"
 ; pathRoot     := "\\NAS\emul\image\Saturn\RPG\Grandia (T-Kr)"
 ; pathRoot     := "\\NAS\emul\image\PcFx\Aa! Megami Sama"
 replaceFile  := false
@@ -36,7 +36,7 @@ Loop, % files.MaxIndex()
 {
 	fileSrc := files[ A_Index ]
 	srcDir  := FileUtil.getDir( fileSrc )
-	; gameDir := FileUtil.getFileName( srcDir )
+	; gameDir := FileUtil.getName( srcDir )
 	gameDir := RegExReplace( srcDir, "^.*\\(.+?)\\_EL_CONFIG\\.*$", "$1")
 	; remove unrecognized character
 	gameDir  := RegExReplace( gameDir, "%", "_" )
@@ -177,7 +177,7 @@ toCdImageWithTurboRip( workDir, fileName, modeSize="" ) {
 	debug( "tmpDir : " tmpDir )
 	debug( "  - read to cd image" )
 	mode := modeSize == "2352" ? "/RAW" : ""
-	command := % """" A_ScriptDir "\util\TurboRip.exe"" /1 " mode " ""/NAME=" fileName """"
+	command := % wrap( A_ScriptDir "\util\TurboRip.exe") " /1 " mode " " wrap("/NAME=" fileName)
 	debug( command )
 	Run, % command, % tmpDir, Hide, pid
   waitToCloseTurboRip( tmpDir, pid )
@@ -187,7 +187,7 @@ toCdImageWithTurboRip( workDir, fileName, modeSize="" ) {
 	{
 		srcFilePath := tracks[ A_Index ]
 		if ( FileUtil.getExt(srcFilePath) != "cue" ) {
-			trgFileName := FileUtil.getFileName(srcFilePath)
+			trgFileName := FileUtil.getName(srcFilePath)
 			trgFileName := RegExReplace( trgFileName, "^([0-9]{2}) (.+?)\.([a-z]+?)$", fileName "-$1.$3" )
 		} else {
 			trgFileName := fileName ".cue"
@@ -217,35 +217,45 @@ toCdImageWithTurboRip( workDir, fileName, modeSize="" ) {
 
 waitToCloseTurboRip( workDir, pid ) {
 
-  prevFileCount := 0
-  retryCount    := 0
+  prevLast   := ""
+  prevSize   := 0
+  retryCount := 0
   while True
   {
       Sleep, 1000
-      currFileCount := FileUtil.getFiles( workDir, ".*", false, true ).MaxIndex()
-      if ( currFileCount != prevFileCount )
-      {
-          prevFileCount := currFileCount
-          retryCount    := 0
+
+      files := FileUtil.getFiles( workDir, "i).*\.(iso|wav)$", false, true )
+      currLast := files[files.MaxIndex()]
+
+      if(currLast != prevLast) {
+      	prevLast   := currLast
+      	prevSize   := 0
+      	retryCount := 0
       } else {
+      	currSize := FileUtil.getSize(currLast)
+        if(currSize != prevSize) {
+        	prevSize := currSize
+        	retryCount := 0
+        } else {
           retryCount := retryCount + 1
-          debug( "\t\t... wait to close" retryCount )
+          debug( "... wait to close" retryCount )        	
+        }
       }
-      if ( retryCount >= 30 ) {
+      if ( retryCount >= 10 ) {
           break
       }
   }
 
   Process, Close, % pid
 
-  SetTitleMatchMode,2
-  loop
-  {
-      IfWinNotExist, Chrome
-          break
-      else
-          WinClose, Chrome
-  }
+  ; SetTitleMatchMode,2
+  ; loop
+  ; {
+  ;     IfWinNotExist, Chrome
+  ;       break
+  ;     else
+  ;       WinClose, Chrome
+  ; }
 
 }
 
@@ -255,17 +265,18 @@ toCdOgg( workDir, cueFile, modeSize="" ) {
 	wavFiles := FileUtil.getFiles( workDir, ".*\.wav" )
 	Loop, % wavFiles.MaxIndex()
 	{
-		; debug( wavFiles[A_Index] )
+		debug( wavFiles[A_Index] )
 		toOgg( wavFiles[A_Index], workDir )
 	}
-
 	debug( "  - convert to ogg cue" )
 	toOggCue( cueFile, workDir, modeSize )
 }
 
 toOgg( wavFile, targetDir ) {
-	targetFile := targetDir "\" FileUtil.getFileName(wavFile, false) ".ogg"
-	RunWait, % A_ScriptDir "\util\oggenc2.exe -n """ targetFile """ """ wavFile """", % targetDir, Hide, pid
+	targetFile := targetDir "\" FileUtil.getName(wavFile, false) ".ogg"
+	cmd := A_ScriptDir "\util\oggenc2.exe -n " wrap(targetFile) " " wrap(wavFile)
+	; debug(">> toOgg : " cmd)
+	RunWait, % cmd, % targetDir, Hide, pid
 	FileDelete, % wavFile
 }
 
@@ -275,7 +286,7 @@ toOggCue( cueFile, targetDir, modeSize="" ) {
 	; MODE_SIZE := "2048"
 	MODE_SIZE := ""
 
-	cueName    := FileUtil.getFileName( cueFile, false )
+	cueName    := FileUtil.getName( cueFile, false )
 	workDir    := FileUtil.getDir( cueFile )
 	trackFiles := FileUtil.getFiles( workDir, ".*-.*\.(ogg|iso)$" )
 	targetFile := targetDir "\" cueName ".cue"
@@ -286,7 +297,7 @@ toOggCue( cueFile, targetDir, modeSize="" ) {
 		
 		if ( RegExMatch(A_LoopReadLine, "^ *TRACK [0-9]{2} .*$") ) {
 			trackIndex++
-			trackName := FileUtil.getFileName( trackFiles[trackIndex] )
+			trackName := FileUtil.getName( trackFiles[trackIndex] )
 			trackExt  := RegExReplace( trackName, ".*\.(.*?)$", "$1" )
 
 			newCueSheet .= "FILE """ trackName """ "

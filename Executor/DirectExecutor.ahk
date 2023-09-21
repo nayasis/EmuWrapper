@@ -7,8 +7,9 @@ imageDir := %0%
 option := getOption(imageDir)
 ; debug( ">> option`n" JSON.dump(option) )
 
-file := option.execution.executable
+file     := option.execution.executable
 runAdmin := option.execution.runAdmin
+notHide  := option.execution.notHideLoader
 
 debug("file:" file)
 debug("runAdmin:" runAdmin)
@@ -19,10 +20,18 @@ if( ! FileUtil.isFile(imageDir "\" file) )
 
 cmd := wrap(imageDir "\" file)
 
-if( runAdmin == "true" ) {
-	RunWait *RunAs %cmd%
+if(notHide == "true") {
+  if( runAdmin == "true" ) {
+		Run *RunAs %cmd%
+	} else {
+		Run %cmd%
+	}
 } else {
-	RunWait %cmd%
+	if( runAdmin == "true" ) {
+		RunWait *RunAs %cmd%
+	} else {
+		RunWait %cmd%
+	}
 }
 
 ExitApp	

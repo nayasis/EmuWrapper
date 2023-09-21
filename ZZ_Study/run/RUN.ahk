@@ -58,8 +58,7 @@ closeProcess() {
 runAsAdmin( fileIni ) {
 	IniRead, value, % fileIni, init, runAsAdmin, false
 	if ( value == "true" ) {
-		if not A_IsAdmin
-			restartAsAdmin()
+		restartAsAdmin()
 	}
 }
 
@@ -134,7 +133,13 @@ runSubHelper( executor, executorDir, executorWait, properties ) {
   	scriptEnter(param)
   	return
   }
-
+  if( InStr(executor, ":scriptClick\", true) ) {
+  	param := StrReplace(executor, ":scriptClick\","")
+  	param := StrSplit(param, ",")
+  	debug(param[1] "," param[2] "," param[3])
+  	scriptClick(param[1],param[2],param[3])
+  	return
+  }
 	executor      := RegExReplace( executor,      "\\",     "\\" )
 	executorDir   := RegExReplace( executorDir,   "\\",     "\\" )
 	if ( executorDir == "_" ) {
@@ -158,9 +163,10 @@ runMain( fileIni, properties ) {
   hideTaskbar       := readIni(fileIni, "init",   "hideTaskbar", properties, "_")
   hideMouse         := readIni(fileIni, "init",   "hideMouse",   properties, "_")
   symlink           := readIni(fileIni, "init",   "symlink",     properties, "_")
-  installFont       := readIni(fileIni, "init",   "installFont", properties, "_")
   isRunWait         := readIni(fileIni, "init",   "runwait",     properties, true)
   exitAltF4         := readIni(fileIni, "init",   "exitAltF4",   properties, true)
+  fontPath          := readIni(fileIni, "init",   "font",        properties, "_")
+  mountImage        := readIni(fileIni, "init",   "mountImage",  properties, "_")
   windowTarget      := readIni(fileIni, "window", "target",      properties, "_")
   windowSearchDelay := readIni(fileIni, "window", "searchDelay", properties, 0)
   windowStart       := readIni(fileIni, "window", "start",       properties, "_")
@@ -180,14 +186,10 @@ runMain( fileIni, properties ) {
 		}
 	}
 
-	if ( installFont != "_" ) {
-		installedPath := properties["windir"] "\Fonts\" FileUtil.getFileName(installFont)
-		debug("installedPath : " installedPath)
-		if( ! FileUtil.isFile(installedPath) ) {
-			debug("install font : " installFont)
-			DllCall( "AddFontResource", Str, installFont )
-			SendMessage,  0x1D,,,, ahk_id 0xFFFF
-		}
+  installFont(fontPath, properties)
+
+	if ( mountImage != "_" ) {
+		VirtualDisk.mount(mountImage)
 	}
 
   if ( exitAltF4 == "true" )
@@ -256,12 +258,31 @@ runMain( fileIni, properties ) {
 			; applicationPid := run(executor,executorDir)
 			; Process, Wait, % applicationPid
 		} else {
-			debug("??? in here ??")
 			run(executor,executorDir)
 		}
 
+		VirtualDisk.unmount()
+
 	}
 
+}
+
+installFont(fontDir, properties) {
+	if ( fontDir == "_" )
+		return
+	winDir := properties["windir"] "\Fonts"
+	fonts  := FileUtil.getFiles(fontDir)
+	for i, path in fonts {
+		installed := winDir "\" FileUtil.getFileName(path)
+		if( ! FileUtil.isFile(installed) ) {
+			debug(">> install font : " path " -> " installed)
+			restartAsAdmin()
+			FileCopy, % path, % winDir
+			DllCall("AddFontResource", Str, installed)
+			SendMessage,  0x1D,,,, ahk_id 0xFFFF
+		}
+	}
+	
 }
 
 readProperties(file) {
@@ -393,6 +414,16 @@ setEnvVariable( fileIni, properties ) {
 
 }
 
+wrap( command, escapeChar:="" ) {
+  return escapeChar """" command escapeChar """"
+}
+
+nvl( val, defaultVal:="" ) {
+  if( val != "" )
+    return val
+  return defaultVal
+}
+
 run(executor, executorDir) {
 	debug("run: " executor)
 	Run, % executor, % executorDir, UseErrorLevel, processId
@@ -406,6 +437,7 @@ run(executor, executorDir) {
 
 runWait(executor, executorDir) {
 	debug("runWait: " executor)
+	debug("    dir: " executorDir)
   RunWait, % executor, % executorDir, UseErrorLevel, processId
 	If ErrorLevel
 		debug("Error Level : " ErrorLevel)
@@ -422,7 +454,8 @@ getRunDir(executor) {
 
 readIni(fileIni, section, key, properties, defaultValue := "_") {
 	IniRead, value, % fileIni, % section, % key, % defaultValue
-	value := removeComment(value)
+	; value := removeComment(value)
+	; debug("key:" key ", value:" value)
 	return bindValue(value,properties)
 }
 
@@ -432,6 +465,15 @@ scriptEnter(waitCmd) {
 	{
 		WinActivate
 		Send, {Enter}
+	}
+}
+
+scriptClick(waitCmd, px, py) {
+	WinWait, % waitCmd
+	IfWinExist
+	{
+		WinActivate
+		Click, % px "," py
 	}
 }
 
@@ -731,9 +773,7 @@ class ResolutionChanger {
 
 class Taskbar {
 	static void := Taskbar._init()
-  __New() {
-      throw Exception( "TaskbarChanger is a static class, dont instante it!", -1 )
-  }
+
   _init() {
   	this.allTray := false
   }
@@ -742,7 +782,7 @@ class Taskbar {
 	* set working tray target to all or main (for Windows 10)
   * @param {boolean} yn 	true for all, false for main only.
   */
-  setAllTray( yn) {
+  setAllTray(yn) {
   	this.allTray := ( yn == true )
   }
 
@@ -1140,6 +1180,40 @@ class FileUtil {
 	  for k, v in t
 	    Array[A_Index] := v
 	  return Array
+	}
+
+}
+
+class VirtualDisk {
+
+  static void := VirtualDisk._init()
+
+	_init() {
+		this.mountedImage := ""
+	}
+
+	mount(path) {
+		if(FileUtil.isFile(path)) {
+			cmd := "powershell Mount-DiskImage '" path "'"
+			debug(cmd)
+			RunWait, % cmd,, Hide,
+			; RunWait, % cmd,,,
+			this.mountedImage := path
+			debug(">> mount : " this.mountedImage)
+			return this.mounted()
+		}
+	}
+
+	mounted() {
+		return this.mountedImage != ""
+	}
+
+	unmount() {
+		if(this.mounted()) {
+			debug(">> unmount : " this.mountedImage)
+			cmd := "powershell Dismount-DiskImage '" this.mountedImage "'"
+			RunWait, % cmd,, Hide,
+		}
 	}
 
 }
