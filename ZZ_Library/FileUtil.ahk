@@ -274,11 +274,11 @@ class FileUtil {
     if( ! this.exist(src) )
     	return false
 
-  	if( deleteTrg == true ) {
-  		this.delete( trg )
+  	if( this.exist(trg) && deleteTrg == true ) {
+  		this.delete(trg)
   	}
 
-		this.makeParentDir( trg, this.isDir(src) )
+		this.makeParentDir(trg, this.isDir(src) )
 		if ( this.isDir(src) ) {
 			cmd := "/c mklink /d """ trg """ """ src """"
 		} else {

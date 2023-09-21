@@ -1,6 +1,6 @@
 #NoEnv
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
-FileEncoding, EUC-KR
+FileEncoding, CP949
 
 fileRun := %0%
 ; fileRun := "e:\download\Dying Light 2 (ko)\bin\ph\work\bin\x64\DyingLightGame_x64_rwdi.exe"
@@ -52,5 +52,10 @@ writeConfig(rootDir, fileRun) {
 executor    = %executor%
 #unblockPath = %executor%
 	)
+	if(FileUtil.exist(rootDir "\bin\font")) {
+		content .= "`nfont        = ${cd}\bin\font"
+	} else {
+    content .= "`n#font        = ${cd}\bin\font"
+	}
 	FileUtil.write(rootDir "\RUN.ini", content)
 }

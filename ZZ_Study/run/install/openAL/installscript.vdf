@@ -1,0 +1,17 @@
+"installscript"
+{
+	"Run Process"
+	{
+		"2.0.7.0"
+		{
+			"hasrunkey"		"HKEY_LOCAL_MACHINE\\Software\\Valve\\Steam\\Apps\\CommonRedist\\OpenAL\\2.0.7.0"
+			"process 1"		"%INSTALLDIR%\\_CommonRedist\\OpenAL\\2.0.7.0\\oalinst.exe"
+			"command 1"		"/s"
+			"nocleanup"		"1"
+		}
+	}
+}
+"kvsignatures"
+{
+	"installscript"		"35e9d3762db87efad266fbbc15ae701597fdbba47594ec644aba181957c6a413577e8e1b7a0c57c6c64099cd42686680c9d68f9bc03b08ad2322238a0e04e5b0139dc56a59350b5e30af0ef06f8ec50b7591dc40a77d25f71cd82e783e2914569a1bc81146851881d939d0fb9b39b0c9fb5077cdb0712af3f2db93ee1f17e017"
+}

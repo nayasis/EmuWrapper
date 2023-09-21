@@ -2,8 +2,8 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-imageDir := "\\NAS2\emul\image\PlayStation\R4 Ridge Racer Type 4 (en)"
-; imageDir := "\\NAS2\emul\image\PlayStation\Super Robot Taisen Alpha (banpresto)(T-ko 230204 by solony)"
+; imageDir := "\\NAS2\emul\image\PlayStation\R4 Ridge Racer Type 4 (en)"
+; imageDir := "\\NAS2\emul\image\PlayStation\TOCA World Touring Cars (en)"
 
 option := getOption(imageDir)
 setCustomFont( imageDir, option )

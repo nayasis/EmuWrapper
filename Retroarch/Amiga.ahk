@@ -2,8 +2,8 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-imageDir := "e:\download\Strip Poker 2"
-; imageDir := "e:\download\Strip Poker"
+; imageDir := "\\NAS2\emul\image\Amiga\Strip Poker 2"
+; imageDir := "\\NAS2\emul\image\amiga\Commando (en)"
 
 option    := getOption( imageDir )
 config    := setConfig( "puae_libretro", option )

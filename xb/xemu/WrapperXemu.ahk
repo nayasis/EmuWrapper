@@ -4,7 +4,7 @@
 global emulatorPid := ""
 
 imageDir := %0%
-; imageDir := "\\NAS2\emul\image\xb\WWE Raw 2 (anchor)(en)"
+; imageDir := "\\NAS2\emul\image\xb\Crimson Skies - High Road to Revenge (fasa)(ko)"
 
 container := new DiskContainer( imageDir, "i).*\.(xiso|iso)$" )
 container.initSlot( 1 )
@@ -78,7 +78,7 @@ getConfig(imageDir, diskContainer) {
 	; dirBase := FileUtil.getDir(imageDir) "\_EL_CONFIG"
 	; option  := getOption(imageDir)
 
-  fileIni := setXemuIni()
+  fileIni := setXemuIni(imageDir)
 
 	config := " "
 	; config .= " -full-screen"
@@ -104,12 +104,15 @@ getOption(imageDir) {
 	return option
 }
 
-setXemuIni() {
+setXemuIni(imageDir) {
 	fileIni := A_ScriptDir "\xemu.toml"
+	saveDir := imageDir "\_EL_CONFIG\save\xemu"
+	FileUtil.makeDir(saveDir)
+	FileUtil.copy(A_ScriptDir "\bios\xbox_hdd.qcow2.src", saveDir "\xbox_hdd.qcow2", 0)
   IniWrite, % " '" A_ScriptDir "\bios\complex_4627.bin'", % fileIni, sys.files, flashrom_path
   IniWrite, % " '" A_ScriptDir "\bios\mcpx_1.0.bin'",     % fileIni, sys.files, bootrom_path
   IniWrite, % " '" A_ScriptDir "\bios\eeprom.bin'",       % fileIni, sys.files, eeprom_path
-  IniWrite, % " '" A_ScriptDir "\bios\xbox_hdd.qcow2'",   % fileIni, sys.files, hdd_path
+  IniWrite, % " '" saveDir "\xbox_hdd.qcow2'",   % fileIni, sys.files, hdd_path
   ; IniDelete, % fileIni, system, dvd_path
 	return fileIni
 }
