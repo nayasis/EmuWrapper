@@ -1,17 +1,16 @@
 #NoEnv
-#include ..\..\..\ZZ_Library\Include.ahk
+#include c:\app\emulator\ZZ_Library\Include.ahk
 
 emulatorPid  := ""
 imageDir := %0%
-; imageDir := "e:\download\citra\Layton\"
+;imageDir := "\\NAS2\emul\image\3DS\3D After Burner II (m2)(en)"
 
 prepareFont()
 
-imageFile := FileUtil.getFile( imageDir, "i).*\.(zip|3ds|3dsx|elf|axf|cci|cxi|cia|app)$")
+imageFile := FileUtil.getFile(imageDir, "i).*\.(zip|3ds|3dsx|elf|axf|cci|cxi|cia|app)$")
 
-if ( imageFile != "" ) {
-
-	command := "citra-qt.exe """ imageFile """"
+if(imageFile != "") {
+	command :=  wrap(A_ScriptDir "\nightly\citra-qt.exe") " " wrap(imageFile)
 	debug( command )
 
 	Run, % command,,,emulatorPid
@@ -23,7 +22,7 @@ if ( imageFile != "" ) {
 	}
 
 } else {
-	Run, % "citra.exe",,,
+	Run, % A_ScriptDir "\nightly\citra.exe",,,
 }
 
 ExitApp

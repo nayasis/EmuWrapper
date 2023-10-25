@@ -15,7 +15,7 @@ imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\Apple2\Wings of Fury (en)"
 ; imageDir := "\\NAS2\emul\image\Apple2\Bard's Tale III - The Thief of Fate (interplay)(en)\"
 ; imageDir := "\\NAS2\emul\image\Apple2\Ultima V - Warriors of Destiny"
-imageDir := "\\NAS2\emul\image\Apple2\King Quest II - Romancing The Throne (en)"
+;imageDir := "\\NAS2\emul\image\Apple2\King Quest II - Romancing The Throne (en)"
 
 fddContainer := new DiskContainer( imageDir, "i).*\.(dsk)$" )
 fddContainer.initSlot(2)
