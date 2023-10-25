@@ -2,8 +2,8 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "e:\download\Dai Gyakuten Saiban 1"
-imageDir := "\\NAS2\emul\image\3DS\Persona Q2 - New Cinema Labyrinth (atlus)(T-ko 1.04 by K)"
+;imageDir := "e:\download\Dai Gyakuten Saiban 1"
+;imageDir := "\\NAS2\emul\image\3DS\Persona Q2 - New Cinema Labyrinth (atlus)(T-ko 1.04 by K)"
 
 option    := getOption( imageDir )
 config    := setConfig( "citra_libretro", option )

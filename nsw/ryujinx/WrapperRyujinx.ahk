@@ -5,7 +5,7 @@ global emulatorPid := ""
 
 imageDir := %0%
 ; imageDir := "d:\app\Switch Army Knife\SAK_64bit"
-imageDir := "\\NAS2\emul\image\NSW\Legend of Zelda - Tears of the Kingdom (nintendo)(ko)"
+;imageDir := "\\NAS2\emul\image\NSW\Legend of Zelda - Tears of the Kingdom (nintendo)(ko)"
 
 makeLink(imageDir)
 
@@ -34,7 +34,7 @@ makeSnapshotLink() {
 
 makeContentLink(src,trg) {
 	FileUtil.makeDir(src)
-	FileUtil.makeLink(src, trg,true)
+	FileUtil.makeLink(src, trg, true)
 }
 
 waitEmulator() {
@@ -93,7 +93,7 @@ changeCdRom( slotNo, file ) {
 	return
 }
 
-getConfig( imageDir, diskContainer ) {
+getConfig(imageDir, diskContainer) {
 
 	; dirBase := FileUtil.getDir(imageDir) "\_EL_CONFIG"
 	; option  := getOption(imageDir)
@@ -110,7 +110,7 @@ getConfig( imageDir, diskContainer ) {
 	
 }
 
-getOption( imageDir ) {
+getOption(imageDir) {
 	dirConf := imageDir "\_EL_CONFIG"
 	IfExist %dirConf%\option\option.json
 	{

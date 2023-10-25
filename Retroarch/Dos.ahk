@@ -3,18 +3,7 @@
 
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\DOS\Uncharted Water (en)"
-; imageDir := "\\NAS2\emul\image\DOS\Uncharted Water (en)\_EL_CONFIG\dosboxConf\dosbox.conf"
-; imageDir := "\\NAS2\emul\image\DOS\Neuromancer (en)\cga"
-; imageDir := "\\NAS2\emul\image\DOS\Nanpa 2 (T-ko)\nanpa2"
-; imageDir := "\\NAS2\emul\image\DOS\Brandish 3 (NW) (ko)"
-; imageDir := "\\NAS2\emul\image\DOS\Heroes of Might and Magic 1"
-; imageDir := "\\NAS2\emul\image\DOS\Ultima 8 - Pagan"
-; imageDir := "\\NAS2\emul\image\DOS\Sangokushi 2 (koei)(ko)"
-; imageDir := "\\NAS2\emul\image\DOS\Uncharted Water - test (koei)(en)"
-; imageDir := "\\NAS2\emul\image\DOS\Cobra (loriciel)(fr)"
-; imageDir := "\\NAS2\emul\image\DOS\Wasteland (en)"
-; imageDir := "\\NAS2\emul\image\DOS\Broken Sword - Shadow of the Templars (en)"
-imageDir := "\\NAS2\emul\image\DOS\WIN98SE"
+;imageDir := "\\NAS2\emul\image\DOS\WIN98SE"
 
 option := getOption( imageDir )
 config := setConfig( "dosbox_pure_libretro", option, true )

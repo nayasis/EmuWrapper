@@ -21,7 +21,7 @@ imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\Apple2\King Quest II - Romancing The Throne (en)"
 ; imageDir := "\\NAS2\emul\image\Apple2\Deathlord"
 ; imageDir := "\\NAS2\emul\image\Apple2\Wasteland (interplay)(en)"
- imageDir := "\\NAS2\emul\image\Apple2\Moebius - the Orb of Celestial Harmony (micro magic)(en)"
+ ;imageDir := "\\NAS2\emul\image\Apple2\Moebius - the Orb of Celestial Harmony (micro magic)(en)"
 
 ;mklink /d "C:\app\emulator\Retroarch\1.14.0\iconengines" "C:\app\emulator\Retroarch\share\iconengines"
 

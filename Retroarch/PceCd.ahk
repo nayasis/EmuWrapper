@@ -2,7 +2,7 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-imageDir := "\\NAS2\emul\image\PcEngineCd\Might and Magic (nec)(T-en 2023-07-18 by TiCo.KH)"
+;imageDir := "\\NAS2\emul\image\PcEngineCd\Might and Magic (nec)(T-en 2023-07-18 by TiCo.KH)"
 
 option    := getOption( imageDir )
 config    := setConfig( "mednafen_supergrafx_libretro", option )
