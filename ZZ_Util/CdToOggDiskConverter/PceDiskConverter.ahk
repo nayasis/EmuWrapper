@@ -3,12 +3,12 @@
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 cuefile := %0%
-cuefile := "e:\download\Private Eye Dol (English v1.0)\Private Eye Dol (English v1.0)\Private Eye Dol (English v1.0).cue"
+;cuefile := "e:\iso\pcecd\Dead of the Brain 1 (English v1.0E)\Dead of the Brain 1 (English v1.0E).cue"
 
 modeSize := "2352"
 
 debug( "1. Rip disk" )
-; ripDisk(cuefile,modeSize)
+ripDisk(cuefile,modeSize)
 
 debug( "2. convert wav to ogg" )
 toOggs(cueFile)

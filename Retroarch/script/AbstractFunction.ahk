@@ -2,8 +2,10 @@
 #WinActivateForce
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-global EMUL_ROOT     := A_ScriptDir "\1.14.0"
-; global EMUL_ROOT     := A_ScriptDir "\1.15.0"
+;global EMUL_ROOT     := A_ScriptDir "\1.14.0"
+;global EMUL_ROOT     := A_ScriptDir "\1.15.0"
+global EMUL_ROOT     := A_ScriptDir "\1.17.0"
+
 global diskContainer := new DiskContainer()
 global CFG_RA_APPEND := EMUL_ROOT "\retroarch.append.cfg"
 

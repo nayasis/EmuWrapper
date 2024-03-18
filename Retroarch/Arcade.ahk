@@ -4,12 +4,18 @@
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\Neogeo\King of Fighters '98 - Dream match never ends (snk)(T-ko 1.0 by dsno)"
 ; imageDir := "\\NAS2\emul\image\ArcadeMame\Outlaws of the Lost Dynasty (en)"
-; imageDir := "\\NAS2\emul\image\ArcadeMame\From TV Animation Slam Dunk - Super Slams (banpresto)(T-ko 1.1 by moopung)"
+ ;imageDir := "\\NAS2\emul\image\ArcadeMame\Virtua Fighter Kids (ja)"
+ ;imageDir := "\\NAS2\emul\image\ArcadeMame\Tekken Tag Tournament (en)"
+ ;imageDir := "\\NAS2\emul\image\Neogeo\King of Fighters '94 (snk)(T-ko 1.0 by dsno)"
+ ;imageDir := "\\NAS2\emul\image\Neogeo\King of Fighters '94 (snk)(en)"
 
 ; EMUL_ROOT := A_ScriptDir "\1.9.0"
 
 option    := getOption(imageDir)
-config    := setConfig("mame_libretro",option,false)
+
+;option.video_driver := "glcore"
+
+config    := setConfig("mame_libretro",option,true)
 imageFile := getRomPath(imageDir,option,"zip|7z",true)
 
 ; config.core := "kronos_libretro"
@@ -17,7 +23,7 @@ imageFile := getRomPath(imageDir,option,"zip|7z",true)
 ; config.core := "fbalpha2012_cps1_libretro"
 ; config.core := "fbalpha2012_cps2_libretro"
 ; config.core := "fbalpha2012_neogeo_libretro"
-; config.core := "mame_libretro"
+ ;config.core := "mame_libretro"
 ; config.core := "mame2016_libretro"
 ; config.core := "mame2003_plus_libretro"
 

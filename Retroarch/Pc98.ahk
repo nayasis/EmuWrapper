@@ -3,26 +3,27 @@
 
 imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\PC98\Suiryuushi Gaiden (shanbara)(ja)"
-; imageDir := "\\NAS\emul\image\PC98\Policenauts (ja)"
+ ;imageDir := "\\NAS2\emul\image\PC98\Policenauts (ja)"
 ; imageDir := "\\NAS\emul\image\PC98\Sacchan no Daibouken (agumix)(ja)"
+ imageDir := "\\NAS2\emul\image\PC98\Dragon Buster (dempa shinbunsha)(ja)"
 
 option := getOption( imageDir )
 config := setConfig( "np2kai_libretro", option, true )
 ; config := setConfig( "nekop2_libretro", option )
 
-setNpConfig( config )
-applyCustomFont( imageDir, config )
-makeCmd( imageDir )
+setNpConfig(config)
+applyCustomFont(imageDir, config)
+fileCmd := makeCmd(imageDir)
 
 ; setCdRom( imageDir, config )
 ; setHdd( imageDir, config )
 ; setFdd( imageDir, config )
 
 ; imageFile := getRomPath( imageDir, option, "cmd|m3u|d88|fdi|fdd|hdm|nfd|xdf|tfd" )
-imageFile := getRomPath( imageDir, option, "cmd" )
-writeConfig( config )
+;imageFile := getRomPath( imageDir, option, "cmd" )
+writeConfig(config)
 
-runEmulator( imageFile, config )
+runEmulator(fileCmd, config)
 
 deleteTempFile()
 
@@ -127,7 +128,7 @@ getCfg( config ) {
   return { "path" : cfgPath, "section" : section }
 }
 
-makeCmd( imageDir ) {
+makeCmd(imageDir) {
 
   files := FileUtil.getFiles( imageDir, "i).*\.(d88|d98|fdi|fdd|hdm|nfd|xdf|tfd)$" )
   hdd   := FileUtil.getFile( imageDir, "i).*\.(hdi|hdd)$" )
@@ -137,12 +138,15 @@ makeCmd( imageDir ) {
   if( cdrom != "" )
     files.push( cdrom )
 
-  content := "np2kai"
+  cmd := "np2kai"
   for i, file in files {
-    content .= " " wrap(file)
+    cmd .= " " wrap(file)
   }
 
-  FileUtil.write( imageDir "\run.cmd", content )
+  fileCmd := A_ScriptDir "\Pc98.cmd"
+  FileUtil.write(fileCmd, cmd)
+  debug(">> fileCmd: " fileCmd ", cmd: " cmd)
+  return fileCmd
 
 }
 

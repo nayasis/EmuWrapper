@@ -7,7 +7,8 @@ imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\PC98\Night Seep (gray)(ja)"
 ; imageDir := "\\NAS2\emul\image\PC98\Dragon Knight 3 (ja)"
 ; imageDir := "\\NAS2\emul\image\PC98\Dragon Knight 4 (T-ko by Edenlock)"
-; imageDir := "\\NAS2\emul\image\PC98\Uncharted Water - New Horizons (ja)"
+ imageDir := "\\NAS2\emul\image\PC98\Uncharted Water - New Horizons (ja)"
+ ;imageDir := "\\NAS2\emul\image\PC98\Taikou Risshiden (koei)(ja)"
 
 option := getOption( imageDir )
 config := setConfig( "np2kai_libretro", option, false )
@@ -17,12 +18,12 @@ config := setConfig( "np2kai_libretro", option, false )
 
 setNpConfig( config )
 applyCustomFont( imageDir, config )
-makeCmd( imageDir )
+fileCmd := makeCmd(imageDir)
 
 imageFile := getRomPath( imageDir, option, "cmd" )
 writeConfig( config )
 
-runEmulator( imageFile, config )
+runEmulator(fileCmd, config)
 
 deleteTempFile()
 
@@ -132,7 +133,9 @@ makeCmd( imageDir ) {
     content .= " " wrap(file)
   }
 
-  FileUtil.write( imageDir "\run.cmd", content )
+  fileCmd := A_ScriptDir "\Pc98.cmd"
+  FileUtil.write(fileCmd, content)
+  return fileCmd
 
 }
 

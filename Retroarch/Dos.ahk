@@ -2,8 +2,8 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS2\emul\image\DOS\Uncharted Water (en)"
 ;imageDir := "\\NAS2\emul\image\DOS\WIN98SE"
+;imageDir := "\\NAS2\emul\image\DOS\Brandish 3 (falcom)(ko)"
 
 option := getOption( imageDir )
 config := setConfig( "dosbox_pure_libretro", option, true )
@@ -40,9 +40,10 @@ makeAutoboot(imageDir, config) {
     if( cdroms.length() > 0 ) {
       images := ""
       for i, f in cdroms {
-        images := images " """ f """"
+        images .= " " wrap(f)
       }
-      autoboot := autoboot "imgmount D " images " -t iso -ide 2m`n`n"
+      ;autoboot := autoboot "imgmount d " images " -t iso -ide 2m`n`n"
+      autoboot := autoboot "imgmount d " images " -t iso`n`n"
     }
   }
 

@@ -5,7 +5,7 @@ global emulatorPid := ""
 
 imageDir := %0%
 ; imageDir := "d:\app\Switch Army Knife\SAK_64bit"
-;imageDir := "\\NAS2\emul\image\NSW\Legend of Zelda - Tears of the Kingdom (nintendo)(ko)"
+imageDir := "\\NAS2\emul\image\NSW\Dragon Quest Monsters 3 (armor project)(ko)"
 
 makeLink(imageDir)
 

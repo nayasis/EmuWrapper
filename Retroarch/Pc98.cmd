@@ -1,0 +1,1 @@
+np2kai "\\NAS2\emul\image\PC98\Virgin Angel (crystal soft)(ja)\Virgin Angel.hdi"
