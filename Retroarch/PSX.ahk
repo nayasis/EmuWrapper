@@ -22,6 +22,8 @@ ExitApp
 setCustomFont( imageDir, option ) {
 	if ( FileUtil.exist(imageDir "\scph5500.bin") == true ) {
 		option.systemfiles_in_content_dir := "true"
+	} else if ( FileUtil.exist(imageDir "\SCPH1001.bin") == true ) {
+		option.systemfiles_in_content_dir := "true"
 	} else {
 		option.systemfiles_in_content_dir := "false"
 	}

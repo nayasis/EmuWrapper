@@ -463,7 +463,7 @@ scriptEnter(waitCmd) {
 	WinWait, % waitCmd
 	IfWinExist
 	{
-		WinActivate
+		WinActivate, % waitCmd
 		Send, {Enter}
 	}
 }
@@ -472,7 +472,7 @@ scriptClick(waitCmd, px, py) {
 	WinWait, % waitCmd
 	IfWinExist
 	{
-		WinActivate
+		WinActivate, % waitCmd
 		Click, % px "," py
 	}
 }

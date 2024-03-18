@@ -419,3 +419,39 @@ psx2/PCSX2 1.7/updater.log
 psx2/PCSX2 1.7/qt.conf
 retroarch/Arcade.cmd
 retroarch/1.15.0/qt.conf
+retroarch/1.14.0/np2.cfg
+retroarch/1.14.0/retroarch_qt.cfg
+retroarch/1.17.0/assets
+retroarch/1.17.0/autoconfig
+retroarch/1.17.0/bearer
+retroarch/1.17.0/cheats
+retroarch/1.17.0/config
+retroarch/1.17.0/content_history.lpl
+retroarch/1.17.0/content_image_history.lpl
+retroarch/1.17.0/content_music_history.lpl
+retroarch/1.17.0/content_video_history.lpl
+retroarch/1.17.0/cores
+retroarch/1.17.0/database
+retroarch/1.17.0/downloads
+retroarch/1.17.0/filters
+retroarch/1.17.0/iconengines
+retroarch/1.17.0/imageformats
+retroarch/1.17.0/info
+retroarch/1.17.0/layouts
+retroarch/1.17.0/logs
+retroarch/1.17.0/overlays
+retroarch/1.17.0/platforms
+retroarch/1.17.0/playlists
+retroarch/1.17.0/qt.conf
+retroarch/1.17.0/recordings
+retroarch/1.17.0/saves
+retroarch/1.17.0/screenshots
+retroarch/1.17.0/shaders
+retroarch/1.17.0/states
+retroarch/1.17.0/styles
+retroarch/1.17.0/system
+retroarch/1.17.0/thumbnails
+ZZ_Util/obsidian/shell/.obsidian/
+ZZ_Util/obsidian/shell/description
+3DS/Citra 2020-12-07/nightly/qt.conf
+psx2/PCSX2 1.7/inis/PCSX2.ini

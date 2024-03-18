@@ -15,3 +15,8 @@
 
 [HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers] 
 "${cd}\bin\AralTrans.exe"="~ RUNASADMIN" 
+
+
+[HKEY_USERS\${sid}\SOFTWARE\Overflow\CrossDays\Install]
+"InstPath"="${cdWin}\\"
+"Version"="1.00bBX"

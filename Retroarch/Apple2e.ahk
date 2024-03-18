@@ -86,7 +86,7 @@ makeCmd(imageDir, config) {
     	break
   }
 
-  hdds  := FileUtil.getFiles(imageDir, "i).*\.(po|2mg)$")
+  hdds  := FileUtil.getFiles(imageDir, "i).*\.(po|2mg|hdv)$")
   for i, hdd in hdds {
   	cmd .= addOption("-hard" i, wrap(hdd))
     if(i >= 2)

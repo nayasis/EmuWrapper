@@ -5,7 +5,7 @@ imageDir := %0%
 ; imageDir := "\\NAS\emul\image\PC98\Hana to Chiruran (dott plan)(ja)"
 ; imageDir := "\\NAS\emul\image\PC98\Policenauts (ja)"
 ; imageDir := "\\NAS2\emul\image\PC98\Night Seep (gray)(ja)"
-imageDir := "\\NAS2\emul\image\PC98\Dragon Knight 3 (ja)"
+imageDir := "\\NAS2\emul\image\PC98\Puyo Puyo (compile)(ja)"
 
 option := getOption( imageDir )
 config := setConfig( "nekop2_libretro", option )
@@ -140,19 +140,20 @@ setCdrom( imageDir, config ) {
   IniWrite, % cdrom, % cfg.path, % cfg.section, HDD3FILE
 }
 
-setHdd( imageDir, config ) {
+setHdd(imageDir, config) {
  	cfg := getCfg( config )
 	hdd := FileUtil.getFile( imageDir, "i).*\.(hdi|hdd)$" )
   IniWrite, % hdd, % cfg.path, % cfg.section, HDD1FILE
 }
 
-setFdd( imageDir, config ) {
+setFdd(imageDir, config) {
 	cfg := getCfg( config ) 
 	files := FileUtil.getFiles( imageDir, "i).*\.(d88|d98|fdi|fdd|hdm|nfd|xdf|tfd)$" )
 	Loop, % 2
 	{
 		if( A_Index > 2 )
 			break
+    debug( files[a_index] "->" cfg.path ", " cfg.section)
 		IniWrite, % files[a_index], % cfg.path, % cfg.section, FDD%a_index%FILE
 	}
 }
