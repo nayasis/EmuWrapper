@@ -3,14 +3,15 @@
 
 global emulPid  := ""
 imageDir := %0%
-; imageDir := "\\NAS2\emul\image\Wii\Zengeki no Reginleiv (sandiot)(T-en 1.0 by Brand Newman)"
+;imageDir := "\\NAS2\emul\image\GameCube\Star Wars - Rogue Squadron III - Rebel Strike (factor 5)(en)"
 
 setConfig( imageDir )
 
 cdContainer := new DiskContainer( imageDir, "i).*\.(gcz|cue|iso|wbfs)$" )
 cdContainer.initSlot( 1 )
 
-emulDir  := A_ScriptDir "\bin\dolphin-master-5.0-11590-x64"
+;emulDir  := A_ScriptDir "\bin\dolphin-master-5.0-11590-x64"
+emulDir  := A_ScriptDir "\bin\dolphin-2409-x64"
 emulPath := emulDir "\Dolphin.exe"
 
 unblockApp( emulPath )

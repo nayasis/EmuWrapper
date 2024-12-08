@@ -140,7 +140,7 @@ class FileUtil {
   readXml(path) {
   	if( ! this.exist(path) )
   		return new XML()
-  	return new XML(this.read(path))
+  	return new XML(path)
   }
 
   read(path) {
@@ -176,7 +176,7 @@ class FileUtil {
 
 	}
 
-	makeDir( path ) {
+	makeDir(path) {
 		FileCreateDir, %path%
 	}
 
@@ -262,6 +262,31 @@ class FileUtil {
   		return false
   }
 
+  hasSymlinkAuth() {
+		testFilePath := A_Temp "\ahkSymlinkTestfile.txt"
+		testLinkPath := A_Temp "\ahkSymlinkTestlink.txt"
+
+		; create temp file
+		FileAppend,, %testFilePath%
+		; create temp link
+		RunWait, %ComSpec% /c mklink "%testLinkPath%" "%testFilePath%", , Hide UseErrorLevel
+
+		; delete temp
+		FileDelete, %testFilePath%
+		FileDelete, %testLinkPath%
+
+		if (ErrorLevel = 0) {
+		    return true
+		} else {
+		    return false
+		}
+  }
+
+  createSymlinkAuth() {
+  	cmd := "fsutil behavior set SymlinkEvaluation L2L:1 R2R:1 L2R:1 R2L:1"
+  	runWait %ComSpec% %cmd%,, Hide
+  }
+
   /**
   * make symbolic link
   *
@@ -269,16 +294,16 @@ class FileUtil {
   * @param trg        target path (path to used as link)
   * @param deleteTrg  delete trg forcidly
   */
-  makeLink( src, trg, deleteTrg:=false ) {
+  makeLink(src, trg, deleteTrg:=false) {
 
     if( ! this.exist(src) )
     	return false
 
-  	if( this.exist(trg) && deleteTrg == true ) {
+  	if( deleteTrg == true && this.exist(trg) ) {
   		this.delete(trg)
   	}
 
-		this.makeParentDir(trg, this.isDir(src) )
+		this.makeParentDir(trg, this.isDir(src))
 		if ( this.isDir(src) ) {
 			cmd := "/c mklink /d """ trg """ """ src """"
 		} else {

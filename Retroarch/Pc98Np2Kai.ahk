@@ -2,14 +2,8 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS\emul\image\PC98\Hana to Chiruran (dott plan)(ja)"
-; imageDir := "\\NAS\emul\image\PC98\Policenauts (ja)"
-; imageDir := "\\NAS2\emul\image\PC98\Night Seep (gray)(ja)"
-; imageDir := "\\NAS2\emul\image\PC98\Dragon Knight 3 (ja)"
-; imageDir := "\\NAS2\emul\image\PC98\Dragon Knight 4 (T-ko by Edenlock)"
- imageDir := "\\NAS2\emul\image\PC98\Uncharted Water - New Horizons (ja)"
- ;imageDir := "\\NAS2\emul\image\PC98\Taikou Risshiden (koei)(ja)"
-
+ ;imageDir := "\\NAS2\emul\image\PC98\Uncharted Water - New Horizons (ja)"
+ 
 option := getOption( imageDir )
 config := setConfig( "np2kai_libretro", option, false )
 

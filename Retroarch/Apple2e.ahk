@@ -3,25 +3,11 @@
 
 ; https://wiki.mamedev.org/index.php/Driver:Apple_II
 
+;global EMUL_ROOT     := A_ScriptDir "\1.17.0"
+;global EMUL_ROOT     := A_ScriptDir "\1.19.1"
+
 imageDir := %0%
-; imageDir := "\\NAS2\emul\image\Apple2\Karateka"
-; imageDir := "\\NAS2\emul\image\Apple2\RPG-Times of Lore (en)"
-; imageDir := "\\NAS2\emul\image\Apple2\Ultima V - Warriors of Destiny"
-; imageDir := "\\NAS2\emul\image\Apple2\Ultima III - Exodus (en)"
-; imageDir := "\\NAS2\emul\image\Apple2\Action\Black Magic"
-; imageDir := "\\NAS2\emul\image\Apple2\Space Rogue (en)"
-; imageDir := "\\NAS2\emul\image\Apple2\Wings of Fury (en)"
-; imageDir := "\\NAS2\emul\image\Apple2\G.I. Joe"
-; imageDir := "\\NAS2\emul\image\Apple2\Action-Aliens (en)"
-; imageDir := "\\NAS2\emul\image\Apple2\2400 A.D"
-; imageDir := "\\NAS2\emul\image\Apple2\One on One (ea)(en)"
-; imageDir := "\\NAS2\emul\image\Apple2\Pitfall 2 - Lost Caverns (activision)(en)"
-; imageDir := "\\NAS2\emul\image\Apple2\Bard's Tale III - The Thief of Fate (interplay)(en)\"
-; imageDir := "\\NAS2\emul\image\Apple2\Wings of Fury (en)"
-; imageDir := "\\NAS2\emul\image\Apple2\King Quest II - Romancing The Throne (en)"
-; imageDir := "\\NAS2\emul\image\Apple2\Deathlord"
-; imageDir := "\\NAS2\emul\image\Apple2\Wasteland (interplay)(en)"
- ;imageDir := "\\NAS2\emul\image\Apple2\Moebius - the Orb of Celestial Harmony (micro magic)(en)"
+;imageDir := "\\NAS2\emul\image\Apple2\World Class Leader Board (access)(en)"
 
 ;mklink /d "C:\app\emulator\Retroarch\1.14.0\iconengines" "C:\app\emulator\Retroarch\share\iconengines"
 

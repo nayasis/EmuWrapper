@@ -4,7 +4,8 @@
 
 ;global EMUL_ROOT     := A_ScriptDir "\1.14.0"
 ;global EMUL_ROOT     := A_ScriptDir "\1.15.0"
-global EMUL_ROOT     := A_ScriptDir "\1.17.0"
+;global EMUL_ROOT     := A_ScriptDir "\1.18.0"
+global EMUL_ROOT     := A_ScriptDir "\1.19.1"
 
 global diskContainer := new DiskContainer()
 global CFG_RA_APPEND := EMUL_ROOT "\retroarch.append.cfg"
@@ -167,6 +168,7 @@ waitCloseEmulator(emulPid:="") {
 	WinWaitClose, ahk_class RetroArch ahk_exe retroarch.exe,,
 	if( emulPid != "" )
 	  Process, WaitClose, emulPid
+	ResolutionChanger.restore()
 }
 
 setConfig(defaultCore, option, log:=false) {
@@ -342,6 +344,11 @@ setVideoShader( config ) {
 }
 
 setResolution( config ) {
+
+	if(A_ScreenWidth > 1920 && A_ScreenHeight > 1080) {
+		ResolutionChanger.change(1920, 1080)
+	}
+
   if( config.fullscreen_resolution == "" || config.fullscreen_resolution == "none" ) {
   	config.video_windowed_fullscreen := "true"
   } else {

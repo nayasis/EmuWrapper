@@ -1,0 +1,812 @@
+{
+  "version": "1.5",
+  "default_core_path": "",
+  "default_core_name": "",
+  "label_display_mode": 0,
+  "right_thumbnail_mode": 0,
+  "left_thumbnail_mode": 0,
+  "thumbnail_match_mode": 0,
+  "sort_mode": 2,
+  "items": [
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Saru! Get You! Million Monkeys (English 72)-241209-011452.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Aedis_Eclipse_Generation_of_Chaos_USA_PSP-ARTiSAN-241209-011041.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Lobster_Attack+2DG-AoD-241209-005337.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Lobster_Attack+2DG-AoD-241209-005321.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Lobster Attack (19xx)(Bob Akerberg)-241209-005101.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Lobster Attack (19xx)(Bob Akerberg)-241209-005057.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Jack Attack (1983)(Commodore)[cr ASS]-241209-004856.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Jack Attack (1983)(Commodore)[cr ASS]-241209-004849.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Jack Attack (1983)(Commodore)[cr ASS]-241209-004837.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Apache Raid (1984)(Anirog Software)-241209-001941.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Apache Raid (1984)(Anirog Software)-241209-001926.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Apache Raid (1984)(Anirog Software)-241209-001915.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Attacker (1984)(Cascade)-241208-234849.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Attacker (1984)(Cascade)-241208-234838.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Sodan Attack (1988)(Arne Fernlund)[cr 1001]-241208-233422.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Sodan Attack (1988)(Arne Fernlund)[cr 1001]-241208-233421.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Sodan Attack (1988)(Arne Fernlund)[cr 1001]-241208-233420.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Sodan Attack (1988)(Arne Fernlund)[cr 1001]-241208-233419.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Sodan Attack (1988)(Arne Fernlund)[cr 1001]-241208-233413.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Mogura Attacker (1990)(Project Makkusu)-241208-231855.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Mogura Attacker (1990)(Project Makkusu)-241208-231830.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Mogura Attacker (1990)(Project Makkusu)-241208-231752.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\sushibar-241208-230357.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Akira (Prototype)-241208-215024.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Akira (Prototype)-241208-214957.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Ar_tonelico_2_Project_Metafalica-241208-134808.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Pc98-241207-223844.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Pc98-241207-165753.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Pc98-241207-155529.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Pc98-241207-152803.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Pc98-241207-152448.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Pc98-241207-152415.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Pc98-241207-152241.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Pc98-241207-152240.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Alloyrun (1988)(Starlight Software)[cr Hotline]-241202-225655.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Tape Master Pro v4.0-241129-000839.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Tape Master Pro v4.0-241129-000829.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Alchemist Marie & Elie - Futari no Atelier (T-ko)-241126-154621.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Hollywood Poker (1987)(Golden Games).tap-241124-045106.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Hollywood Poker (1987)(Golden Games).tap-241124-044655.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Progolf (1988)(Atlantis)(Side B)[Pebble Beach USA].tap-241124-034137.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Crazy Jogger (1987)(Multisoft)-241124-025209.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Frohn (1987)(Kingsoft)[cr ASS]-241124-022214.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Frohn (1987)(Kingsoft)[cr ASS]-241124-022212.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Foton (1991)(Trash Productions)[cr CHR][t +1 CHR]-241124-020729.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Lightforce (1987)(FTL)-241124-012656.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\G-Force (1984)(Euro-Byte)-241124-011817.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Magnetron (1988)(Firebird).tap-241123-233809.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\autoboot-241123-225727.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Enforce (1991)(Codemasters)[cr MHI][t +1 MHI]-241123-223347.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Enforce (1991)(Codemasters)[cr MHI][t +1 MHI]-241123-223338.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Flyer Fox (1984)(Game Gems)-241123-221400.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Flyer Fox (1984)(Game Gems)-241123-221359.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Flight Path 737 (1984)(Anirog Software)-241123-220234.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\International Tennis (1985)(Commodore Business Machines)[cr ASS]-241123-030021.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\International Tennis (1985)(Commodore)-241123-025951.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\International Tennis (1985)(Commodore)-241123-025938.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Treasures of Ra (1984)(Dinamite)-241122-021403.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Treasures of Ra (1984)(Dinamite)-241122-021401.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Treasures of Ra (1984)(Dinamite)-241122-021335.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Ollo II - The Final Conflict (1986)(Craza Soft)-241122-012946.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Ollo (1986)(Bug-Byte).tap-241122-005547.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Ollo (1986)(Bug-Byte).tap-241122-005535.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Connection (1993)(CP Verlag)[cr Active]-241122-003555.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Connection (1993)(CP Verlag)[cr Active]-241122-003549.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Meitantei Conan - Daiei Teikoku no Isan (English v1.0.0)-241121-235220.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Chinese Juggler, The (1984)(Ocean)-241121-033801.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Long (China) (Unl)-241121-032102.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\SanGokuShi DS 3 (T-ko 1.1)-241121-020118.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Anter-Planter (1984)(Romik Software)-241117-001712.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\wiz-241115-012947.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Django (19xx)(-)[cr Dynamix]-241112-032425.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Django (19xx)(-)[cr Dynamix]-241112-032419.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Django (19xx)(-)[cr Dunex]-241112-032359.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Django (19xx)(-)[cr Dunex]-241112-032353.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Camel Trophy (1986)(Tequila)-241112-025208.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Camel Trophy (1986)(Tequila)-241112-025203.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Camel Trophy (1986)(Tequila)-241112-025148.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Camel Trophy (1986)(Tequila)-241112-025144.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Attack of the Mutant Camels (1983)(Llamasoft)-241112-023138.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Advanced Basketball Simulator (1989)(Mastertronic).tap-241112-022022.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Rad Warrior (1988)(Epyx)-241112-020516.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Rad Warrior (1988)(Epyx)-241112-020515.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Pac-Man (1983)(Atari)-241109-153854.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Pac-Man (1983)(Atari)-241109-153849.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Continental Circus (1989)(Taito-Mastertronic).tap-241109-131211.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Vampire's Lair (1986)(Alpha Software)-241109-123923.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Vampire Hunter 2-241108-215751.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Vampire Hunter 2 Redux-241108-215649.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Vampire Hunter 2 Redux-241108-215636.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Nosferatu the Vampire (1986)(Macmillan)-241108-205704.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Tomahawk (1986)(Digital Integration).tap-241108-204801.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Crazy Kong (1983)(Interceptor Software).tap-241107-235143.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Crazy Kong (1983)(Interceptor Software).tap-241107-235136.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Crazy Kong (1983)(Interceptor Software).tap-241107-235123.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Kong-241107-234924.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Kong-241107-234917.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\DonkeyKongJR-241107-234452.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\DonkeyKongJR-241107-234436.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    },
+    {
+      "path": "C:\\app\\emulator\\retroarch\\1.19.1\\screenshots\\Kong (1983)(Anirog Software)[cr 1001][a]-241107-234212.png",
+      "label": "",
+      "core_path": "builtin",
+      "core_name": "imageviewer",
+      "crc32": "",
+      "db_name": ""
+    }
+  ]
+}
