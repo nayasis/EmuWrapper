@@ -1,0 +1,202 @@
+{
+  "main": {
+    "id": "60a3cb892d3c9d2f",
+    "type": "split",
+    "children": [
+      {
+        "id": "3e7d549c5dc600f5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "97e7f6717d1613fc",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "description/game.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "game"
+            }
+          },
+          {
+            "id": "4e68dc26f8196783",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.7.6"
+              },
+              "icon": "lucide-file",
+              "title": "Release Notes 1.7.6"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "0ab2b0139a06d29f",
+    "type": "split",
+    "children": [
+      {
+        "id": "40d3dfc68085c663",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9121c0171c20c5ca",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-folder-closed",
+              "title": "파일 탐색기"
+            }
+          },
+          {
+            "id": "e972f84519b91502",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "검색"
+            }
+          },
+          {
+            "id": "793f1be4decb86ff",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "5860271140b5f6b0",
+    "type": "split",
+    "children": [
+      {
+        "id": "7773bdb3cbed9e0c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5ea0605c4befd37c",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "description/game.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "game의 백링크"
+            }
+          },
+          {
+            "id": "8c72303fe262edf6",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "description/game.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "game의 나가는 링크"
+            }
+          },
+          {
+            "id": "0eecda7e8c06a8ae",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "04f0941cb0a6561c",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "description/game.md"
+              },
+              "icon": "lucide-list",
+              "title": "game 개요"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:퀵 스위처 열기": false,
+      "graph:그래프 뷰 열기": false,
+      "canvas:새 캔버스 만들기": false,
+      "daily-notes:오늘의 데일리 노트 열기": false,
+      "templates:템플릿 삽입": false,
+      "command-palette:명령어 팔레트 열기": false
+    }
+  },
+  "active": "97e7f6717d1613fc",
+  "lastOpenFiles": [
+    "description/MK8_KOR_v1.2.zip",
+    "description/Rance (manual).pdf",
+    "description/Foxy (addendum).pdf",
+    "description/Foxy (manual).pdf",
+    "description/Run Run Kyousoukyoku (manual).pdf",
+    "description/Shangrlia (manual).pdf",
+    "description/Shangrlia 2 (manual).pdf",
+    "description/Night Slave (manual).pdf",
+    "description/Alice no Yakata (manual) 1.pdf",
+    "description/Resident Evil 4 v1.0-v20230424 Plus 36 Trainer (ko).exe",
+    "2024-09-08.md",
+    "2024-09-28.md",
+    "무제 파일.canvas",
+    "무제 파일 1.canvas",
+    "description/전체 가독률 100% 공략.html",
+    "description/UU_PSX_Controls.jpg",
+    "description/game.md",
+    "description/Policenauts (manual protect) 1.gif",
+    "description/kq1vga_map.png",
+    "울티마 IV 지도.png",
+    "description/울티마 IV 지도.png",
+    "description/Savage Empire - Map.jpg"
+  ]
+}

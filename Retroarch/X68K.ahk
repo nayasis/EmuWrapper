@@ -2,18 +2,14 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS2\emul\image\x68000\Ys 3 - Wanderers From Ys (ja)\"
-; imageDir := "\\NAS2\emul\image\x68000\Ys 2 - Ancient Ys Vanished (ja)\"
-; imageDir := "\\NAS2\emul\image\x68000\Akumajou Dracula (ja)\"
-; imageDir := "\\NAS2\emul\image\x68000\Final Fight (ja)\"
-; imageDir := "\\NAS2\emul\image\x68000\Sangokushi (ja)\"
-; imageDir := "\\NAS2\emul\image\x68000\Sangokushi III (ja)\"
+;imageDir := "\\NAS2\emul\image\x68000\Ys 3 - Wanderers From Ys (falcom)(ja)"
 
 option    := getOption( imageDir )
 config    := setConfig( "px68k_libretro", option )
 imageFile := getRomPath( imageDir, option, "cmd|m3u|zip|dim|img|d88|88d|hdm|dup|2hd|xdf|hdf" )
 
 setStartDir(imageDir)
+applyCustomFont(imageDir)
 writeConfig(config, imageFile)
 runEmulator(imageFile, config)
 
@@ -26,5 +22,15 @@ setStartDir(imageDir) {
 	FileUtil.makeDir(dirConf)
 	FileUtil.write(dirConf "\config", conf)
 }
+
+applyCustomFont(imageDir) {
+  fontPath := FileUtil.getFile(imageDir "\_EL_CONFIG\font\")
+  if( ! FileUtil.exist(fontPath) ) {
+  	fontPath := EMUL_ROOT "\system\keropi\cgrom.dat.origin"
+  }
+  debug(fontPath "->" trgPath)
+  FileUtil.makeLink(fontPath, EMUL_ROOT "\system\keropi\cgrom.dat", true)
+}
+
 
 #include %A_ScriptDir%\script\AbstractHotkey.ahk

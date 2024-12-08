@@ -4,8 +4,7 @@
 global emulatorPid := ""
 
 imageDir := %0%
-; imageDir := "d:\app\Switch Army Knife\SAK_64bit"
-imageDir := "\\NAS2\emul\image\NSW\Dragon Quest Monsters 3 (armor project)(ko)"
+;imageDir := "\\NAS2\emul\image\NSW\Korean Drone Flying Tour - Jeju Island-1 (14 dimension)(ko)"
 
 makeLink(imageDir)
 

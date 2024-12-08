@@ -4,6 +4,8 @@
 imageDir := %0%
 ;imageDir := "\\NAS2\emul\image\DOS\WIN98SE"
 ;imageDir := "\\NAS2\emul\image\DOS\Brandish 3 (falcom)(ko)"
+;imageDir := "\\NAS2\emul\image\DOS\Magic Candle 3 (mindcraft)(en)"
+imageDir := "\\NAS2\emul\image\DOS\Magic Candle (mindcraft)(en)"
 
 option := getOption( imageDir )
 config := setConfig( "dosbox_pure_libretro", option, true )
@@ -32,7 +34,7 @@ makeAutoboot(imageDir, config) {
   ;   return
   ; }
 
-  autoboot := RegExReplace(config.dosbox_startup,"#{path}",imageDir)
+  autoboot := RegExReplace(config.dosbox_startup,"(#{path}|\${cd})", imageDir)
 
   ; dosbox-pure mount cdrom automatically
   if( config.core == "dosbox_svn_libretro" ) {

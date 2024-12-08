@@ -2,10 +2,7 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS2\emul\image\PC98\Suiryuushi Gaiden (shanbara)(ja)"
- ;imageDir := "\\NAS2\emul\image\PC98\Policenauts (ja)"
-; imageDir := "\\NAS\emul\image\PC98\Sacchan no Daibouken (agumix)(ja)"
- imageDir := "\\NAS2\emul\image\PC98\Dragon Buster (dempa shinbunsha)(ja)"
+;imageDir := "\\NAS2\emul\image\PC98\Madou Monogatari 1-2-3 #2 (compile)(ja)"
 
 option := getOption( imageDir )
 config := setConfig( "np2kai_libretro", option, true )

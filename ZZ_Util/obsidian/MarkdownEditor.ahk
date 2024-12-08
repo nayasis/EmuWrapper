@@ -6,14 +6,14 @@ param := %0%
 
 srcDir  := FileUtil.getDir(param)
 srcFile := FileUtil.getName(param)
-trgDir  := A_ScriptDir "\shell\description"
+trgDir  := A_ScriptDir "\emuloader\description"
 
 debug(srcDir)
 debug(srcFile)
 
 FileUtil.makeLink(srcDir, trgDir, true)
 
-cmd := "obsidian://open?vault=shell&file=" srcFile
+cmd := "obsidian://open?vault=emuloader&file=" srcFile
 debug(cmd)
 
 Run % cmd

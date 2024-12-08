@@ -2,8 +2,7 @@
 #include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := %0%
-; imageDir := "\\NAS2\emul\image\PlayStation\R4 Ridge Racer Type 4 (en)"
-; imageDir := "\\NAS2\emul\image\PlayStation\TOCA World Touring Cars (en)"
+ ;imageDir := "\\NAS2\emul\image\PlayStation\Psychic Force (T-ko)"
 
 option := getOption(imageDir)
 setCustomFont( imageDir, option )
@@ -20,9 +19,8 @@ runEmulator( imageFile, config )
 ExitApp
 
 setCustomFont( imageDir, option ) {
-	if ( FileUtil.exist(imageDir "\scph5500.bin") == true ) {
-		option.systemfiles_in_content_dir := "true"
-	} else if ( FileUtil.exist(imageDir "\SCPH1001.bin") == true ) {
+	customfont := FileUtil.getFile(imageDir, "scph.*\.bin")
+	if ( customfont != "" ) {
 		option.systemfiles_in_content_dir := "true"
 	} else {
 		option.systemfiles_in_content_dir := "false"

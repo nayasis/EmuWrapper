@@ -1,1 +1,1 @@
-np2kai "\\NAS2\emul\image\PC98\Virgin Angel (crystal soft)(ja)\Virgin Angel.hdi"
+np2kai "\\NAS2\emul\image\PC98\Sanshimai (jast)(T-en 1.0 by BabaJeanmel)\Sanshimai (uncensored) (T-en 1.0).hdi"

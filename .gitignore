@@ -44,6 +44,7 @@ Windows 95/WIN98/stderr.txt
 3DS/Citra*/network.xml
 3DS/Citra*/nightly-mingw/scripting/citra.py
 3DS/Citra*/maintenancetool.dat
+3DS/Citra/save_bak/
 
 PSX2/PCSX2 1.5.0/Bios/
 PSX2/PCSX2 1.5.0/cheats/
@@ -453,5 +454,12 @@ retroarch/1.17.0/system
 retroarch/1.17.0/thumbnails
 ZZ_Util/obsidian/shell/.obsidian/
 ZZ_Util/obsidian/shell/description
-3DS/Citra 2020-12-07/nightly/qt.conf
 psx2/PCSX2 1.7/inis/PCSX2.ini
+PSX2/pcsx2_2.0.2/translations
+
+arcade/teknoparrot/bin/ElfLdr2
+arcade/teknoparrot/bin/intel_x64
+arcade/teknoparrot/bin/libs
+arcade/teknoparrot/bin/MD5
+
+ZZ_Util/obsidian/emuloader/description

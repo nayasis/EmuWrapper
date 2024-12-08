@@ -1,38 +1,15 @@
 #NoEnv
 
 ; debug( "merong" )
-; debug( "Hwasu" )
+; debug( "jake" )
 ; ExitApp
 
-
-; Gui, GuiSimpleLogger:+LastFoundExist
-; if ( ! WinExist() ) {
-;   global GuiSimpleLoggerEdit
-;   Gui, GuiSimpleLogger:Margin, 0, 0
-;   Gui, GuiSimpleLogger:Add, Edit, vGuiSimpleLoggerEdit VScroll W340 H100
-;   Gui, GuiSimpleLogger:+AlwaysOnTop +Resize -MaximizeBox +Minsize360x120
-;   Gui, GuiSimpleLogger:Show, x100 y100 w420 h270, AHK Logger
-; }
-; Gui, GuiSimpleLogger:Show
-; GuiControlGet, GuiSimpleLoggerEdit, GuiSimpleLogger:
-; GuiControl, GuiSimpleLogger:, GuiSimpleLoggerEdit, %GuiSimpleLoggerEdit%%message%
 debug( message="" ) {
   if( A_IsCompiled == 1 )
     return
   message .= "`r`n" 
   FileAppend %message%, *
 }
-
-; GuiSimpleLoggerGuiClose:
-;   GuiControl, GuiSimpleLogger:, GuiSimpleLoggerEdit, % ""
-;   Gui, GuiSimpleLogger:Hide
-;   Return
-
-; GuiSimpleLoggerGuiSize: 
-;   If A_EventInfo = 1  ; if window has been minimized
-;     Return
-;   GuiControl GuiSimpleLogger:Move, GuiSimpleLoggerEdit, % "H" A_GuiHeight " W" A_GuiWidth
-;     Return
 
 sendKey( key ) {
   SendInput {%key% down}
@@ -195,9 +172,13 @@ class Environment {
     throw Exception( "Environment is static class", -1 )
   }
 
-  getEnv( environmentName ) {
+  getEnv(environmentName) {
     EnvGet, env, % environmentName
     return env
+  }
+
+  getUserHome() {
+    return this.getEnv("userprofile")
   }
 
   restartAsAdmin() {
@@ -211,6 +192,27 @@ class Environment {
       }
       ExitApp
     }
+  }
+
+}
+
+/**
+* Network
+*/
+class Network {
+
+  static _void := Network._init()
+
+  __New() {
+    throw Exception( "Network is static class", -1 )
+  }
+
+  block(ruleName, path) {
+    Environment.restartAsAdmin()
+    RunWait, % "netsh advfirewall firewall delete rule name=" wrap(ruleName),,Hide,
+    cmd := "netsh advfirewall firewall add rule name=" wrap(ruleName) " dir=out program=" wrap(path) " action=block"
+    debug(cmd)
+    RunWait, % cmd,,Hide,
   }
 
 }

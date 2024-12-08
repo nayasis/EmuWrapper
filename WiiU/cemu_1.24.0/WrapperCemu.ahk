@@ -56,7 +56,7 @@ getConfig( imageDir ) {
 		setFontLink(imageDir,e)
 	}
 
-  disk := FileUtil.getFile( imageDir "\disk\code", "rpx")
+  disk := FileUtil.getFile(imageDir "\disk\code", "rpx")
 
   if( disk != "" ) {
 		config .= " -g " wrap(disk)
