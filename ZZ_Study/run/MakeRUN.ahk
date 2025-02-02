@@ -1,6 +1,6 @@
 #NoEnv
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
-FileEncoding, CP949
+;FileEncoding, CP949
 
 fileRun := %0%
 ; fileRun := "e:\download\Dying Light 2 (ko)\bin\ph\work\bin\x64\DyingLightGame_x64_rwdi.exe"

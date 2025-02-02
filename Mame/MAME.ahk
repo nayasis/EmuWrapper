@@ -1,16 +1,11 @@
 #NoEnv
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-global EMUL_ROOT := A_ScriptDir "\0.251"
+global EMUL_ROOT := A_ScriptDir "\0.273"
 global emulPid   := ""
 
-romName    := %0%
-; romName := "f:\download\MAME 0.203 Software List ROMs (split)\apple2\ultima5.zip"
-; romName := "gnw_opanic"
-; romName := "futari15"
-; romName := "unsquad"
-; romName := "warlords"
-; romName := "aerofgts"
+romName := %0%
+;romName := "ctower"
 
 if ( FileUtil.isDir(romName) ) {
 	romName := FileUtil.getFile( romName, "i{P up}).*\.(zip|7z)$")
@@ -25,10 +20,10 @@ romPath .= "\\NAS2\emul\image\Mame\rom;"
 
 ; artpath .= "\\NAS\emul\image\ArcadeMame\Space Invaders Part II (en)\artwork;"
 
-; options .= " -hlsl_enable"
+options .= " -hlsl_enable"
 options .= " -waitvsync"
-; options .= " -screen ""\\.\DISPLAY1"""
-options .= " -skip_gameinfo"
+options .= " -screen ""\\.\DISPLAY3"""
+;options .= " -skip_gameinfo"
 options .= " -priority 1"
 ; options .= " -video opengl"
 ; options .= " -gl_glsl"
@@ -38,7 +33,7 @@ options .= " -priority 1"
 
 ; options .= " -video d3d"
 ; options .= " -filter 0"
-; options .= " -hlsl_enable 0"
+;options .= " -hlsl_enable 0"
 
 emulPid  := ""
 emulExe := EMUL_ROOT "\mame.exe"
@@ -63,7 +58,7 @@ debug( "end !")
 ExitApp
 
 waitEmulator() {
-	WinWait, ahk_class MAME ahk_exe mame64.exe,, 10
+	WinWait, ahk_class MAME ahk_exe mame.exe,, 10
 	IfWinExist
 	{
 	  activateEmulator()
@@ -71,11 +66,11 @@ waitEmulator() {
 }
 
 activateEmulator() {
-	WinActivate, ahk_class MAME ahk_exe mame64.exe,, 10
+	WinActivate, ahk_class MAME ahk_exe mame.exe,, 10
 }
 
 waitCloseEmulator( emulPid:="" ) {
-	WinWaitClose, ahk_class MAME ahk_exe mame64.exe,,
+	WinWaitClose, ahk_class MAME ahk_exe mame.exe,,
 	if( emulPid != "" )
 	  Process, WaitClose, emulPid
 }

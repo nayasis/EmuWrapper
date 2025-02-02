@@ -1,1 +1,1 @@
-np2kai "\\NAS2\emul\image\PC98\Sanshimai (jast)(T-en 1.0 by BabaJeanmel)\Sanshimai (uncensored) (T-en 1.0).hdi"
+np2kai "\\NAS2\emul\image\PC98\Dragon Knight 4 (T-ko by Edenlock)\dk4.hdi"
