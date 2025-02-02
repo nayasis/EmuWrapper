@@ -27,11 +27,10 @@ imageFile := getRomPath(imageDir,option,"zip|7z",true)
 ; config.core := "mame2016_libretro"
 ; config.core := "mame2003_plus_libretro"
 
-isMame := RegExMatch(config.core, "i)^mame.*")
-
-if(isMame) {
-	linkResource(config, imageFile)
-}
+;isMame := RegExMatch(config.core, "i)^mame.*")
+;if(isMame) {
+;	linkResource(config, imageFile)
+;}
 
 setBezel(config,imageDir)
 writeConfig(config, imageFile)
@@ -59,13 +58,13 @@ setBezel(config, imageDir) {
 	}
 }
 
-linkResource(config, imageFile) {
-	pathSystem := EMUL_ROOT "\system\mame"
-	FileUtil.makeDir( pathSystem )
-	imageDir := FileUtil.getDir(imageFile)
-	for i,v in ["samples","artwork"] {
-		FileUtil.makeLink( imageDir "\" v,  pathSystem "\" v, true )
-	}
-}
+;linkResource(config, imageFile) {
+;	pathSystem := EMUL_ROOT "\system\mame"
+;	FileUtil.makeDir( pathSystem )
+;	imageDir := FileUtil.getDir(imageFile)
+;	for i,v in ["samples","artwork"] {
+;		FileUtil.makeLink( imageDir "\" v,  pathSystem "\" v, true )
+;	}
+;}
 
 #include %A_ScriptDir%\script\AbstractHotkey.ahk

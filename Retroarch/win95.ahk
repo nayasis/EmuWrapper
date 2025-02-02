@@ -3,6 +3,7 @@
 
 imageDir := %0%
 imageDir := "\\NAS2\emul\image\DOS\WIN98SE"
+imageDir := "\\NAS2\emul\image\DOS\Dragon Strike (en)"
 
 option := getOption( imageDir )
 config := setConfig( "dosbox_pure_libretro", option, true )
@@ -10,7 +11,7 @@ config := setConfig( "dosbox_pure_libretro", option, true )
  ; config.core := "dosbox_svn_libretro"
 ; config.core := "dosbox_core_libretro"
 
-; makeAutoboot(imageDir,config)
+;makeAutoboot(imageDir,config)
 
 imageFile := imageDir
 ; if( ! FileUtil.exist(imageFile) )

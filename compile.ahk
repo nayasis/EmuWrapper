@@ -2,6 +2,8 @@
 #include %A_ScriptDir%\ZZ_Library\Include.ahk
 #SingleInstance Force
 
+;C:\Users\nayasis\AppData\Local\Programs\AutoHotkey\Compiler\Ahk2Exe.exe
+;global dirCompiler := Environment.getUserHome() "\AppData\Local\Programs\AutoHotkey\Compiler"
 global dirCompiler := "c:\Program Files\AutoHotkey\Compiler"
 global bin := "Unicode 64-bit.bin"
 

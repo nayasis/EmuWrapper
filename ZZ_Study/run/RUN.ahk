@@ -233,7 +233,7 @@ runMain( fileIni, properties ) {
   installFont(fontPath, properties)
 
 	if ( mountImage != "_" ) {
-		VirtualDisk.mount(mountImage)
+		mountDisk(mountImage)
 	}
 
   if ( exitAltF4 == "true" )
@@ -265,7 +265,7 @@ runMain( fileIni, properties ) {
 
 		if ( windowTarget != "_" ) {
 
-			applicationPid := run(executor,executorDir)
+			applicationPid := run(executor,executorDir,false,false)
 			If(applicationPid == "")
 				return
 			sleep, % windowSearchDelay
@@ -298,14 +298,16 @@ runMain( fileIni, properties ) {
 			}
 
 		} else if ( isRunWait == true ) {
-			runWait(executor,executorDir)
+			runWait(executor,executorDir,false)
 			; applicationPid := run(executor,executorDir)
 			; Process, Wait, % applicationPid
 		} else {
-			run(executor,executorDir)
+			run(executor,executorDir,false,false)
 		}
 
-		VirtualDisk.unmount()
+		if ( mountImage != "_" ) {
+			unmountDisk(mountImage)
+		}
 
 	}
 
@@ -472,7 +474,7 @@ setEnvVariable( fileIni, properties ) {
 
 }
 
-run(executor, executorDir, wait=false) {
+run(executor, executorDir="", wait=false, hide=true) {
 	if(wait == true) {
 		debug(">> run")
 	} else {
@@ -480,10 +482,16 @@ run(executor, executorDir, wait=false) {
 	}
 	debug("- exe: " executor)
 	debug("- dir: " executorDir)
+
+  option := "UseErrorLevel"
+	if(hide) {
+		option .= " Hide"
+	}
+
 	if(wait == true) {
-		RunWait, % executor, % executorDir, UseErrorLevel, processId
+		RunWait, % executor, % executorDir, % option, processId
 	} else {
-		Run, % executor, % executorDir, UseErrorLevel, processId
+		Run, % executor, % executorDir, % option, processId
 	}
 	if ErrorLevel {
 		debug("Error Level : " ErrorLevel)
@@ -494,8 +502,8 @@ run(executor, executorDir, wait=false) {
 	return processId
 }
 
-runWait(executor, executorDir) {
-	return run(executor, executorDir, true)
+runWait(executor, executorDir="", hide=true) {
+	return run(executor, executorDir, true, hide)
 }
 
 getRunDir(executor) {
@@ -760,4 +768,18 @@ changeResolution( resolutionConfig ) {
     height := Trim( RegExReplace( resolutionConfig, "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$2" ) )
 		ResolutionChanger.change( width, height )
 	}
+}
+
+mountDisk(path) {
+	cmd := wrap(path, "\""")
+	cmd := wrap("-ImagePath " cmd)
+	cmd := "powershell -WindowStyle Hidden Mount-DiskImage " cmd
+	runWait(cmd)
+}
+
+unmountDisk(path) {
+	cmd := wrap(path, "\""")
+	cmd := wrap("-ImagePath " cmd)
+	cmd := "powershell -WindowStyle Hidden Dismount-DiskImage " cmd
+	runWait(cmd)
 }

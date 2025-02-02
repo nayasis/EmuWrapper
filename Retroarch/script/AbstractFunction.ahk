@@ -2,10 +2,9 @@
 #WinActivateForce
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-;global EMUL_ROOT     := A_ScriptDir "\1.14.0"
-;global EMUL_ROOT     := A_ScriptDir "\1.15.0"
 ;global EMUL_ROOT     := A_ScriptDir "\1.18.0"
-global EMUL_ROOT     := A_ScriptDir "\1.19.1"
+;global EMUL_ROOT     := A_ScriptDir "\1.19.1"
+global EMUL_ROOT     := A_ScriptDir "\1.20.0"
 
 global diskContainer := new DiskContainer()
 global CFG_RA_APPEND := EMUL_ROOT "\retroarch.append.cfg"
@@ -215,6 +214,7 @@ getCoreName(core) {
 	  "fceumm_libretro"                 : "FCEUmm"
 	  "mednafen_pce_fast_libretro"      : "Beetle PCE Fast"
 	  "mednafen_supergrafx_libretro"    : "Beetle SuperGrafx"
+	  "mednafen_pcfx_libretro"          : "Beetle PC-FX"
 	  "mednafen_psx_libretro"           : "Beetle PSX"
 	  "mednafen_psx_hw_libretro"        : "Beetle PSX HW"
 	  "pcsx_rearmed_libretro"           : "PCSX-ReARMed"
