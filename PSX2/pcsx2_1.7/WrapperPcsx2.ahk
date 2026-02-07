@@ -10,7 +10,7 @@ imageDir := %0%
 ; imageDir := "\\NAS2\emul\image\PSX2\Super Robot Taisen Z (T-ko 23.05.08)"
 
 option := getOption(imageDir)
-; debug( ">> option`n" JSON.dump(option) )
+; debug( ">> option`n" . JSON.dump(option) )
 
 container := new DiskContainer(imageDir, "i).*\.(chd|cso|iso|bin)$")
 container.initSlot( 1 )
@@ -146,6 +146,6 @@ makeLink() {
 	for i,e in ["bios","memcards","snaps","sstates"] {
 		src := A_ScriptDir "\..\share\" e
 		trg := A_ScriptDir "\" e
-		FileUtil.makeLink(src, trg)
+		FileUtil.makeLink(src, trg, true)
 	}
 }

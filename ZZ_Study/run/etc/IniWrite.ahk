@@ -1,4 +1,4 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
 path := A_ScriptDir "\ezTransXP"
 

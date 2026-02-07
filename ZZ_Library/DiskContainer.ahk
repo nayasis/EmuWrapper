@@ -1,4 +1,4 @@
-;#NoEnv
+#Requires AutoHotkey >=2.0
 /*
 
 ;TestCode
@@ -48,20 +48,19 @@ setDisk( slotNo, file ) {
 
 class DiskContainer {
 
-    static slot := []
+    static slot := Map()
 
     container   := []
    
-    __New( path, pattern=".*" ) {
-        if ( path != "" ) {
-            this.container := FileUtil.getFiles( path, pattern )
+    __New(path, pattern := ".*") {
+        if (path != "") {
+            this.container := FileUtil.getFiles(path, pattern)
         }
-        
     }
 
     size() {
-        cnt := this.container.MaxIndex()
-        if( cnt == "" )
+        cnt := this.container.Length
+        if (cnt == "" || cnt == 0)
             return 0
         return cnt
     }
@@ -74,111 +73,85 @@ class DiskContainer {
       return this.size() > 1
     }
 
-    addPath( path ) {
-        this.container.insert( path )
+    addPath(path) {
+        this.container.Push(path)
     }
     
     toString() {
-        
         returnVal := ""
-
-        returnVal := % returnVal ">> In Slot`n"
-        For slotNo, slot in DiskContainer.slot
-            returnVal := % returnVal "  - slot:" slotNo ", file: """ slot.fileInserted "`n"
-
-		returnVal := % returnVal ">> In Container`n"
-        Loop % this.container.MaxIndex()
-        {
-            returnVal := % returnVal "  - index:" A_Index ", file : """ this.container[A_Index] "`n"
+        returnVal := returnVal . ">> In Slot`n"
+        for slotNo, slot in DiskContainer.slot {
+            returnVal := returnVal . "  - slot:" . slotNo . ", file: `"" . slot.fileInserted . "`n"
         }
-        
+        returnVal := returnVal . ">> In Container`n"
+        loop this.container.Length {
+            returnVal := returnVal . "  - index:" . A_Index . ", file : `"" . this.container[A_Index] . "`n"
+        }
         return returnVal
-        
     }
     
-    toOption( limitCount=999, prefix="", postfix="" ) {
-        
+    toOption(limitCount := 999, prefix := "", postfix := "") {
         returnVal := ""
-        
-        Loop % this.size()
-        {
-            if( A_Index > limitCount )
+        loop this.size() {
+            if (A_Index > limitCount)
                 break
-            returnVal := % returnVal prefix " """ this.container[A_Index] """" postfix
+            returnVal := returnVal . prefix . " `"" . this.container[A_Index] . "`"" . postfix
         }
-        
-        return Trim( returnVal )
-        
+        return Trim(returnVal)
     }
 
-    insertDisk( slotNo, functionName, duration=1000 ) {
-
+    insertDisk(slotNo, functionName, duration := 1000) {
         file := ""
-        
-        ; Select file
-        Loop % this.size()
-        {
-            
-            file := this.container[ 1 ]
-
-            swapDisk := this.container[ 1 ]
-            this.container.Remove( 1 )
-            this.container.Insert( swapDisk )
-
-            if( file != DiskContainer.slot[ slotNo ].fileInserted )
+        loop this.size() {
+            file := this.container[1]
+            swapDisk := this.container[1]
+            this.container.RemoveAt(1)
+            this.container.Push(swapDisk)
+            if (file != DiskContainer.slot[slotNo].fileInserted)
                 break
-                
         }
 
-        SetTimer, Timer_DiskContainer_insertDisk_RunFunction, off
+        SetTimer(DiskContainer.Timer_InsertDisk_RunFunction, 0)
 
-        ;Tray.showMessage( "Compare", file "`n == " DiskContainer.slot[ slotNo ].fileInserted "`n ==" this.toString(), 10000 )
+        if (!DiskContainer.slot.Has(slotNo) || DiskContainer.slot[slotNo] == "")
+            DiskContainer.slot[slotNo] := {}
 
-        ; Set Slot
-        if( DiskContainer.slot[ slotNo ] == null )
-            DiskContainer.slot[ slotNo ] := {}
+        DiskContainer.slot[slotNo].file := file
+        DiskContainer.slot[slotNo].functionName := functionName
 
-        DiskContainer.slot[ slotNo ].file         := file
-        DiskContainer.slot[ slotNo ].functionName := functionName
-
-
-        ; Show Status
-        debug( "insert disk in drive " slotNo )
-        simpleFileName := FileUtil.getFileName(file)
-        if ( simpleFileName == "" ) {
-            simpleFileName := RegExReplace( file, "(.+?)\.*?$", "$1" )
+        debug("insert disk in drive " slotNo)
+        simpleFileName := FileUtil.getName(file)
+        if (simpleFileName == "") {
+            simpleFileName := RegExReplace(file, "(.+?)\.*?$", "$1")
         }
-        debug( simpleFileName )
-        Tray.showMessage( "Insert Disk in Drive " slotNo " : " simpleFileName )
+        debug(simpleFileName)
+        Tray.showMessage("Insert Disk in Drive " . slotNo . " : " . simpleFileName)
 
-		SetTimer, Timer_DiskContainer_insertDisk_RunFunction, -%duration%
-		return
+        SetTimer(DiskContainer.Timer_InsertDisk_RunFunction, -duration)
+    }
 
-		Timer_DiskContainer_insertDisk_RunFunction:
-
-            For slotNo, slot in DiskContainer.slot
-            {
-                if( slot.file == "" )
-                    continue
-
-                Func( slot.functionName ).( slotNo, slot.file )
-
-                slot.fileInserted := slot.file
-                slot.file         := ""
-                slot.functionName := ""
-
-            }
-            
-			return
-
-
+    static Timer_InsertDisk_RunFunction() {
+        for slotNo, slot in DiskContainer.slot {
+            if (slot.file == "")
+                continue
+            fn := Func(slot.functionName)
+            if (fn)
+                fn.Call(slotNo, slot.file)
+            slot.fileInserted := slot.file
+            slot.file := ""
+            slot.functionName := ""
+        }
     }
     
     removeDisk( slotNo, functionName ) {
 
         Tray.showMessage( "Remove disk in Drive " slotNo, "" )
+        if !DiskContainer.slot.Has(slotNo)
+            return
         slot := DiskContainer.slot[ slotNo ]
-        Func( functionName ).( slotNo, slot.file )
+        fn := Func(functionName)
+        if (fn)
+            fn.Call(slotNo, slot.file)
         slot.fileInserted := ""
         slot.file         := ""
         slot.functionName := ""        
@@ -186,39 +159,35 @@ class DiskContainer {
     }
     
     cancel() {
-        Tray.showMessage( "Cancel to change disk" )
-        For slotNo, slot in DiskContainer.slot
-        {
-            if( slot.file == "" )
+        Tray.showMessage("Cancel to change disk")
+        for slotNo, slot in DiskContainer.slot {
+            if (slot.file == "")
                 continue
-            
-            slot.file         := ""
+            slot.file := ""
             slot.functionName := ""
-
         }
-        SetTimer, Timer_DiskContainer_insertDisk_RunFunction, off
+        SetTimer(DiskContainer.Timer_InsertDisk_RunFunction, 0)
     }
     
-    setSlot( slotNo, file ) {
-        if( DiskContainer.slot[ slotNo ] == null )
-            DiskContainer.slot[ slotNo ] := {}
-        DiskContainer.slot[ slotNo ].fileInserted := file
+    setSlot(slotNo, file) {
+        if (!DiskContainer.slot.Has(slotNo) || DiskContainer.slot[slotNo] == "")
+            DiskContainer.slot[slotNo] := {}
+        DiskContainer.slot[slotNo].fileInserted := file
     }
 
-    getFileInSlot( slotNo ) {
-        return DiskContainer.slot[ slotNo ].fileInserted
+    getFileInSlot(slotNo) {
+        return DiskContainer.slot.Has(slotNo) ? DiskContainer.slot[slotNo].fileInserted : ""
     }
     
-    getFile( index ) {
-        return this.container[ index ]
+    getFile(index) {
+        return this.container[index]
     }
 
-    initSlot( size ) {
-        Loop % this.size()
-        {
-            if( A_index > size )
+    initSlot(size) {
+        loop this.size() {
+            if (A_Index > size)
                 break
-            this.setSlot( A_Index, this.getFile(A_Index) )
+            this.setSlot(A_Index, this.getFile(A_Index))
         }
     }
 

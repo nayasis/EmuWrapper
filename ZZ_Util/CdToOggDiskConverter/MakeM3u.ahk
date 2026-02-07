@@ -1,46 +1,41 @@
-#NoEnv
-#include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
-; pathRoot := "f:\download\dc"
-; pathRoot := "\\NAS\emul\image\PC88\Acchi Muite Hoi! (19xx)"
 pathRoot := "\\NAS\emul\image\PC98"
 
-debug( ">> start" )
+debug(">> start")
 
-files   := FileUtil.getFiles( pathRoot, "i).*\.(d88|fdd|fdi)$", false, true )
-srcDirs := {}
+files := FileUtil.getFiles(pathRoot, "i).*\.(d88|fdd|fdi)$", false, -1)
+srcDirs := Map()
 
-debug( ">> read files")
-; gathering files
-Loop, % files.MaxIndex()
-{
-	fileSrc := files[ A_Index ]
-	srcDir  := FileUtil.getDir( fileSrc )
+debug(">> read files")
+loop files.Length {
+  fileSrc := files[A_Index]
+  srcDir := FileUtil.getDir(fileSrc)
 
-  if ( srcDirs[srcDir] == "" ) {
-  	srcDirs[srcDir]  := []
+  if (!srcDirs.Has(srcDir)) {
+    srcDirs[srcDir] := []
   }
-
-  srcDirs[srcDir].insert( fileSrc )
-  debug( srcDir " :: " fileSrc )
+  srcDirs[srcDir].Push(fileSrc)
+  debug(srcDir " :: " fileSrc)
 }
 
-debug( ">> write m3u")
+debug(">> write m3u")
 
-for srcDir, files in srcDirs {
-	debug( srcDir " has " files.MaxIndex() )
-	if ( files.MaxIndex() <= 1 )
-		continue
-	fileM3u := srcDir "/multi-disk.m3u"
-	m3uText := ""
-	for idx, fileName in files {
-		m3uText .= FileUtil.getName( fileName ) "`n"
-		debug( "`t " FileUtil.getName( fileName ) )
-	}
-	FileUtil.delete( fileM3u )
-	FileAppend, % m3uText, % fileM3u
+for srcDir, dirFiles in srcDirs {
+  debug(srcDir " has " dirFiles.Length)
+  if (dirFiles.Length <= 1)
+    continue
+  fileM3u := srcDir "/multi-disk.m3u"
+  m3uText := ""
+  for idx, fileName in dirFiles {
+    m3uText .= FileUtil.getName(fileName) "`n"
+    debug("`t " FileUtil.getName(fileName))
+  }
+  FileUtil.delete(fileM3u)
+  FileAppend(m3uText, fileM3u)
 }
 
-debug( ">> end" )
+debug(">> end")
 
 ExitApp

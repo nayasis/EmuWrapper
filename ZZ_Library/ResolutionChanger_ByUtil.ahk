@@ -1,23 +1,23 @@
+#Requires AutoHotkey >=2.0
+
 class ResolutionChanger {
 
+    static _init() {
+        ResolutionChanger.srcWidth := A_ScreenWidth
+        ResolutionChanger.srcHeight := A_ScreenHeight
+    }
     static void := ResolutionChanger._init()
 
-    _init() {
-        this.srcWidth  := A_ScreenWidth
-        this.srcHeight := A_ScreenHeight
-    }
-  
     __New() {
-        throw Exception( "ResolutionChanger is a static class, dont instante it!", -1 )
+        throw Error("ResolutionChanger is a static class, dont instantiate it!", -1)
     }
 
-
-    change( width, height ) {
-        If ( RegExMatch(width, "^\d+$") == false || RegExMatch(height, "^\d+$") == false ) {
-            MsgBox Resolution must be consisted with digit values ( input values : [%width%]x[%height%])
+    change(width, height) {
+        if (RegExMatch(width, "^\d+$") == false || RegExMatch(height, "^\d+$") == false) {
+            MsgBox("Resolution must be consisted with digit values ( input values : [" width "]x[" height "])")
             return
-        }        
-        Run, % A_ScriptDir "\..\..\ZZ_Library\dc64.exe -width=" width " -height=" height
+        }
+        Run(A_ScriptDir "\..\..\ZZ_Library\dc64.exe -width=" width " -height=" height)
     }
   
     /*
@@ -30,8 +30,8 @@ class ResolutionChanger {
     */
   
     restore() {
-        if ( A_ScreenWidth != this.srcWidth || A_ScreenHeight != this.srcHeight ) {
-            this.change( this.srcWidth, this.srcHeight )
+        if (A_ScreenWidth != this.srcWidth || A_ScreenHeight != this.srcHeight) {
+            this.change(this.srcWidth, this.srcHeight)
         }
     }
 

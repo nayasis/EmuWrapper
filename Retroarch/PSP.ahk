@@ -1,12 +1,12 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDir := %0%
+imageDir := A_Args.Length ? A_Args[1] : ""
 ; imageDir := "\\NAS\emul\image\PSP\Densha de Go! Pocket - Yamanotesen Hen (ja)"
 ; imageDir := "\\NAS\emul\image\PSP\ToraDora Portable (T-ko)"
 ; imageDir := "\\NAS\emul\image\PSP\Phantasy Star Portable 2 (en)"
 ; imageDir := "\\NAS2\emul\image\PSP\God Eater 2 (T-en 1.3 by RedArtz)"
- ;imageDir := "\\NAS2\emul\image\PlayStation\Harmful Park (sky think)(T-en 1.1 by Hilltop)"
+ ;imageDir := "\\NAS2\emul\image\PSP\Rockman Dash - Hagane no Boukenshin (capcom)(T-ko)"
 
 setCustomFont( imageDir )
 
@@ -37,4 +37,4 @@ setCustomFont( imageDir ) {
 	
 }
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

@@ -1,4 +1,4 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
 WinWait, ahk_exe ActraiserR.exe
 IfWinExist

@@ -1,9 +1,9 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 ; daphne-core is missing sound feature on Windows platform.
 
-imageDir := %0%
+imageDir := A_Args.Length ? A_Args[1] : ""
 ; imageDir := "e:\download\Daphne for Retropie\lair\roms"
 ;imageDir := "\\NAS\emul\ZZ_Temp\daphne\Daphne for Retropie\ROMs\lair2.daphne"
 
@@ -17,4 +17,4 @@ waitCloseEmulator()
 
 ExitApp
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

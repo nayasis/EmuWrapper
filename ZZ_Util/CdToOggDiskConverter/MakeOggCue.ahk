@@ -1,5 +1,5 @@
-#NoEnv
-#include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 cueFile   := "disk.cue"
 targetDir := "\\NAS\emul\image\NeoGeo CD\Samurai Shodown 2 (en)"

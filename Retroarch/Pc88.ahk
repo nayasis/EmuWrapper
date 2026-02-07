@@ -1,7 +1,7 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDir := %0%
+imageDir := A_Args.Length ? A_Args[1] : ""
 ; imageDir := "\\NAS\emul\image\PC88\Ys 2 (T-ko)"
 ; imageDir := "\\NAS\emul\image\PC88\Ys 1 (ja)"
 ; imageDir := "\\NAS\emul\image\PC88\Lupin the 3rd - Babylon no Ougon Densetsu (ja)"
@@ -28,4 +28,4 @@ applyCustomFont( imageDir, config ) {
 
 }
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

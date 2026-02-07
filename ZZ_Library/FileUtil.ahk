@@ -1,17 +1,14 @@
-; #NoEnv
-; #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
-; FileUtil.makeLink("C:\app\emulator\Retroarch\share\config","C:\app\emulator\Retroarch\1.9.7\config")
-; ExitApp
+#Requires AutoHotkey >=2.0
+#Warn VarUnset, Off  ; xml is class from Xml.ahk (included via Include.ahk)
 
 class FileUtil {
 
+	static _init() {
+	}
 	static void := FileUtil._init()
 
-	_init() {
-	}
-
 	__New() {
-		throw Exception( "FileUtil is a static class, dont instante it!", -1 )
+		throw Error("FileUtil is a static class, dont instantiate it!", -1)
 	}
 
 	getDir( path ) {
@@ -34,14 +31,12 @@ class FileUtil {
 	* @return user home directory path
 	*/
 	getHomeDir() {
-		EnvGet, userHome, userprofile
-		return userHome
+		return EnvGet("userprofile")
 	}
 
-	getExt( filePath ) {
-		SplitPath, % filePath, fileName, fileDir, fileExtention, fileNameWithoutExtension, DriveName
-		StringLower, fileExtention, fileExtention
-		return fileExtention
+	getExt(filePath) {
+		SplitPath(filePath, , , &fileExtention)
+		return StrLower(fileExtention)
 	}
 
   /**
@@ -52,177 +47,173 @@ class FileUtil {
   * @exmaple
   *   FileUtil.isExt("cue|mdx")
   */
-	isExt( filePath, extentionPattern ) {
-
-		IfNotExist %filePath%
+	isExt(filePath, extentionPattern) {
+		if (!FileExist(filePath))
 			return false
-
-		if ( RegExMatch( filePath, "i).*\.(" extentionPattern ")$" ) ) {
+		if (RegExMatch(filePath, "i).*\.(" extentionPattern ")$")) {
 			return true
 		} else {
 			return false
 		}
-
 	}
 	
-	getName( filePath, withExt:=true ) {
-		filePath := RegExReplace( filePath, "^(.*?)\\$", "$1" )
-		SplitPath, filePath, fileName, fileDir, fileExtention, fileNameWithoutExtension, DriveName
-		if( withExt == true )
+	getName(filePath, withExt := true) {
+		filePath := RegExReplace(filePath, "^(.*?)\\$", "$1")
+		SplitPath(filePath, &fileName, &fileDir, &fileExtention, &fileNameWithoutExtension)
+		if (withExt == true)
 			return fileName
 		return fileNameWithoutExtension
 	}
 	
-	getFiles( path, pattern=".*", includeDir=false, recursive=false ) {
-		
+	getFiles(path, pattern := ".*", includeDir := false, depth := 0) {
 		files := []
-
-		if ( this.isFile(path) ) {
-			if RegExMatch( path, pattern )
-				files.Insert( path )
+		if (this.isFile(path) && includeDir == false) {
+			if RegExMatch(path, pattern)
+				files.Push(path)
 		} else {
-		  currDir := this.getDir( path )
-		  if( currDir != "" ) {
-				Loop, %currDir%\*, % includeDir, % recursive
-				{
-					if not RegExMatch( A_LoopFileFullPath, pattern )
-						continue
-					files.Insert( A_LoopFileFullPath )
-				}
-				this._sortArray( files )
-		  }
+			currDir := this.getDir(path)
+			if (currDir != "") {
+				this._getFilesRecursive(currDir, pattern, includeDir, depth, files)
+				this._sortArray(files)
+			}
 		}
-		
 		return files
-		
 	}
 
-	getFile( pathDirOrFile, pattern=".*", includeDir=false, recursive=false ) {
+	_getFilesRecursive(dir, pattern, includeDir, depth, files) {
+		dirs := []
+		Loop Files, dir "\*", "FD" {
+			if (InStr(A_LoopFileAttrib, "D")) {
+				dirs.Push(A_LoopFileFullPath)
+				if (includeDir && RegExMatch(A_LoopFileFullPath, pattern)) {
+					files.Push(A_LoopFileFullPath)
+				}
+			} else {
+				if RegExMatch(A_LoopFileFullPath, pattern) {
+					files.Push(A_LoopFileFullPath)
+				}
+			}
+		}
 
-    if( ! this.exist(pathDirOrFile) ) {
-    	return ""
-    }
+		if (depth == -1 || depth > 0) {
+			nextDepth := (depth == -1) ? -1 : (depth - 1)
+			for index, subDir in dirs {
+				this._getFilesRecursive(subDir, pattern, includeDir, nextDepth, files)
+			}
+		}
+	}
 
-		if( this.isFile(pathDirOrFile) ) {
+	getFile(pathDirOrFile, pattern := ".*", includeDir := false, depth := 0) {
+		if (!this.exist(pathDirOrFile) && includeDir == false) {
+			return ""
+		}
+		if (this.isFile(pathDirOrFile)) {
 			return pathDirOrFile
 		}
-
-    files := this.getFiles( pathDirOrFile, pattern, includeDir, recursive )
-
-    if ( files.MaxIndex() > 0 ) {
-      return files[ 1 ]
-    }
-
-    return ""
-
+		files := this.getFiles(pathDirOrFile, pattern, includeDir, depth)
+		if (files.Length > 0) {
+			return files[1]
+		} else {
+			return ""
+		}
 	}
 	
-	isDir( path ) {
-		if( ! this.exist(path) )
+	isDir(path) {
+		if (!this.exist(path))
 			return false
-		FileGetAttrib, attr, %path%
-		Return InStr( attr, "D" )
+		attr := FileGetAttrib(path)
+		return InStr(attr, "D") > 0
 	}
 	
-	isFile( path ) {
-		if( ! this.exist(path) )
+	isFile(path) {
+		if (!this.exist(path))
 			return false
-		FileGetAttrib, attr, %path%
-		Return ! InStr( attr, "D" )
+		attr := FileGetAttrib(path)
+		return !InStr(attr, "D")
 	}
 
   readJson(path) {
-  	if( ! this.exist(path) )
-  		return {}
+  	if (!this.exist(path))
+  		return Map()
   	return JSON.load(this.read(path))
   }
 
   readXml(path) {
-  	if( ! this.exist(path) )
-  		return new XML()
-  	return new XML(path)
+    global xml  ; class from Xml.ahk
+  	if (!this.exist(path))
+  		return xml()
+  	return xml(path)
   }
 
   read(path) {
-  	FileRead, text, %path%
-  	return text
+  	return FileRead(path)
   }
 
-	readProperties( path ) {
-
-		prop := []
-
-		Loop, Read, %path%
-		{
-
-			If RegExMatch(A_LoopReadLine, "^#.*" )
+	readProperties(path) {
+		prop := Map()
+		loop read, path {
+			if RegExMatch(A_LoopReadLine, "^#.*")
 				continue
-
-			splitPosition := InStr(A_LoopReadLine, "=" )
-
-			If ( splitPosition = 0 ) {
+			splitPosition := InStr(A_LoopReadLine, "=")
+			if (splitPosition = 0) {
 				key := A_LoopReadLine
 				val := ""
 			} else {
-				key := SubStr( A_LoopReadLine, 1, splitPosition - 1 )
-				val := SubStr( A_LoopReadLine, splitPosition + 1 )
+				key := SubStr(A_LoopReadLine, 1, splitPosition - 1)
+				val := SubStr(A_LoopReadLine, splitPosition + 1)
 			}
-			
-			prop[ Trim(key) ] := Trim(val)
-
+			prop[Trim(key)] := Trim(val)
 		}
-
 		return prop
-
 	}
 
 	makeDir(path) {
-		FileCreateDir, %path%
+		DirCreate(path)
 	}
 
-	makeParentDir( path, forDirectory=true ) {
-		if ( forDirectory == true ) {
-			parentDir := this.getParentDir( path )
+	makeParentDir(path, forDirectory := true) {
+		if (forDirectory == true) {
+			parentDir := this.getParentDir(path)
 		} else {
-			parentDir := this.getDir( path )
+			parentDir := this.getDir(path)
 		}
-		FileCreateDir, % parentDir
+		DirCreate(parentDir)
 	}
 
 	exist( path ) {
 		return FileExist( path ) != ""
 	}
 
-	delete( path, recursive=1 ) {
-		if ( this.isFile(path) ) {
-			FileDelete, % path
-		} else if( this.isDir(path) ) {
-			FileRemoveDir, % path, % recursive
+	delete(path, recursive := 1) {
+		if (this.isFile(path)) {
+			FileDelete(path)
+		} else if (this.isDir(path)) {
+			DirDelete(path, recursive)
 		}
 	}
 
-	move( src, trg, overwrite=1 ) {
-		if ( ! this.exist(src) )
+	move(src, trg, overwrite := 1) {
+		if (!this.exist(src))
 			return
-		this.makeParentDir( trg, this.isDir(src) )
-		FileMove, % src, % trg, % overwrite
+		this.makeParentDir(trg, this.isDir(src))
+		FileMove(src, trg, overwrite ? 1 : 0)
 	}
 
-	copy( src, trg, overwrite=1 ) {
-		if ( ! this.exist(src) )
+	copy(src, trg, overwrite := 1) {
+		if (!this.exist(src))
 			return
-		this.makeParentDir( trg, this.isDir(src) )
-		if ( this.isDir(src) ) {
-			FileCopyDir, % src, % trg, % overwrite
+		this.makeParentDir(trg, this.isDir(src))
+		if (this.isDir(src)) {
+			DirCopy(src, trg, overwrite)
 		} else {
-			FileCopy, % src, % trg, % overwrite
+			FileCopy(src, trg, overwrite ? 1 : 0)
 		}
 	}
 
-	write( path, content="" ) {
-		this.makeParentDir( path )
-		FileDelete, % path
-		FileAppend, % content, % path
+	write(path, content := "") {
+		this.makeParentDir(path)
+		try FileDelete(path)
+		FileAppend(content, path)
 	}
 
   /**
@@ -231,9 +222,8 @@ class FileUtil {
   * @param {path} filePath
   * @return size (byte)
   */
-	getSize( path ) {
-		FileGetSize, size, % path
-		return size
+	getSize(path) {
+		return FileGetSize(path)
 	}
 
   /**
@@ -243,9 +233,8 @@ class FileUtil {
   * @param {witchTime} M: modification time (default), C: creation time, A: last access time
   * @return YYYYMMDDHH24MISS
   */
-	getTime( path, whichTime="M" ) {
-		FileGetTime, var, % path, % whichTime
-		return var
+	getTime(path, whichTime := "M") {
+		return FileGetTime(path, whichTime)
 	}
 
   /**
@@ -255,36 +244,31 @@ class FileUtil {
   * @return true if path is symlink
   */
   isSymlink(path) {
-  	FileGetAttrib, attr, % path
-  	if( InStr(attr,"D") )
-  		return true
-  	else
-  		return false
+  	attr := FileGetAttrib(path)
+  	return InStr(attr, "L") > 0
   }
 
   hasSymlinkAuth() {
 		testFilePath := A_Temp "\ahkSymlinkTestfile.txt"
 		testLinkPath := A_Temp "\ahkSymlinkTestlink.txt"
 
-		; create temp file
-		FileAppend,, %testFilePath%
-		; create temp link
-		RunWait, %ComSpec% /c mklink "%testLinkPath%" "%testFilePath%", , Hide UseErrorLevel
+		debug("symlink test file path: " testFilePath)
 
-		; delete temp
-		FileDelete, %testFilePath%
-		FileDelete, %testLinkPath%
+		FileAppend("", testFilePath)
+		RunWait(A_ComSpec ' /c mklink "' testLinkPath '" "' testFilePath '"', , "Hide")
 
-		if (ErrorLevel = 0) {
-		    return true
-		} else {
-		    return false
-		}
+		hasAuth := this.exist(testLinkPath)
+
+		try FileDelete(testFilePath)
+		try FileDelete(testLinkPath)
+
+		debug("has auth: " hasAuth)
+		return hasAuth
   }
 
   createSymlinkAuth() {
   	cmd := "fsutil behavior set SymlinkEvaluation L2L:1 R2R:1 L2R:1 R2L:1"
-  	runWait %ComSpec% %cmd%,, Hide
+  	RunWait(A_ComSpec " " cmd, , "Hide")
   }
 
   /**
@@ -305,13 +289,12 @@ class FileUtil {
 
 		this.makeParentDir(trg, this.isDir(src))
 		if ( this.isDir(src) ) {
-			cmd := "/c mklink /d """ trg """ """ src """"
+			cmd := "/c mklink /d `"" . trg . "`" `"" . src . "`""
 		} else {
-			cmd := "/c mklink """ trg """ """ src """"
+			cmd := "/c mklink `"" . trg . "`" `"" . src . "`""
 		}
-		debug( cmd )
-		; run %ComSpec% %cmd%,,
-		runWait %ComSpec% %cmd%,, Hide
+		debug(cmd)
+		RunWait(A_ComSpec " " cmd, , "Hide")
 		; this.cli( cmd )
 
 		return true
@@ -324,53 +307,48 @@ class FileUtil {
   * @param  command	 command
   * @return command execution result
   */
-	cli( command ) {
-
+	cli(command) {
 		dhw := A_DetectHiddenWindows
-		DetectHiddenWindows,On
-		Run, %ComSpec% /k,,Hide UseErrorLevel, pid
-		if not ErrorLevel
-		{
-			while ! WinExist("ahk_pid" pid)
-				Sleep,100
-			DllCall( "AttachConsole","UInt",pid )
-		}
-		DetectHiddenWindows, % dhw
-
-		; debug( "command :`n`t" command )
-		shell := ComObjCreate("WScript.Shell")
+		DetectHiddenWindows(true)
 		try {
-			exec := shell.Exec( comspec " " command )
-			While ! exec.Status
-				sleep, 100
-			result := exec.StdOut.readAll()
+			Run(A_ComSpec " /k", , "Hide UseErrorLevel", &pid)
+			if (pid) {
+				while !WinExist("ahk_pid" pid)
+					Sleep(100)
+				DllCall("AttachConsole", "UInt", pid)
+			}
 		}
-		catch e
-		{
-			debug( "error`n" e.what "`n" e.message )
+		DetectHiddenWindows(dhw)
+
+		shell := ComObject("WScript.Shell")
+		try {
+			exec := shell.Exec(A_ComSpec " " command)
+			while !exec.Status
+				Sleep(100)
+			result := exec.StdOut.ReadAll()
+		} catch as e {
+			debug("error`n" e.What "`n" e.Message)
 		}
-		; debug( "result :`n`t" result )
 		DllCall("FreeConsole")
-		Process Close, %pid%
-
+		ProcessClose(pid)
 		return result
-
 	}
 
-	_sortArray( Array ) {
-	  t := Object()
+	_sortArray(Array) {
+	  t := Map()
 	  for k, v in Array
-	    t[RegExReplace(v,"\s")]:=v
+	    t[RegExReplace(v, "\s")] := v
+	  Array := []
 	  for k, v in t
-	    Array[A_Index] := v
+	    Array.Push(v)
 	  return Array
 	}
 
-	resolvePath( absolutePath, relativePath ) {
-    VarSetCapacity( dest, (A_IsUnicode ? 2 : 1) * 260, 1 ) ; MAX_PATH
-    DllCall( "Shlwapi.dll\PathCombine", "UInt", &dest, "UInt", &absolutePath, "UInt", &relativePath )
-    Return, dest
-  }
+	resolvePath(absolutePath, relativePath) {
+		dest := Buffer(260 * 2, 0)
+		DllCall("Shlwapi.dll\PathCombine", "Ptr", dest, "Str", absolutePath, "Str", relativePath)
+		return StrGet(dest)
+	}
 
   normalizePath( path ) {
   	return RegExReplace( path, "\\+", "\" )

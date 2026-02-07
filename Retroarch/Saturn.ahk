@@ -1,9 +1,9 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 ; global EMUL_ROOT := A_ScriptDir "\1.9.7"
 
-imageDir := %0%
+imageDir := A_Args.Length ? A_Args[1] : ""
 ; imageDir := "\\NAS2\emul\image\Saturn\Grandia (T-ko)"
 ; imageDir := "\\NAS2\emul\image\Saturn\Daytona USA (en)"
 ; imageDir := "\\NAS2\emul\image\Saturn\FIFA Soccer 97 (ea)(en)"
@@ -32,4 +32,4 @@ runEmulator( imageFile, config )
 
 ExitApp
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

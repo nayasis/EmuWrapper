@@ -1,7 +1,5 @@
-SetBatchLines, -1
-#SingleInstance ignore
-#NoTrayIcon
-#NoEnv
+#Requires AutoHotkey >=2.0
+#SingleInstance Ignore
 #Include XMLWrite.ahk
 #Include XMLRead.ahk
 #Include XMLQuery.ahk

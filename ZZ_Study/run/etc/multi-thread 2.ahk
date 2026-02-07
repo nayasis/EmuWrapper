@@ -1,11 +1,11 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
 SetTimer, threadClickSafeMode, 100
 sleep 5000
 ExitApp
 
 threadClickSafeMode:
-	IfWinExist, ¾ÈÀü ¸ðµå·Î ½ÇÇàÇÏ½Ã°Ú½À´Ï±î?
+	IfWinExist, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï½Ã°Ú½ï¿½ï¿½Ï±ï¿½?
 	{
 		WinActivate
 		Click 176, 170, Left

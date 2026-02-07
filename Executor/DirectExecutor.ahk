@@ -5,7 +5,7 @@ imageDir := %0%
 ; imageDir := "G:\emuloader\PC\PC001044"
 
 option := getOption(imageDir)
-; debug( ">> option`n" JSON.dump(option) )
+; debug( ">> option`n" . JSON.dump(option) )
 
 file     := option.execution.executable
 runAdmin := option.execution.runAdmin

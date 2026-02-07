@@ -1,10 +1,8 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDir := %0%
-; imageDir := "\\NAS2\emul\image\Famicom\Punisher (en)"
-; imageDir := "\\NAS2\emul\image\Famicom\Tenchi wo Kurau 2 - Shokatsu Koumei Den (T-ko)"
-; imageDir := "\\NAS2\emul\image\Famicom\Bonk's Adventure (hudson)(en)"
+imageDir := A_Args.Length ? A_Args[1] : ""
+;imageDir := "\\NAS2\emul\image\Famicom\Dragon Knife (waixing)(T-en 1.0 by pacnsacdave)"
 
 option    := getOption( imageDir )
 config    := setConfig( "mesen_libretro", option )
@@ -20,4 +18,4 @@ runEmulator( imageFile, config )
 
 ExitApp
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

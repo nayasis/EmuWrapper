@@ -13,10 +13,13 @@ show-info-bar: true
 apps-list-grid: true
 display-system-apps: true
 stretch_the_display_area: false
+fullscreen_hd_res_pixel_perfect: false
 show-live-area-screen: true
 icon-size: 64
 archive-log: false
 backend-renderer: OpenGL
+custom-driver-name: ""
+turbo-mode: false
 gpu-idx: 0
 high-accuracy: true
 resolution-multiplier: 1
@@ -28,14 +31,15 @@ texture-cache: true
 async-pipeline-compilation: true
 show-compile-shaders: true
 hashless-texture-cache: false
-import-textures: false
+import-textures: true
 export-textures: false
 export-as-png: true
+memory-mapping: double-buffer
 boot-apps-full-screen: false
 audio-backend: SDL
 audio-volume: 100
 ngs-enable: true
-sys-button: 1
+sys-button: 0
 sys-lang: 1
 sys-date-format: 2
 sys-time-format: 0
@@ -43,11 +47,10 @@ cpu-pool-size: 10
 modules-mode: 0
 delay-background: 4
 delay-start: 10
-background-alpha: 0.300000012
+background-alpha: 0.3
 log-level: 0
-cpu-backend: Dynarmic
 cpu-opt: true
-pref-path: .\pref\
+pref-path: .\pref/
 discord-rich-presence: true
 wait-for-debugger: false
 color-surface-debug: false
@@ -55,8 +58,13 @@ show-touchpad-cursor: true
 performance-overlay: false
 performance-overlay-detail: 0
 performance-overlay-position: 0
+enable-gamepad-overlay: true
+overlay-show-touch-switch: false
+overlay-scale: 1
+overlay-opacity: 100
 screenshot-format: 1
 disable-motion: false
+controller-analog-multiplier: 1
 keyboard-button-select: 229
 keyboard-button-start: 40
 keyboard-button-up: 82
@@ -86,13 +94,14 @@ keyboard-gui-toggle-gui: 10
 keyboard-gui-fullscreen: 68
 keyboard-gui-toggle-touch: 23
 keyboard-toggle-texture-replacement: 0
-keyboard-take-screenshot: 0
+keyboard-take-screenshot: 65
 user-id: 00
 user-auto-connect: true
 user-lang: ""
 display-info-message: false
 show-welcome: false
 check-for-updates: true
+file-loading-delay: 0
 asia-font-support: false
 shader-cache: true
 spirv-shader: false
@@ -104,6 +113,7 @@ http-timeout-attempts: 50
 http-timeout-sleep-ms: 100
 http-read-end-attempts: 10
 http-read-end-sleep-ms: 250
+adhoc-addr: 0
 tracy-primitive-impl: false
 controller-binds:
   - 0
@@ -111,7 +121,7 @@ controller-binds:
   - 2
   - 3
   - 4
-  - 5
+  - 15
   - 6
   - 7
   - 8

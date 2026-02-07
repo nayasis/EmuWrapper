@@ -1,4 +1,4 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
 IfWinNotExist, ahk_class MainClass ahk_exe mameui64.exe
 {

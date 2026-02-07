@@ -1,8 +1,9 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDir := %0%
- ;imageDir := "\\NAS2\emul\image\PC98\Uncharted Water - New Horizons (ja)"
+imageDir := A_Args.Length ? A_Args[1] : ""
+;imageDir := "\\NAS2\emul\image\PC98\Uncharted Water - New Horizons (ja)"
+;imageDir := "\\NAS2\emul\image\PC98\Giten Megami Tensei (T-en 0.3 by Sneikkimies)"
  
 option := getOption( imageDir )
 config := setConfig( "np2kai_libretro", option, false )
@@ -143,4 +144,4 @@ getCdrom( imageDir ) {
   return cdRom
 }
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

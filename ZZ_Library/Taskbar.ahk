@@ -1,77 +1,58 @@
-#NoEnv
-#Include, c:\app\emulator\ZZ_Library\Common.ahk
-
- ;!T:: 
- ;   debug("taskbar is hidden ? " Taskbar.isHidden() )
- ;   Taskbar.toggle()
- ;   return
- ;!F4::
- ;   ExitApp
+#Requires AutoHotkey >=2.0
+#Include Common.ahk
 
 class Taskbar {
+	static _init() {
+		Taskbar.allTray := false
+	}
 	static void := Taskbar._init()
-    __New() {
-        throw Exception( "TaskbarChanger is a static class, dont instante it!", -1 )
-    }
-    _init() {
-    	this.allTray := false
-    }
 
-    /**
-	* set working tray target to all or main (for Windows 10)
-    * @param {boolean} yn 	true for all, false for main only.
-    */
-    setAllTray(yn) {
-    	this.allTray := ( yn == true )
-    }
+	__New() {
+		throw Error("Taskbar is a static class, dont instantiate it!", -1)
+	}
 
-    toggle() {
-    	if(this.isHidden()) {
+	setAllTray(yn) {
+		this.allTray := (yn == true)
+	}
+
+	toggle() {
+		if (this.isHidden())
 			this.show()
-    	} else {
-    		this.hide()
-    	}
-    }
+		else
+			this.hide()
+	}
 
-    show(forcibly:=false) {
-    	IfWinExist ahk_class Shell_TrayWnd
-    	{
-    		if(forcibly == false)
-    			return
-    	}
-		;Enable "Always on top" (& disable auto-hide)
-		NumPut( (ABS_ALWAYSONTOP := 0x2), APPBARDATA, 32, "UInt" )
-	    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
-	    WinShow ahk_class Shell_TrayWnd
-	    if ( this.allTray == true ) {
-			WinHide ahk_class Shell_SecondaryTrayWnd
-	    }
-		WinShow, Start ahk_class Button
-    }
-
-    hide(forcibly:=false) {
-		IfWinNotExist ahk_class Shell_TrayWnd
-		{
-    		if(forcibly == false)
-    			return
+	show(forcibly := false) {
+		if (!WinExist("ahk_class Shell_TrayWnd")) {
+			if (forcibly == false)
+				return
 		}
-		;Disable "Always on top" (& enable auto-hide to hide Start button)
-		NumPut( ( ABS_AUTOHIDE := 0x1 ), APPBARDATA, 32, "UInt" )
-	    DllCall( "Shell32.dll\SHAppBarMessage", "UInt", ( ABM_SETSTATE := 0xA ), "UInt", &APPBARDATA )
-	    WinHide ahk_class Shell_TrayWnd
-	    if ( this.allTray == true ) {
-	    	WinShow ahk_class Shell_SecondaryTrayWnd
-	    }
-		WinHide, Start ahk_class Button
-    }
+		APPBARDATA := Buffer(48, 0)
+		NumPut("UInt", 48, APPBARDATA, 0)
+		NumPut("UInt", 0x2, APPBARDATA, 32)
+		DllCall("Shell32.dll\SHAppBarMessage", "UInt", 0xA, "Ptr", APPBARDATA)
+		WinShow("ahk_class Shell_TrayWnd")
+		if (this.allTray == true)
+			WinHide("ahk_class Shell_SecondaryTrayWnd")
+		WinShow("Start ahk_class Button")
+	}
 
-    isHidden() {
-    	IfWinNotExist ahk_class Shell_TrayWnd
-    	{
-    		return true
-    	} else {
-    		return false
-    	}
-    }
+	hide(forcibly := false) {
+		if (!WinExist("ahk_class Shell_TrayWnd")) {
+			if (forcibly == false)
+				return
+		}
+		APPBARDATA := Buffer(48, 0)
+		NumPut("UInt", 48, APPBARDATA, 0)
+		NumPut("UInt", 0x1, APPBARDATA, 32)
+		DllCall("Shell32.dll\SHAppBarMessage", "UInt", 0xA, "Ptr", APPBARDATA)
+		WinHide("ahk_class Shell_TrayWnd")
+		if (this.allTray == true)
+			WinShow("ahk_class Shell_SecondaryTrayWnd")
+		WinHide("Start ahk_class Button")
+	}
 
+	isHidden() {
+		return !WinExist("ahk_class Shell_TrayWnd")
+	}
 }

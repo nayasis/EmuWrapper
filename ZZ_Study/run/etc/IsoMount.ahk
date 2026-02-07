@@ -1,4 +1,4 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
 pathIso := A_ScriptDir "\iso\d7.iso"
 

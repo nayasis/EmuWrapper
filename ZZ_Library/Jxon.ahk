@@ -1,4 +1,4 @@
-Jxon_Load(ByRef src, args*)
+Jxon_Load(&src, args*)
 {
 	static q := Chr(34)
 
@@ -104,9 +104,8 @@ Jxon_Load(ByRef src, args*)
 			{
 				val := SubStr(src, pos, i := RegExMatch(src, "[\]\},\s]|$",, pos)-pos)
 				
-				static null := "" ; for #Warn
-				if InStr(",true,false,null,", "," . val . ",", true) ; if var in
-					val := %val%
+				if InStr(",true,false,null,", "," . val . ",", true)
+					val := (val = "true") ? true : (val = "false") ? false : ""
 				else if (Abs(val) == "") ? (pos--, next := "#") : 0
 					continue
 				
@@ -136,17 +135,15 @@ Jxon_Dump(obj, indent:="", lvl:=1)
 			is_array := k == A_Index
 		until !is_array
 
-		static integer := "integer"
-		if indent is %integer%
-		{
+		if (indent is Integer) {
 			if (indent < 0)
 				throw Exception("Indent parameter must be a postive integer.", -1, indent)
 			spaces := indent, indent := ""
-			Loop % spaces
+			loop spaces
 				indent .= " "
 		}
 		indt := ""
-		Loop, % indent ? lvl : 0
+		loop (indent ? lvl : 0)
 			indt .= indent
 
 		lvl += 1, out := "" ; Make #Warn happy

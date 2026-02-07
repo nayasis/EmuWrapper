@@ -1,4 +1,4 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
 WinWait, Set Optimal Settings?,, 20
 IfWinExist

@@ -1,7 +1,7 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDir := %0%
+imageDir := A_Args.Length ? A_Args[1] : ""
 ; imageDir := "\\NAS\emul\image\GameBoy\Dragon Quest I & II (T-ko)"
 
 option    := getOption( imageDir )
@@ -17,4 +17,4 @@ runEmulator( imageFile, config )
 
 ExitApp
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

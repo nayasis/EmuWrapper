@@ -118,7 +118,7 @@ setConfig( imageFilePath ) {
   		if( FileUtil.exist(dirEmulSave "\" pureName) )
   			continue
 
-  		zipHandler := new 7Zip( zipFile )
+  		zipHandler := new SevenZip( zipFile )
   		zipHandler.extract( dirEmulSave )
   		zipHandler.close()
 

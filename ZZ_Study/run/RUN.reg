@@ -20,3 +20,7 @@
 [HKEY_USERS\${sid}\SOFTWARE\Overflow\CrossDays\Install]
 "InstPath"="${cdWin}\\"
 "Version"="1.00bBX"
+
+[HKEY_USERS\${sid}\Software\DESSERTSOFT\WANNABE]
+"Install folder"="${cd}\\bin"
+"Type"=dword:00000000

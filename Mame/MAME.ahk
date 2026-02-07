@@ -1,7 +1,7 @@
 #NoEnv
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
-global EMUL_ROOT := A_ScriptDir "\0.273"
+global EMUL_ROOT := A_ScriptDir "\0.276"
 global emulPid   := ""
 
 romName := %0%
@@ -38,6 +38,8 @@ options .= " -priority 1"
 emulPid  := ""
 emulExe := EMUL_ROOT "\mame.exe"
 emulIni := EMUL_ROOT "\mame.ini"
+
+FileUtil.makeLink("d:\app\emulator\ZZ_snapshot", EMUL_ROOT "\snap", true)
 
 ; command := wrap(emulExe) " " options " -rompath " wrap(romPath) " -artpath " wrap(artpath) " " wrap(romName) 
 command := wrap(emulExe) " " options " -rompath " wrap(romPath) " " wrap(romName) 

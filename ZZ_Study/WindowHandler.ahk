@@ -1,6 +1,6 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
-DetectHiddenWindows, ON
+DetectHiddenWindows("On")
 Gui0 := WinExist( A_ScriptFullPath " ahk_class AutoHotkey" )
 Gui +LastFound
 Gui1 := WinExist()

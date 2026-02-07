@@ -1,5 +1,3 @@
-#NoEnv
-
 /**
  * Command line Interface with in / out pipe
  */
@@ -9,7 +7,7 @@ class Cli {
  	hStdOutputReadPipe  := 0
  	processId           := 0
 
- 	__New( commandLine, showConsole=true ) {
+ 	__New( commandLine, showConsole:=true ) {
 
  		DllCall( "CreatePipe", "Ptr*", hStdInputReadPipe,  "Ptr*", hStdInputWritePipe,  "UInt", 0, "UInt", 0 )
  		DllCall( "CreatePipe", "Ptr*", hStdOutputReadPipe, "Ptr*", hStdOutputWritePipe, "UInt", 0, "UInt", 0 )
@@ -57,7 +55,7 @@ class Cli {
 
  		; MsgBox, % "processId : " this.processId "`nhStdOutputWritePipe : " hStdOutputWritePipe "`nhStdInputReadPipe : " hStdInputReadPipe
 
- 		Process, Wait, % this.processId
+ 		ProcessWait(this.processId)
 
  		DllCall( "CloseHandle", "Ptr", NumGet(processInfo, 0)         )
  		DllCall( "CloseHandle", "Ptr", NumGet(processInfo, a_ptrSize) )
@@ -75,13 +73,11 @@ class Cli {
 
  	waitForClose() {
 
- 		Loop {
- 			Process, Exist, % this.processId
- 			if (ErrorLevel == 0) {
- 				break
- 			}
- 			Sleep, 100
- 		}
+		Loop {
+			if !ProcessExist(this.processId)
+				break
+			Sleep(100)
+		}
 
  	}
 
@@ -93,11 +89,11 @@ class Cli {
  		DllCall( "CloseHandle", "Ptr", hStdInputWritePipe  )
  		DllCall( "CloseHandle", "Ptr", hStdOutputReadPipe  )
 
- 		Process, Close, % this.processId
+ 		ProcessClose(this.processId)
 
  	}
 
- 	readPipe( codepage="" ) {
+ 	readPipe( codepage:="" ) {
 
     hStdOutputReadPipe:=this.hStdOutputReadPipe
     
@@ -117,7 +113,7 @@ class Cli {
 
  	}
 
- 	writePipe( command, codepage="" ) {
+ 	writePipe( command, codepage:="" ) {
 
 		hStdInputWritePipe  := this.hStdInputWritePipe
 
@@ -137,7 +133,7 @@ class Cli {
 
 }
 
-cmdlet( command, Callback := "", WorkingDir:=0, ByRef ProcessID:=0 ) {
+cmdlet( command, Callback := "", WorkingDir:=0, &ProcessID := 0 ) {
   Static StrGet := "StrGet"
   tcWrk := WorkingDir=0 ? "Int" : "Str"
   DllCall( "CreatePipe", UIntP,hPipeRead, UIntP,hPipeWrite, UInt,0, UInt,0 )
@@ -271,41 +267,28 @@ cmdlet( command, Callback := "", WorkingDir:=0, ByRef ProcessID:=0 ) {
 
 }
 
-EucEncode( p_data, p_reserved=true, p_encode=true ) {
+EucEncode( p_data, p_reserved:=true, p_encode:=true ) {
 
-   old_FormatInteger := A_FormatInteger
-   SetFormat, Integer, hex
-   unsafe =
-      ( Join LTrim
-         25000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F20
-         22233C3E5B5C5D5E607B7C7D7F808182838485868788898A8B8C8D8E8F9091929394
-         95969798999A9B9C9D9E9FA0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6
-         B7B8B9BABBBCBDBEBFC0C1C2C3C4C5C6C7C8C9CACBCCCDCECFD0D1D2D3D4D5D6D7D8
-         D9DADBDCDDDEDF7EE0E1E2E3E4E5E6E7E8E9EAEBECEDEEEFF0F1F2F3F4F5F6F7F8F9
-         FAFBFCFDFEFF
-      )
+   unsafe := "25000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F2022233C3E5B5C5D5E607B7C7D7F808182838485868788898A8B8C8D8E8F909192939495969798999A9B9C9D9E9FA0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBFC0C1C2C3C4C5C6C7C8C9CACBCCCDCECFD0D1D2D3D4D5D6D7D8D9DADBDCDDDEDF7EE0E1E2E3E4E5E6E7E8E9EAEBECEDEEEFF0F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF"
 
-   if ( p_reserved )
-      unsafe = %unsafe%24262B2C2F3A3B3D3F40
+   if (p_reserved)
+      unsafe .= "24262B2C2F3A3B3D3F40"
 
-   if ( p_encode )
-      loop, % StrLen( unsafe )//2
-      {
-         StringMid, token, unsafe, A_Index*2-1, 2
-         StringReplace, p_data, p_data, % Chr( "0x" token ), `%%token%, all
+   if (p_encode) {
+      loop (StrLen(unsafe) // 2) {
+         token := SubStr(unsafe, A_Index * 2 - 1, 2)
+         p_data := StrReplace(p_data, Chr(Integer("0x" token)), "%" token "%", "All")
       }
-   else
-      loop, % StrLen( unsafe )//2
-      {
-         StringMid, token, unsafe, A_Index*2-1, 2
-         StringReplace, p_data, p_data, `%%token%, % Chr( "0x" token ), all
+   } else {
+      loop (StrLen(unsafe) // 2) {
+         token := SubStr(unsafe, A_Index * 2 - 1, 2)
+         p_data := StrReplace(p_data, "%" token "%", Chr(Integer("0x" token)), "All")
       }
+   }
 
-   SetFormat, Integer, %old_FormatInteger%
-   return, p_data
-
+   return p_data
 }
 
 EucDecode( p_data ) {
-   return, EucEncode( p_data, true, false )
+   return EucEncode( p_data, true, false )
 }

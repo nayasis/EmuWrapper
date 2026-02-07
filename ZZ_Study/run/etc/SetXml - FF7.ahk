@@ -1,5 +1,5 @@
 #SingleInstance, Force
-#NoEnv
+#Requires AutoHotkey >=2.0
 #Include, c:\app\emulator\ZZ_Library\Common.ahk
 #Include, c:\app\emulator\ZZ_Library\FileUtil.ahk
 #Include, c:\app\emulator\ZZ_Library\Xml.ahk

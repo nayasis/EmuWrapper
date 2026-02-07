@@ -1,4 +1,4 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
 iniFile  := A_ScriptDir "\bin\cpkredir.ini"
 modsPath := A_ScriptDir "\bin\mods\ModsDB.ini"

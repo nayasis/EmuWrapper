@@ -4,7 +4,7 @@
 global emulatorPid := ""
 
 imageDir := %0%
-; imageDir := "\\NAS2\emul\image\xb\Crimson Skies - High Road to Revenge (fasa)(ko)"
+imageDir := "\\NAS2\emul\image\xb\Star Wars - Knights of the Old Republic (bioware)(en)"
 
 container := new DiskContainer( imageDir, "i).*\.(xiso|iso)$" )
 container.initSlot( 1 )
@@ -109,7 +109,7 @@ setXemuIni(imageDir) {
 	saveDir := imageDir "\_EL_CONFIG\save\xemu"
 	FileUtil.makeDir(saveDir)
 	FileUtil.copy(A_ScriptDir "\bios\xbox_hdd.qcow2.src", saveDir "\xbox_hdd.qcow2", 0)
-  IniWrite, % " '" A_ScriptDir "\bios\complex_4627.bin'", % fileIni, sys.files, flashrom_path
+  IniWrite, % " '" A_ScriptDir "\bios\xbox_4627_debug.bin'", % fileIni, sys.files, flashrom_path
   IniWrite, % " '" A_ScriptDir "\bios\mcpx_1.0.bin'",     % fileIni, sys.files, bootrom_path
   IniWrite, % " '" A_ScriptDir "\bios\eeprom.bin'",       % fileIni, sys.files, eeprom_path
   IniWrite, % " '" saveDir "\xbox_hdd.qcow2'",   % fileIni, sys.files, hdd_path

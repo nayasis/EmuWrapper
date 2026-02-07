@@ -1,7 +1,7 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDir := %0%
+imageDir := A_Args.Length ? A_Args[1] : ""
 ; imageDir := "\\NAS2\emul\image\N64\Star Wars - Rogue Squadron (en)"
 ; imageDir := "\\NAS2\emul\image\N64\Choro Q 64 2 - Hacha Mecha Grand Prix Race (takara)(T-en 1.0 by Zoinkity)"
 ; imageDir := "\\NAS2\emul\image\N64\Neon Genesis Evangelion (bandai)(T-ko 210831 by hanmaru)"
@@ -22,4 +22,4 @@ runEmulator( imageFile, config )
 
 ExitApp
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

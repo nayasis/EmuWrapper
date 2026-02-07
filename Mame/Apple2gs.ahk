@@ -160,7 +160,7 @@ getConfig(imageDir, fddContainer) {
   if(option.core.bootupSpeed == "")
     option.core.bootupSpeed := "0"
 
-  debug( ">> option`n" JSON.dump(option) )
+  debug( ">> option`n" . JSON.dump(option) )
 
   ; fullscreen
   if(option.core.full_screen != "true") {

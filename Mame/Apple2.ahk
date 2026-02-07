@@ -1,23 +1,25 @@
 #InstallKeybdHook
 #NoEnv
-#include c:\app\emulator\ZZ_Library\Include.ahk
-#include c:\app\emulator\ZZ_Library\EmulCommon.ahk
+#include d:\app\emulator\ZZ_Library\Include.ahk
+#include d:\app\emulator\ZZ_Library\EmulCommon.ahk
 
 ;https://wiki.mamedev.org/index.php/Driver:Apple_II
 
-global EMUL_ROOT := A_ScriptDir "\0.251"
+global EMUL_ROOT := A_ScriptDir "\0.276"
 global BIOS_ROOT := "\\NAS2\emul\image\Mame"
 global emulPid   := ""
 
 imageDir := %0%
-; imageDir := "\\NAS2\emul\image\Apple2\Action\Karateka"
-; imageDir := "\\NAS2\emul\image\Apple2\RPG-Times of Lore (en)"
-; imageDir := "\\NAS2\emul\image\Apple2\Wings of Fury (en)"
-; imageDir := "\\NAS2\emul\image\Apple2\Bard's Tale III - The Thief of Fate (interplay)(en)\"
-; imageDir := "\\NAS2\emul\image\Apple2\Ultima V - Warriors of Destiny"
+;imageDir := "\\NAS2\emul\image\Apple2\Action\Karateka"
+;imageDir := "\\NAS2\emul\image\Apple2\RPG-Times of Lore (en)"
+;imageDir := "\\NAS2\emul\image\Apple2\Wings of Fury (en)"
+;imageDir := "\\NAS2\emul\image\Apple2\Bard's Tale III - The Thief of Fate (interplay)(en)\"
+;imageDir := "\\NAS2\emul\image\Apple2\Ultima V - Warriors of Destiny"
 ;imageDir := "\\NAS2\emul\image\Apple2\King Quest II - Romancing The Throne (en)"
+;imageDir := "\\NAS2\emul\image\Apple2\Deathlord"
+imageDir := "\\NAS2\emul\image\Apple2\Star Rank Boxing II (gamestar)(en)"
 
-fddContainer := new DiskContainer( imageDir, "i).*\.(dsk)$" )
+fddContainer := new DiskContainer( imageDir, "i).*\.(dsk|nib|wozs)$" )
 fddContainer.initSlot(2)
 
 romPath .= BIOS_ROOT "\chd;"
@@ -160,7 +162,7 @@ getConfig(imageDir, fddContainer) {
   if(option.core.bootupSpeed == "")
     option.core.bootupSpeed := "0"
 
-  debug( ">> option`n" JSON.dump(option) )
+  debug( ">> option`n" . JSON.dump(option) )
 
   ; fullscreen
   if(option.core.full_screen != "true") {
@@ -189,7 +191,9 @@ getConfig(imageDir, fddContainer) {
 
   ; fdd
   diskCnt := fddContainer.size()
-  fddCnt  := Min(option.core.fdd * 1,diskCnt)
+  fddCnt  := Min(option.core.fdd_cnt * 1,diskCnt)
+  debug(">> fddcnt  : " option.core.fdd_cnt)
+  debug(">> diskCnt : " diskCnt)
   for i in range(1, Min(fddCnt,diskCnt) + 1) {
     ; debug("fdd index:" i)
     config .= " -flop"i " " wrap(fddContainer.getFile(i))

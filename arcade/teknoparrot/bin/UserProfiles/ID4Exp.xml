@@ -3,7 +3,7 @@
   <ProfileName>ID4Exp</ProfileName>
   <GameNameInternal>Initial D: Arcade Stage 4 (Export)</GameNameInternal>
   <GameGenreInternal>Racing</GameGenreInternal>
-  <GamePath>\\NAS2\emul\image\teknoparrot\Initial D 4 Export\id4.elf</GamePath>
+  <GamePath>\\NAS2\emul\image\teknoparrot\Initial D 4 Export (ja)\id4.elf</GamePath>
   <TestMenuParameter>-t</TestMenuParameter>
   <TestMenuIsExecutable>false</TestMenuIsExecutable>
   <ExtraParameters />
@@ -58,6 +58,15 @@
     <FieldInformation>
       <CategoryName>General</CategoryName>
       <FieldName>RealGearshift</FieldName>
+      <FieldValue>0</FieldValue>
+      <FieldType>Bool</FieldType>
+      <FieldMin>0</FieldMin>
+      <FieldMax>0</FieldMax>
+      <FieldOptions />
+    </FieldInformation>
+    <FieldInformation>
+      <CategoryName>FFB Blaster</CategoryName>
+      <FieldName>Enable</FieldName>
       <FieldValue>0</FieldValue>
       <FieldType>Bool</FieldType>
       <FieldMin>0</FieldMin>
@@ -927,7 +936,7 @@
     </JoystickButtons>
   </JoystickButtons>
   <EmulationProfile>SegaInitialDLindbergh</EmulationProfile>
-  <GameProfileRevision>24</GameProfileRevision>
+  <GameProfileRevision>26</GameProfileRevision>
   <HasSeparateTestMode>true</HasSeparateTestMode>
   <Is64Bit>false</Is64Bit>
   <TestExecIs64Bit>false</TestExecIs64Bit>
@@ -949,4 +958,12 @@
   <GasAxisMax>255</GasAxisMax>
   <OnlineProfileURL />
   <IsLegacy>false</IsLegacy>
+  <HasTpoSupport>true</HasTpoSupport>
+  <IsTpoExclusive>false</IsTpoExclusive>
+  <RequiresBepInEx>false</RequiresBepInEx>
+  <LaunchMinimized>false</LaunchMinimized>
+  <LaunchSecondExecutableMinimized>false</LaunchSecondExecutableMinimized>
+  <OnlineIdFieldName />
+  <OnlineIdType>None</OnlineIdType>
+  <Requires4GBPatch>false</Requires4GBPatch>
 </GameProfile>

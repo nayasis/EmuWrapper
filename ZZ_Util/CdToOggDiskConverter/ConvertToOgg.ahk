@@ -1,5 +1,5 @@
-#NoEnv
-#include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 file := A_ARGS[1]
 modeSize     := nvl(A_ARGS[2], "2048")

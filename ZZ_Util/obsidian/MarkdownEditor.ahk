@@ -1,5 +1,5 @@
-#NoEnv
-#include c:\app\emulator\ZZ_Library\Include.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 param := %0%
 ;param := "\\NAS2\emul\image\DOS\Worlds of Ultima - Savage Empire\_EL_CONFIG\description\game.md"

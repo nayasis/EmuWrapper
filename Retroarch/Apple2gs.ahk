@@ -1,9 +1,9 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 ; https://wiki.mamedev.org/index.php/Driver:Apple_II
 
-imageDir := %0%
+imageDir := A_Args.Length ? A_Args[1] : ""
 ; imageDir := "\\NAS2\emul\image\Apple2gs\Police Quest - In Pursuit of the Death Angel (sierra)(en)"
 
 option  := getOption(imageDir)
@@ -144,4 +144,4 @@ linkResource() {
   FileUtil.makeLink( EMUL_ROOT "\system\mame\console\common\samples",  dirSystem "\samples", true )
 }
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

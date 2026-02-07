@@ -190,8 +190,8 @@ setConfig(defaultCore, option, log:=false) {
   }
 
   if(log) {
-	  debug( ">> FROM option`n" JSON.dump(option) )
-	  debug( ">> TO config`n" JSON.dump(config) )
+	  debug( ">> FROM option`n" . JSON.dump(option) )
+	  debug( ">> TO config`n" . JSON.dump(config) )
   }
   return config
 

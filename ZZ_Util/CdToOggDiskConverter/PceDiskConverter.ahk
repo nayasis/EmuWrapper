@@ -1,6 +1,6 @@
 
-#NoEnv
-#include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 cuefile := %0%
 ;cuefile := "e:\iso\pcecd\Dead of the Brain 1 (English v1.0E)\Dead of the Brain 1 (English v1.0E).cue"

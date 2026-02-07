@@ -1,4 +1,4 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
 SetTimer, threadClickSafeMode, 100
 SetTimer, threadClickOptimalSettings, 100

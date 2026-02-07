@@ -1,19 +1,17 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
 class VirtualDisk {
 
+  static _init() {
+		VirtualDisk.mountedImage := ""
+	}
   static void := VirtualDisk._init()
 
-	_init() {
-		this.mountedImage := ""
-	}
-
 	mount(path) {
-		if(FileUtil.isFile(path)) {
+		if (FileUtil.isFile(path)) {
 			cmd := "powershell Mount-DiskImage '" path "'"
 			debug(cmd)
-			RunWait, % cmd,, Hide,
-			; RunWait, % cmd,,,
+			RunWait(cmd, , "Hide")
 			this.mountedImage := path
 			debug(">> mount : " this.mountedImage)
 			return this.mounted()
@@ -25,11 +23,10 @@ class VirtualDisk {
 	}
 
 	unmount() {
-		if(this.mounted()) {
+		if (this.mounted()) {
 			debug(">> unmount : " this.mountedImage)
 			cmd := "powershell Dismount-DiskImage '" this.mountedImage "'"
-			RunWait, % cmd,, Hide,
+			RunWait(cmd, , "Hide")
 		}
 	}
-
 }

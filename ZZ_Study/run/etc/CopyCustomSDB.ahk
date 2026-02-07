@@ -1,4 +1,4 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 #include FileUtil.ahk
 
 restartAsAdmin()

@@ -1,5 +1,5 @@
-#NoEnv
-#include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 file := %0%
 ; file := "e:\download\pc98\KSS\Dragon Lore\Dragon Lore (Disc 1).ccd"

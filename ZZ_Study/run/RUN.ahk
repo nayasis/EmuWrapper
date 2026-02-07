@@ -1,20 +1,19 @@
-#NoEnv
-#Include, c:\app\emulator\ZZ_Library\Common.ahk
-#Include, c:\app\emulator\ZZ_Library\FileUtil.ahk
-#Include, c:\app\emulator\ZZ_Library\ResolutionChanger.ahk
-#Include, c:\app\emulator\ZZ_Library\Xml.ahk
-#Include, c:\app\emulator\ZZ_Library\Taskbar.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\..\..\ZZ_Library\Common.ahk
+#Include %A_ScriptDir%\..\..\ZZ_Library\FileUtil.ahk
+#Include %A_ScriptDir%\..\..\ZZ_Library\ResolutionChanger.ahk
+#Include %A_ScriptDir%\..\..\ZZ_Library\Xml.ahk
+#Include %A_ScriptDir%\..\..\ZZ_Library\Taskbar.ahk
 
-FileEncoding, UTF-8
-FileEncoding, UTF-8
-DetectHiddenWindows, On
+FileEncoding("UTF-8")
+DetectHiddenWindows("On")
 
 global applicationPid       := ""
 global applicationCloseWait := ""
 global applicationCloseWin  := ""
 global applicationCloseProc := ""
 
-SplitPath, A_ScriptName, , , , NoextScriptFileName
+SplitPath(A_ScriptName, , , , &NoextScriptFileName)
 
 fileIni := A_ScriptDir "\" NoextScriptFileName ".ini"
 fileReg := A_ScriptDir "\" NoextScriptFileName ".reg"
@@ -46,7 +45,7 @@ closeProcess() {
 	debug(">> close process")
 	if( applicationPid != "" ) {
 		debug("  - applicationId: " applicationPid)
-		Process, Close, % applicationPid
+		ProcessClose(applicationPid)
 	}
 	if( applicationCloseWait != "" ) {
 		debug("  - applicationCloseWait: " applicationCloseWait)
@@ -180,6 +179,11 @@ runSubHelper( executor, executorDir, executorWait, properties ) {
   	param := StrSplit(param, ",")
   	debug(param[1] "," param[2] "," param[3])
   	scriptClick(param[1],param[2],param[3])
+  	return
+  }
+  if( InStr(executor, ":scriptFocus\", true) ) {
+  	param := StrReplace(executor, ":scriptFocus\","")
+  	scriptFocus(param)
   	return
   }
 	executor    := RegExReplace( executor,    "\\", "\\" )
@@ -476,9 +480,9 @@ setEnvVariable( fileIni, properties ) {
 
 run(executor, executorDir="", wait=false, hide=true) {
 	if(wait == true) {
-		debug(">> run")
+		debug(">> run - wait")
 	} else {
-		debug(">> runwait")
+		debug(">> run - no wait")
 	}
 	debug("- exe: " executor)
 	debug("- dir: " executorDir)
@@ -489,7 +493,8 @@ run(executor, executorDir="", wait=false, hide=true) {
 	}
 
 	if(wait == true) {
-		RunWait, % executor, % executorDir, % option, processId
+		RunWait, % executor, % executorDir, % option, applicationPid
+		processId := applicationPid
 	} else {
 		Run, % executor, % executorDir, % option, processId
 	}
@@ -524,6 +529,14 @@ scriptEnter(waitCmd) {
 	{
 		WinActivate, % waitCmd
 		Send, {Enter}
+	}
+}
+
+scriptFocus(waitCmd) {
+	WinWait, % waitCmd
+	IfWinExist
+	{
+		WinActivate, % waitCmd
 	}
 }
 

@@ -1,8 +1,8 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDir := %0%
-;imageDir := "\\NAS2\emul\image\PC98\Madou Monogatari 1-2-3 #2 (compile)(ja)"
+imageDir := A_Args.Length ? A_Args[1] : ""
+;imageDir := "\\NAS2\emul\image\PC98\Dragon Slayer - The Legend of Heroes (T-en 0.9b)"
 
 option := getOption( imageDir )
 config := setConfig( "np2kai_libretro", option, true )
@@ -10,18 +10,19 @@ config := setConfig( "np2kai_libretro", option, true )
 
 setNpConfig(config)
 applyCustomFont(imageDir, config)
-fileCmd := makeCmd(imageDir)
 
-; setCdRom( imageDir, config )
-; setHdd( imageDir, config )
-; setFdd( imageDir, config )
+;if(config.core == "np2kai_libretro") {
+;  imageFile := makeCmd(imageDir)
+;} else {
+;  setCdRom( imageDir, config )
+;  setHdd( imageDir, config )
+;  setFdd( imageDir, config )
+;  imageFile := getRomPath( imageDir, option, "m3u|d88|fdi|fdd|hdm|nfd|xdf|tfd" )
+;}
 
-; imageFile := getRomPath( imageDir, option, "cmd|m3u|d88|fdi|fdd|hdm|nfd|xdf|tfd" )
-;imageFile := getRomPath( imageDir, option, "cmd" )
+imageFile := makeCmd(imageDir)
 writeConfig(config)
-
-runEmulator(fileCmd, config)
-
+runEmulator(imageFile, config)
 deleteTempFile()
 
 ExitApp
@@ -114,7 +115,7 @@ setNpConfig( config ) {
 
 }
 
-getCfg( config ) {
+getCfg(config) {
   if( config.core == "np2kai_libretro" ) {
   	cfgPath := EMUL_ROOT "\system\np2kai\np2kai.cfg"
   	section := "NekoProjectIIkai"
@@ -147,7 +148,7 @@ makeCmd(imageDir) {
 
 }
 
-getCdrom( imageDir ) {
+getCdrom(imageDir) {
   dir := imageDir "\_EL_CONFIG\cdrom"
   cdRom := FileUtil.getFile( dir, "i).*\.(cue)$" )
   if( cdRom == "" )
@@ -155,6 +156,16 @@ getCdrom( imageDir ) {
   if( cdRom == "" )
     cdRom := FileUtil.getFile( dir, "i).*\.(iso|bin|img)$" )  
   return cdRom
+}
+
+
+setCdRom(imageDir, config) {
+  cdrom := getCdrom(imageDir)
+  if( cdRom == "" )
+    return
+
+  cfg := getCfg( config )
+  IniWrite, % cdRom, % cfg.path, % cfg.section, CDD3FILE
 }
 
 setHdd( imageDir, config ) {
@@ -174,4 +185,4 @@ setFdd( imageDir, config ) {
 	}
 }
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

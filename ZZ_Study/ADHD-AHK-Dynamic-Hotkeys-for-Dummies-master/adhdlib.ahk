@@ -252,7 +252,7 @@ Class ADHDLib {
 		#InstallMouseHook
 		#MaxHotKeysPerInterval, 200
 
-		#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+		#Requires AutoHotkey >=2.0
 		SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 		; Make sure closing the GUI using X exits the script

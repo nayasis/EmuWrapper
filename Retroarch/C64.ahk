@@ -1,15 +1,11 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDir := %0%
-; imageDir := "\\NAS2\emul\image\c64\Black Magic (en)"
-; imageDir := "\\NAS2\emul\image\c64\Commando"
-; imageDir := "\\NAS2\emul\image\c64\Bards Tale 3 (en)"
-; imageDir := "\\NAS2\emul\image\c64\Ultima V - Warriors of Destiny (origin)(en)\"
- ;imageDir := "\\NAS2\emul\image\c64\Leaderboard - Tournament (access)(en)"
+imageDir := A_Args.Length ? A_Args[1] : ""
+;imageDir := "\\NAS2\emul\image\c64\Wasteland_1988_Interplay"
 
 option    := getOption( imageDir )
-config    := setConfig( "vice_x64sc_libretro", option )
+config    := setConfig( "vice_xscpu64_libretro", option )
 imageFile := getRomPath( imageDir, option, "m3u|zip|adf|adz|hdf|hdz|bin|crt|prg|p00|d64|d71|d81|dfi|dmp|g64|lbr|lnx|nbz|nib|tap|t64|hdd" )
 
 ; config.core := "vice_x64_libretro"
@@ -24,4 +20,4 @@ runEmulator( imageFile, config )
 
 ExitApp
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

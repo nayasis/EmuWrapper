@@ -1,8 +1,8 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDir := %0%
- ;imageDir := "\\NAS2\emul\image\PlayStation\Psychic Force (T-ko)"
+imageDir := A_Args.Length ? A_Args[1] : ""
+;imageDir := "\\NAS2\emul\image\PlayStation\Alundra (T-ko)"
 
 option := getOption(imageDir)
 setCustomFont( imageDir, option )
@@ -18,13 +18,15 @@ runEmulator( imageFile, config )
 
 ExitApp
 
-setCustomFont( imageDir, option ) {
-	customfont := FileUtil.getFile(imageDir, "scph.*\.bin")
+setCustomFont(imageDir, option) {
+	customfont := FileUtil.getFile(imageDir, "i)scph.*\.bin")
+	debug("customfont: " customfont)
 	if ( customfont != "" ) {
 		option.systemfiles_in_content_dir := "true"
 	} else {
 		option.systemfiles_in_content_dir := "false"
 	}
+	debug("option.systemfiles_in_content_dir: " option.systemfiles_in_content_dir)
 }
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

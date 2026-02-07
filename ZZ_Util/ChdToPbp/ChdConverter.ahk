@@ -1,92 +1,72 @@
-#NoEnv
-#include %A_ScriptDir%\lib\FileUtil.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\..\..\ZZ_Library\FileUtil.ahk
 
-imageDir := %0%
-; imageDir := "\\NAS\emul\image\PlayStation\Hyper Olympic in Nagano (ja)"
+imageDir := A_Args.Length ? A_Args[1] : ""
 
-; tempRoot := A_ScriptDir "\_temp"
 tempRoot := "f:\_temp"
-tempIso  := tempRoot "\iso"
-tempPbp  := tempRoot "\pbp"
+tempIso := tempRoot "\iso"
+tempPbp := tempRoot "\pbp"
 
-; prepare temp dir
-FileUtil.delete( tempRoot )
-FileUtil.makeDir( tempIso )
-FileUtil.makeDir( tempPbp )
+FileUtil.delete(tempRoot)
+FileUtil.makeDir(tempIso)
+FileUtil.makeDir(tempPbp)
 
-; CHD to BIN/CUE
-toIso( imageDir, tempIso )
+toIso(imageDir, tempIso)
+toPbp(tempIso, tempPbp)
+renamePbp(tempPbp, tempRoot, imageDir)
 
-; BIN/CUE to PBP
-toPbp( tempIso, tempPbp )
+FileUtil.delete(tempIso)
+FileUtil.delete(tempPbp)
 
-; rename file
-renamePbp( tempPbp, tempRoot, imageDir )
+ExitApp
 
-; delete temp dir
-FileUtil.delete( tempIso )
-FileUtil.delete( tempPbp )
-
-Exit
-
-debug( message ) {
- if( A_IsCompiled == 1 )
-   return
-  message .= "`n" 
-  FileAppend %message%, * ; send message to stdout
+debug(message) {
+  if (A_IsCompiled == 1)
+    return
+  message .= "`n"
+  FileAppend(message, "*")
 }
 
-toIso( dirChd, dirIso ) {
-	chdFiles := FileUtil.getFiles( dirChd, "(?i).*\.chd$", false, true )
-	for i, file in chdFiles {
-		isoName := FileUtil.getName( file, false )
-		target  := dirIso "\" isoName
-		RunWait "%A_ScriptDir%\lib\chdman.exe" extractcd -i "%file%" -o "%target%.cue" -ob "%target%.bin"	
-	}
+toIso(dirChd, dirIso) {
+  chdFiles := FileUtil.getFiles(dirChd, "(?i).*\.chd$", false, -1)
+  for i, file in chdFiles {
+    isoName := FileUtil.getName(file, false)
+    target := dirIso "\" isoName
+    RunWait('"' A_ScriptDir '\lib\chdman.exe" extractcd -i "' file '" -o "' target '.cue" -ob "' target '.bin"')
+  }
 }
 
-toPbp( dirIso, dirPbp ) {
+toPbp(dirIso, dirPbp) {
+  pidPsx2psp := Run('"' A_ScriptDir '\lib\PSX2PSP v1.4.2\PSX2PSP.exe" /batch')
+  WinWait("ahk_exe PSX2PSP.exe")
+  WinActivate()
+  A_Clipboard := dirIso
+  Sleep(1000)
+  Send("^v")
+  Sleep(1000)
+  Send("{Tab}")
+  Sleep(100)
+  A_Clipboard := dirPbp
+  Sleep(100)
+  Send("^v")
+  Sleep(100)
+  Send("{Tab}{Tab}{Enter}")
+  Sleep(1000)
 
-	Run, "%A_ScriptDir%\lib\PSX2PSP v1.4.2\PSX2PSP.exe" /batch,,,pidPsx2psp
-	WinWait, ahk_exe PSX2PSP.exe
-	WinActivate
-	Clipboard := dirIso
-	Sleep, 1000
-	Send ^v
-	Sleep, 1000
-	Send {tab}
-	Sleep, 100
-	Clipboard := dirPbp
-	Sleep, 100
-	Send ^v
-	Sleep, 100
-	Send {tab}{tab}{enter}
-	Sleep, 1000
-
-	loop
-	{
-		ControlGetText, message, TStatusBar1, ahk_exe PSX2PSP.exe
-		; debug( message )
-		if ( message == "Done." ) {
-			Break
-		}
-		Sleep, 300
-	}
-	Process, close, % pidPsx2psp
-
+  loop {
+    message := ControlGetText("TStatusBar1", "ahk_exe PSX2PSP.exe")
+    if (message == "Done.")
+      break
+    Sleep(300)
+  }
+  ProcessClose(pidPsx2psp)
 }
 
-renamePbp( dirPbp, targetDir, dirChd ) {
-
-	pbpFile := FileUtil.getFile( dirPbp, "(?i).*\.pbp$", false, true )
-
-	fileName  := FileUtil.getName( dirChd )
-	fileExt   := FileUtil.getExt( pbpFile )
-
-	renamedFile := targetDir "\" fileName "." fileExt
-
-	debug( pbpFile " -> " renamedFile )
-
-	FileUtil.move( pbpFile, renamedFile )
-
+renamePbp(dirPbp, targetDir, dirChd) {
+  pbpFile := FileUtil.getFile(dirPbp, "(?i).*\.pbp$", false, -1)
+  fileName := FileUtil.getName(dirChd)
+  fileExt := FileUtil.getExt(pbpFile)
+  renamedFile := targetDir "\" fileName "." fileExt
+  debug(pbpFile " -> " renamedFile)
+  FileUtil.move(pbpFile, renamedFile)
 }

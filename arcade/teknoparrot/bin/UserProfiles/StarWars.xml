@@ -3,7 +3,7 @@
   <ProfileName>StarWars</ProfileName>
   <GameNameInternal>STAR WARS: Battle Pod</GameNameInternal>
   <GameGenreInternal>Flying</GameGenreInternal>
-  <GamePath>\\NAS2\emul\image\taknoparrot\Star Wars Battle Pod\Launcher\RSLauncher.exe</GamePath>
+  <GamePath>\\NAS2\emul\image\teknoparrot\Star Wars Battle Pod\Launcher\RSLauncher.exe</GamePath>
   <TestMenuParameter />
   <TestMenuIsExecutable>false</TestMenuIsExecutable>
   <ExtraParameters />
@@ -44,7 +44,7 @@
     <FieldInformation>
       <CategoryName>General</CategoryName>
       <FieldName>Windowed</FieldName>
-      <FieldValue>0</FieldValue>
+      <FieldValue>1</FieldValue>
       <FieldType>Bool</FieldType>
       <FieldMin>0</FieldMin>
       <FieldMax>0</FieldMax>
@@ -53,7 +53,7 @@
     <FieldInformation>
       <CategoryName>General</CategoryName>
       <FieldName>Borderless Fullscreen</FieldName>
-      <FieldValue>0</FieldValue>
+      <FieldValue>1</FieldValue>
       <FieldType>Bool</FieldType>
       <FieldMin>0</FieldMin>
       <FieldMax>0</FieldMax>
@@ -89,6 +89,15 @@
     <FieldInformation>
       <CategoryName>General</CategoryName>
       <FieldName>Reverse Throttle Axis</FieldName>
+      <FieldValue>0</FieldValue>
+      <FieldType>Bool</FieldType>
+      <FieldMin>0</FieldMin>
+      <FieldMax>0</FieldMax>
+      <FieldOptions />
+    </FieldInformation>
+    <FieldInformation>
+      <CategoryName>FFB Blaster</CategoryName>
+      <FieldName>Enable</FieldName>
       <FieldValue>0</FieldValue>
       <FieldType>Bool</FieldType>
       <FieldMin>0</FieldMin>
@@ -150,23 +159,10 @@
     </JoystickButtons>
     <JoystickButtons>
       <ButtonName>Service</ButtonName>
-      <XInputButton>
-        <IsLeftThumbX>false</IsLeftThumbX>
-        <IsRightThumbX>false</IsRightThumbX>
-        <IsLeftThumbY>false</IsLeftThumbY>
-        <IsRightThumbY>false</IsRightThumbY>
-        <IsAxisMinus>false</IsAxisMinus>
-        <IsLeftTrigger>true</IsLeftTrigger>
-        <IsRightTrigger>false</IsRightTrigger>
-        <ButtonCode>0</ButtonCode>
-        <IsButton>false</IsButton>
-        <ButtonIndex>0</ButtonIndex>
-        <XInputIndex>0</XInputIndex>
-      </XInputButton>
       <InputMapping>Service1</InputMapping>
       <AnalogType>None</AnalogType>
-      <BindNameXi>Input Device 0 LeftTrigger</BindNameXi>
-      <BindName>Input Device 0 LeftTrigger</BindName>
+      <BindNameXi />
+      <BindName />
       <HideWithDirectInput>false</HideWithDirectInput>
       <HideWithXInput>false</HideWithXInput>
       <HideWithRawInput>false</HideWithRawInput>
@@ -628,7 +624,7 @@
     </JoystickButtons>
   </JoystickButtons>
   <EmulationProfile>NamcoMachStorm</EmulationProfile>
-  <GameProfileRevision>31</GameProfileRevision>
+  <GameProfileRevision>32</GameProfileRevision>
   <HasSeparateTestMode>false</HasSeparateTestMode>
   <Is64Bit>true</Is64Bit>
   <TestExecIs64Bit>false</TestExecIs64Bit>
@@ -651,4 +647,12 @@
   <GasAxisMax>255</GasAxisMax>
   <OnlineProfileURL />
   <IsLegacy>false</IsLegacy>
+  <HasTpoSupport>false</HasTpoSupport>
+  <IsTpoExclusive>false</IsTpoExclusive>
+  <RequiresBepInEx>false</RequiresBepInEx>
+  <LaunchMinimized>false</LaunchMinimized>
+  <LaunchSecondExecutableMinimized>false</LaunchSecondExecutableMinimized>
+  <OnlineIdFieldName />
+  <OnlineIdType>None</OnlineIdType>
+  <Requires4GBPatch>false</Requires4GBPatch>
 </GameProfile>

@@ -166,7 +166,7 @@ class xml
 	
 	__Delete() {
 		ObjRelease(Object(this.doc)) ; Is this necessary??
-		OutputDebug, % "Object freed."
+		OutputDebug("Object freed.")
 	}
 	
 	__Set(property, value) {
@@ -419,7 +419,7 @@ class xml
 			return false
 		
 		c := []
-		Loop, % cn.length {
+		Loop cn.length {
 			if (cn.item(A_Index-1)[nType] == (t ? nts[type] : type))
 				c[(i := i ? i : 1)] := cn.item(A_Index-1), i+=1
 		}
@@ -435,7 +435,7 @@ class xml
 		this.transformNodeToObject(this.style(), this.doc)
 	}
 	
-	toEntity(ByRef str) {
+	toEntity(&str) {
 		static e := [["&", "&amp;"], ["<", "&lt;"], [">", "&gt;"], ["'", "&apos;"], ["""", "&quot;"]]
 		
 		for a, b in e
@@ -443,7 +443,7 @@ class xml
 		return !(str ~= "s)([<>'""]|&(?!(amp|lt|gt|apos|quot);))")
 	}
 	
-	toChar(ByRef str) {
+	toChar(&str) {
 		static e := [["<", "&lt;"], [">", "&gt;"], ["'", "&apos;"], ["""", "&quot;"], ["&", "&amp;"]]
 		
 		for a, b in e
@@ -453,14 +453,14 @@ class xml
 	
 	viewXML(ie:=true) {
 		static dir := (FileExist(A_ScriptDir) ? A_ScriptDir : A_Temp)
-		static _v := []
+		static _v := Map()
 		
 		dhw := A_DetectHiddenWindows
-		DetectHiddenWindows, On
+		DetectHiddenWindows("On")
 		
 		if !this.documentElement
 			return
-		if WinExist("ahk_id " _v[this].hwnd)
+		if _v.Has(this) && WinExist("ahk_id " _v[this].hwnd)
 			return
 		if ie {
 			this.save((f := dir "\tempXML_" A_TickCount ".xml"))
@@ -469,13 +469,13 @@ class xml
 		} else (f := this.xml)
 		
 		if (hwnd := this._view(f)) {
-			_v[this] := {hwnd: hwnd, res:f}
-			WinWaitClose, % "ahk_id " hwnd
-			ObjRemove(_v, this)
+			_v[this] := {hwnd: hwnd, res: f}
+			WinWaitClose("ahk_id " hwnd)
+			_v.Delete(this)
 		}
 		if (ie ? FileExist(f) : false)
-			FileDelete, % f
-		DetectHiddenWindows, % dhw
+			FileDelete(f)
+		DetectHiddenWindows(dhw)
 	}
 	
 	style(){
@@ -485,21 +485,22 @@ class xml
 			RegExMatch(ComObjType(this.doc, "Name"), "IXMLDOMDocument\K(?:\d|$)", m)
 			MSXML := "MSXML2.DOMDocument" (m < 3 ? "" : ".6.0")
 			xsl := ComObjCreate(MSXML)
-			style =
+			style := "
 			(LTrim
-			<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-			<xsl:output method="xml" indent="yes" encoding="UTF-8"/>
-			<xsl:template match="@*|node()">
+			<xsl:stylesheet version=`"1.0`" xmlns:xsl=`"http://www.w3.org/1999/XSL/Transform`">
+			<xsl:output method=`"xml`" indent=`"yes`" encoding=`"UTF-8`"/>
+			<xsl:template match=`"@*|node()`">
 			<xsl:copy>
-			<xsl:apply-templates select="@*|node()"/>
-			<xsl:for-each select="@*">
+			<xsl:apply-templates select=`"@*|node()`"/>
+			<xsl:for-each select=`"@*`">
 			<xsl:text></xsl:text>
 			</xsl:for-each>
 			</xsl:copy>
 			</xsl:template>
 			</xsl:stylesheet>
-			)
-			xsl.loadXML(style), style := NULL
+			)"
+			xsl.loadXML(style)
+			style := ""
 		}
 		return xsl
 	}
@@ -564,62 +565,64 @@ class xml
 	}
 	
 	_view(p*) {
-		static _v := []
+		static _v := Map()
 		
-		if !ObjHasKey(_v, p.1) {
+		if !_v.Has(p.1) {
 			if (p.1 ~= "^(\Q" A_ScriptDir "\E|\Q" A_Temp "\E)\\tempXML_\d+\.xml$")
 				f := true
 			else if (p.1 ~= "s)^<.*>$")
 				f := false
 			else return
-			Gui, New
-			Gui, +LastFound +LabelviewXML +Resize
-			hwnd := WinExist()
-			_v[hwnd] := {button:"", res: (f ? p.1 : false), xv:""}
-			Gui, Margin, 0, 12
-			Gui, Font, s10, Consolas
-			Gui, Color, % f ? "" : 0xFFFFFF
-			Gui, Add, % f ? "ActiveX" : "Edit"
-			, % "y0 w600 h400 HwndhXV" (f ? "" : " HScroll -Wrap ReadOnly T8")
-			, % f ? "Shell.Explorer" : p.1
-			if f {
-				GuiControlGet, IE,, % hXV
-				IE.Navigate((_v[hwnd].res))
-			}
-			Gui, Add, Button, y+12 x+-100 w88 h26 Default HwndhBtn gviewXMLClose, OK
-			Gui, Show,, % A_ScriptName " - viewXML"
+			myGui := Gui()
+			myGui.Opt("+Resize")
+			myGui.MarginX := 0
+			myGui.MarginY := 12
+			myGui.SetFont("s10", "Consolas")
 			if !f
-				SendMessage, 0x00B1, 0, 0,, % "ahk_id " hXV ; EM_SETSEL
-			_v[hwnd].xv := hXV , _v[hwnd].button := hBtn
+				myGui.BackColor := 0xFFFFFF
+			if f
+				xvCtrl := myGui.Add("ActiveX", "x0 y0 w600 h400", "Shell.Explorer")
+			else
+				xvCtrl := myGui.Add("Edit", "x0 y0 w600 h400 HScroll -Wrap ReadOnly T8", p.1)
+			btnCtrl := myGui.Add("Button", "x500 y+12 w88 h26 Default", "OK")
+			myGui.Show("Hide")
+			hwnd := myGui.Hwnd
+			_v[hwnd] := Map("gui", myGui, "button", btnCtrl.Hwnd, "xv", xvCtrl.Hwnd, "res", (f ? p.1 : false))
+			if f
+				xvCtrl.Value.Navigate(p.1)
+			btnCtrl.OnEvent("Click", (*) => this._view(hwnd, "viewXMLClose"))
+			myGui.OnEvent("Close", (*) => this._view(hwnd, "viewXMLClose"))
+			myGui.OnEvent("Size", (guiObj, minMax, w, h) => this._view(hwnd, "viewXMLSize", minMax, w, h))
+			myGui.Title := A_ScriptName " - viewXML"
+			if !f
+				SendMessage(0x00B1, 0, 0, "", "ahk_id " xvCtrl.Hwnd) ; EM_SETSEL
+			myGui.Show()
 			return hwnd
 		} else {
 			if (p.2 == "viewXMLClose") {
-				if (_v[p.1].res ? FileExist(_v[p.1].res) : false)
-					FileDelete, % _v[p.1].res
-				Gui, % p.1 ":Destroy"
-				_v.Remove(p.1, "")
+				res := _v[p.1]["res"]
+				if (res && FileExist(res))
+					FileDelete(res)
+				_v[p.1]["gui"].Destroy()
+				_v.Delete(p.1)
 			}
 			if (p.2 == "viewXMLSize") {
-				if (A_EventInfo == 1) ; Minimized, do nothing
+				if (p.Has(3) && p[3] = 1) ; Minimized (SIZE_MINIMIZED)
 					return
-				
-				DllCall("SetWindowPos", "Ptr", _v[p.1].button, "Ptr", 0
-				, "UInt", (A_GuiWidth-100), "UInt", (A_GuiHeight -38) ; x|y
-				, "Uint",  88, "UInt", 26 ; w|h (ignored in this case)
-				, "UInt", 0x0010|0x0001|0x0004) ; SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER
-				
-				DllCall("SetWindowPos", "Ptr", _v[p.1].xv, "Ptr", 0
-				, "UInt", 0, "UInt", 0 ; x|y (ignored in this case)
-				, "Uint",  A_GuiWidth, "UInt", (A_GuiHeight-50) ; w|h
-				, "UInt", 0x0010|0x0002|0x0004) ; SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOZORDER
-				
+				guiW := p.Has(4) ? p[4] : 0
+				guiH := p.Has(5) ? p[5] : 0
+				if (guiW && guiH) {
+					DllCall("SetWindowPos", "Ptr", _v[p.1]["button"], "Ptr", 0
+					, "UInt", (guiW-100), "UInt", (guiH-38)
+					, "UInt", 88, "UInt", 26
+					, "UInt", 0x0010|0x0001|0x0004)
+					DllCall("SetWindowPos", "Ptr", _v[p.1]["xv"], "Ptr", 0
+					, "UInt", 0, "UInt", 0
+					, "UInt", guiW, "UInt", (guiH-50)
+					, "UInt", 0x0010|0x0002|0x0004)
+				}
 			}
 		}
-		return
-		viewXMLSize:
-		viewXMLClose:
-		xml._view(A_Gui, A_ThisLabel)
-		return
 	}
 	
 }

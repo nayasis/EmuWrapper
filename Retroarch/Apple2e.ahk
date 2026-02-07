@@ -1,15 +1,13 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 ; https://wiki.mamedev.org/index.php/Driver:Apple_II
 
 ;global EMUL_ROOT     := A_ScriptDir "\1.17.0"
 ;global EMUL_ROOT     := A_ScriptDir "\1.19.1"
 
-imageDir := %0%
-;imageDir := "\\NAS2\emul\image\Apple2\World Class Leader Board (access)(en)"
-
-;mklink /d "C:\app\emulator\Retroarch\1.14.0\iconengines" "C:\app\emulator\Retroarch\share\iconengines"
+imageDir := A_Args.Length ? A_Args[1] : ""
+;imageDir := "\\NAS2\emul\image\Apple2\Deathlord"
 
 option  := getOption(imageDir)
 config  := setConfig("mame_libretro",option,true)
@@ -40,11 +38,13 @@ makeCmd(imageDir, config) {
 
 	fileCmd := A_ScriptDir "\Apple2e.cmd"
 
+	cmd := ""
 	cmd .= nvl(config.machine, "apple2ee")
 
 	cmd .= " -waitvsync"
 	cmd .= " -rewind"
 	cmd .= " -skip_gameinfo"
+  ;cmd .= " -noreadconfig "
 
   cmd .= addOption("-ramsize", config.ramsize)
   cmd .= addOption("-gameio",  config.gameio)
@@ -59,9 +59,10 @@ makeCmd(imageDir, config) {
   cmd .= addOption("-sl7",     config.sl7)
 
   cmd .= addOption("-rp", wrap( EMUL_ROOT "\system\mame\console\apple"))
+  ;cmd .= addOption("-rp", wrap( EMUL_ROOT "\system\mame\bios"))
 
   disks  := FileUtil.getFiles(imageDir, "i).*\.(dsk|woz|a2r|nib)$")
-  fddCnt := min(config.fdd_cnt, disks.maxIndex())
+  fddCnt := min(config.fdd_cnt, disks.Length)
   fddIdx := [1,2,3,4]
   if(fddCnt >= 3) {
     fddIdx := [3,4,1,2]
@@ -147,4 +148,4 @@ linkResource() {
   FileUtil.makeLink( EMUL_ROOT "\system\mame\console\common\samples",  dirSystem "\samples", true )
 }
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

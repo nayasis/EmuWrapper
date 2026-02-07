@@ -1,7 +1,7 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDir := %0%
+imageDir := A_Args.Length ? A_Args[1] : ""
 ;imageDir := "e:\download\Dai Gyakuten Saiban 1"
 ;imageDir := "\\NAS2\emul\image\3DS\Brain Age - Concentration Training (ko)"
 
@@ -36,4 +36,4 @@ prepareFont(imageFile) {
 
 
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

@@ -1,4 +1,4 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 #Persistent
 
 fileSetting := A_MyDocuments "\EA Games\Medal of Honor Airborne(tm)\Config\MOHASettings.ini"

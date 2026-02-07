@@ -1,5 +1,4 @@
-SetBatchLines -1
-#NoEnv
+#Requires AutoHotkey >=2.0
 ;Created by Robert Eding: Rseding91@yahoo.com
 ;Current version 2.6
 

@@ -1,5 +1,5 @@
-#NoEnv
-#include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 ; pathRoot := "\\NAS\emul\image\PcEngineCd\ACTION\Castlevania - Rondo of Blood (En)"
 ; pathRoot     := "\\NAS\emul\image\PcEngineCd\ACTION\Faussete Amour (ja)"

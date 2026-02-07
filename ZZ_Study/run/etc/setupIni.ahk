@@ -1,4 +1,4 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
 fileIni := A_ScriptDir "\bin\baldur.ini"
 

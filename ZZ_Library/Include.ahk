@@ -1,4 +1,4 @@
-#include %A_LineFile%\..\
+#Requires AutoHotkey >=2.0
 #Include Common.ahk
 #Include FileUtil.ahk
 #Include VirtualDisk.ahk
@@ -7,7 +7,7 @@
 #Include Tray.ahk
 #Include Taskbar.ahk
 #Include Xml.ahk
-#Include 7Zip.ahk
+#Include SevenZip.ahk
 #Include JSON.ahk
 #Include Jxon.ahk
 #Include Cli.ahk

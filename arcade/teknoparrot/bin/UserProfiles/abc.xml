@@ -51,6 +51,15 @@
       <FieldOptions />
     </FieldInformation>
     <FieldInformation>
+      <CategoryName>FFB Blaster</CategoryName>
+      <FieldName>Enable</FieldName>
+      <FieldValue>0</FieldValue>
+      <FieldType>Bool</FieldType>
+      <FieldMin>0</FieldMin>
+      <FieldMax>0</FieldMax>
+      <FieldOptions />
+    </FieldInformation>
+    <FieldInformation>
       <CategoryName>General</CategoryName>
       <FieldName>Enable Outputs</FieldName>
       <FieldValue>0</FieldValue>
@@ -749,7 +758,7 @@
     </JoystickButtons>
   </JoystickButtons>
   <EmulationProfile>AfterBurnerClimax</EmulationProfile>
-  <GameProfileRevision>21</GameProfileRevision>
+  <GameProfileRevision>22</GameProfileRevision>
   <HasSeparateTestMode>true</HasSeparateTestMode>
   <Is64Bit>false</Is64Bit>
   <TestExecIs64Bit>false</TestExecIs64Bit>
@@ -772,4 +781,12 @@
   <GasAxisMax>255</GasAxisMax>
   <OnlineProfileURL />
   <IsLegacy>false</IsLegacy>
+  <HasTpoSupport>false</HasTpoSupport>
+  <IsTpoExclusive>false</IsTpoExclusive>
+  <RequiresBepInEx>false</RequiresBepInEx>
+  <LaunchMinimized>false</LaunchMinimized>
+  <LaunchSecondExecutableMinimized>false</LaunchSecondExecutableMinimized>
+  <OnlineIdFieldName />
+  <OnlineIdType>None</OnlineIdType>
+  <Requires4GBPatch>false</Requires4GBPatch>
 </GameProfile>

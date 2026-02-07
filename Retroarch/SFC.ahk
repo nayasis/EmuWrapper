@@ -1,9 +1,9 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 ; EMUL_ROOT := A_ScriptDir "\1.9.0"
 
-imageDir := %0%
+imageDir := A_Args.Length ? A_Args[1] : ""
 ; imageDir := "\\NAS\emul\image\SuperFamicom\Fire Emblem 3 - Monshou no Nazo (T-ko)"
 ; imageDir := "\\NAS\emul\image\SuperFamicom\BS Fire Emblem Akaneia Senki - Episode 3 ~ Seigi no Tozokudan (nintendo)(T-en 1.01 by Darnman)"
 ; imageDir := "\\NAS\emul\image\SuperFamicom\BS Fire Emblem Akaneia Senki - Episode 1 ~ Palace Kanraku (nintendo)(T-en 1.01 by Darnman)"
@@ -22,4 +22,4 @@ runEmulator( imageFile, config )
 
 ExitApp
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

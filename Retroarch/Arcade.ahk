@@ -1,12 +1,7 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-imageDir := %0%
-; imageDir := "\\NAS2\emul\image\Neogeo\King of Fighters '98 - Dream match never ends (snk)(T-ko 1.0 by dsno)"
-; imageDir := "\\NAS2\emul\image\ArcadeMame\Outlaws of the Lost Dynasty (en)"
- ;imageDir := "\\NAS2\emul\image\ArcadeMame\Virtua Fighter Kids (ja)"
- ;imageDir := "\\NAS2\emul\image\ArcadeMame\Tekken Tag Tournament (en)"
- ;imageDir := "\\NAS2\emul\image\Neogeo\King of Fighters '94 (snk)(T-ko 1.0 by dsno)"
+imageDir := A_Args.Length ? A_Args[1] : ""
  ;imageDir := "\\NAS2\emul\image\Neogeo\King of Fighters '94 (snk)(en)"
 
 ; EMUL_ROOT := A_ScriptDir "\1.9.0"
@@ -50,11 +45,13 @@ loop, % option.core.wait_subprocess
 ExitApp
 
 setBezel(config, imageDir) {
-	if(config.input_overlay == "")
+	if(config.input_overlay == "" || config.input_overlay == "none")
 		return
-	bezel := FileUtil.getFile( imageDir "\_EL_CONFIG\bezel", "i).*\.(cfg)$" )
-	if(bezel != "") {
-		config.input_overlay := bezel
+	if(config.input_overlay == "default") {
+		bezel := FileUtil.getFile( imageDir "\_EL_CONFIG\bezel", "i).*\.(cfg)$" )
+		if(bezel != "") {
+			config.input_overlay := bezel
+		}		
 	}
 }
 
@@ -67,4 +64,4 @@ setBezel(config, imageDir) {
 ;	}
 ;}
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

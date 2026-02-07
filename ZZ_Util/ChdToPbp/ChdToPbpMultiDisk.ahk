@@ -1,5 +1,5 @@
-#NoEnv
-#include %A_ScriptDir%\lib\FileUtil.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\..\..\ZZ_Library\FileUtil.ahk
 
 imageDir := %0%
 imageDir := "\\NAS\emul\image\PlayStation\Final Fantasy Tactics - Complete v2 (en)"

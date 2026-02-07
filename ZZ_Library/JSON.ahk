@@ -41,7 +41,7 @@ class JSON
 	 */
 	class load extends JSON.Functor
 	{
-		Call(self, ByRef text, reviver:="")
+		Call(self, text, reviver:="")
 		{
 			this.rev := IsObject(reviver) ? reviver : false
 		; Object keys(and array indices) are temporarily stored in arrays so that
@@ -140,14 +140,10 @@ class JSON
 						} else {
 							value := SubStr(text, pos, i := RegExMatch(text, "[\]\},\s]|$",, pos)-pos)
 
-							static number := "number", integer :="integer"
-							if value is %number%
-							{
-								if value is %integer%
-									value += 0
-							}
+							if (IsNumber(value))
+								value += 0
 							else if (value == "true" || value == "false")
-								value := %value% + 0
+								value := (value = "true") ? 1 : 0
 							else if (value == "null")
 								value := ""
 							else
@@ -172,7 +168,7 @@ class JSON
 			return this.rev ? this.Walk(root, "") : root[""]
 		}
 
-		ParseError(expect, ByRef text, pos, len:=1)
+		ParseError(expect, text, pos, len:=1)
 		{
 			static quot := Chr(34), qurly := quot . "}"
 			
@@ -233,10 +229,9 @@ class JSON
 			this.rep := IsObject(replacer) ? replacer : ""
 
 			this.gap := ""
-			if (space) {
-				static integer := "integer"
-				if space is %integer%
-					Loop, % ((n := Abs(space))>10 ? 10 : n)
+			if (space != "") {
+				if (space is Integer || IsInteger(space))
+					loop Min(10, Abs(space))
 						this.gap .= " "
 				else
 					this.gap := SubStr(space, 1, 10)
@@ -244,7 +239,7 @@ class JSON
 				this.indent := "`n"
 			}
 
-			return this.Str({"": value}, "")
+			return this.Str(Map("", value), "")
 		}
 
 		Str(holder, key)
@@ -258,7 +253,7 @@ class JSON
 			; Check object type, skip serialization for other object types such as
 			; ComObject, Func, BoundFunc, FileObject, RegExMatchObject, Property, etc.
 				static type := A_AhkVersion<"2" ? "" : Func("Type")
-				if (type ? type.Call(value) == "Object" : ObjGetCapacity(value) != "") {
+				if (type ? type.Call(value) == "Object" : (Type(value) == "Object")) {
 					if (this.gap) {
 						stepback := this.indent
 						this.indent .= this.gap
@@ -276,7 +271,7 @@ class JSON
 
 					str := ""
 					if (is_array) {
-						Loop, % value.Length() {
+						loop value.Length {
 							if (this.gap)
 								str .= this.indent
 							
@@ -309,7 +304,7 @@ class JSON
 				}
 			
 			} else ; is_number ? value : "value"
-				return ObjGetCapacity([value], 1)=="" ? value : this.Quote(value)
+				return (value is "Number") ? value : this.Quote(value)
 		}
 
 		Quote(string)
@@ -350,8 +345,7 @@ class JSON
 	 *     of code readability and convenience, it's better to do 'return JSON.Undefined'.
 	 *     Internally, the property returns a ComObject with the variant type of VT_EMPTY.
 	 */
-	Undefined[]
-	{
+	static Undefined {
 		get {
 			static empty := {}, vt_empty := ComObject(0, &empty, 1)
 			return vt_empty
@@ -360,7 +354,7 @@ class JSON
 
 	class Functor
 	{
-		__Call(method, ByRef arg, args*)
+		__Call(method, arg, args*)
 		{
 		; When casting to Call(), use a new instance of the "function object"
 		; so as to avoid directly storing the properties(used across sub-methods)

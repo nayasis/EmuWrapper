@@ -1,19 +1,16 @@
-#NoEnv
-#include %A_ScriptDir%\script\AbstractFunction.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 ; EMUL_ROOT := A_ScriptDir "\1.8.4"
 
-imageDir := %0%
-; imageDir := "\\NAS2\emul\image\PlayStation\Silent Hill (T-ko)"
-; imageDir := "\\NAS2\emul\image\PSX2\God of War 1 (sce)(ko)"
-; imageDir := "\\NAS2\emul\image\PSX2\Wizardry - Tale of the Forsaken Land (atlus)(en)"
-; imageDir := "\\NAS2\emul\image\PSX2\Jak 2 (sce,naughty dog)(ko,en)"
-; imageDir := "\\NAS2\emul\image\PSX2\Super Robot Taisen MX (banpresto)(T-ko 1.9.1 by solony)\"
-; imageDir := "\\NAS2\emul\image\PSX2\Front Mission 5- Scars of the War (square enix)(T-en patch 4 complete by FM5)"
+imageDir := A_Args.Length ? A_Args[1] : ""
+;imageDir := "\\NAS2\emul\image\PSX2\Wizardry - Tale of the Forsaken Land (atlus)(en)"
 
 option := getOption( imageDir )
 config := setConfig( "pcsx2_libretro", option, true )
-imageFile := getRomPath( imageDir, option, "m3u|cso|bin|iso|chd" )
+imageFile := getRomPath(imageDir, option, "m3u|cso|bin|iso|chd")
+
+linkSaveFolder(imageDir)
 
 ; config.core := "pcsx2_libretro"
 
@@ -25,4 +22,10 @@ runEmulator( imageFile, config )
 
 ExitApp
 
-#include %A_ScriptDir%\script\AbstractHotkey.ahk
+linkSaveFolder(imageDir) {
+	src := imageDir "\_EL_CONFIG\save\ra\save"
+	trg := EMUL_ROOT "\system\pcsx2\memcards"
+	FileUtil.makeLink(src,trg,true)
+}
+
+#Include %A_ScriptDir%\script\AbstractHotkey.ahk

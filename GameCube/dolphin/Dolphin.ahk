@@ -3,22 +3,19 @@
 
 global emulPid  := ""
 imageDir := %0%
-;imageDir := "\\NAS2\emul\image\GameCube\Star Wars - Rogue Squadron III - Rebel Strike (factor 5)(en)"
+;imageDir := "\\NAS2\emul\image\GameCube\Second Sight (free radical design)(en)"
 
 setConfig( imageDir )
 
 cdContainer := new DiskContainer( imageDir, "i).*\.(gcz|cue|iso|wbfs)$" )
 cdContainer.initSlot( 1 )
 
-;emulDir  := A_ScriptDir "\bin\dolphin-master-5.0-11590-x64"
-emulDir  := A_ScriptDir "\bin\dolphin-2409-x64"
+emulDir  := A_ScriptDir "\bin\dolphin-2506-x64"
 emulPath := emulDir "\Dolphin.exe"
 
 unblockApp( emulPath )
 
 if ( cdContainer.hasDisk() ) {
-
-	; ResolutionChanger.change( 1024, 768 )
 
   command := emulPath " """ cdContainer.getFile(1) """"
   debug( command )
@@ -30,8 +27,6 @@ if ( cdContainer.hasDisk() ) {
 		waitEmulatorClosed( emulPid )
 	}
 
-	; ResolutionChanger.restore()
-	
 } else {
 	Run, % emulPath, % emulDir,,emulPid
 }
@@ -69,22 +64,19 @@ getOption( imageDir ) {
 }
 
 waitEmulator() {
-	; Dolphin 5.0-14095
-	; ahk_class Qt5150QWindowIcon
-	; ahk_exe Dolphin.exe
-	WinWait, ahk_class Qt5150QWindowIcon ahk_exe Dolphin.exe,,10
+	WinWait, ahk_class Qt651QWindowIcon ahk_exe Dolphin.exe,,10
 	IfWinExist
 	  activateEmulator()
 }
 
-waitEmulatorClosed( emulPid:="" ) {
-	WinWaitClose, ahk_class Qt5150QWindowIcon ahk_exe Dolphin.exe,,
-	if( emulPid != "" )
+waitEmulatorClosed(emulPid:="") {
+	WinWaitClose, ahk_class Qt651QWindowIcon ahk_exe Dolphin.exe,,
+	if(emulPid != "")
 	  Process, WaitClose, emulPid
 }
 
 activateEmulator() {
-	WinActivate, ahk_class Qt5150QWindowIcon ahk_exe Dolphin.exe,,10
+	WinActivate, ahk_class Qt651QWindowIcon ahk_exe Dolphin.exe,,10
 }
 
 linkSnapshotDir() {

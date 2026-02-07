@@ -1,1 +1,1 @@
-np2kai "\\NAS2\emul\image\PC98\Dragon Knight 4 (T-ko by Edenlock)\dk4.hdi"
+np2kai "\\NAS2\emul\image\PC98\Giten Megami Tensei (T-en 0.3 by Sneikkimies)\boot.fdi" "\\NAS2\emul\image\PC98\Giten Megami Tensei (T-en 0.3 by Sneikkimies)\hdd.hdi"

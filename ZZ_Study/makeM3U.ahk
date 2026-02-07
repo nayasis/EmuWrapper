@@ -1,4 +1,4 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
 fileM3u := ""
 content := ""
@@ -20,7 +20,7 @@ debug( message ) {
  if( A_IsCompiled == 1 )
    return
   message .= "`n" 
-  FileAppend %message%, * ; send message to stdout
+  FileAppend(message, "*")
 }
 
 getDir( path ) {

@@ -1,5 +1,5 @@
-#NoEnv
-#include c:\app\emulator\ZZ_Library\Include.ahk
+#Requires AutoHotkey >=2.0
+#Include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
 ; global windowMain := "ahk_exe HDLGManClient.exe"
 global windowMain := "ahk_exe HDLGManClient-timeout-160.exe"

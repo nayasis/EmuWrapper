@@ -1,4 +1,4 @@
-#NoEnv
+#Requires AutoHotkey >=2.0
 
 while( err != "0" ) {
 	RunWait, % "FF7_Launcher.exe"
