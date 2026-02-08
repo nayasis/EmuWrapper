@@ -16,6 +16,65 @@
  *     Email:      - cocobelgica <at> gmail <dot> com
  */
 
+#Warn All, Off
+
+class DotMap {
+	__New(map) {
+		this._m := map
+	}
+
+	__Get(name, params) {
+		if (this._m.Has(name)) {
+			val := this._m[name]
+		} else {
+			val := Map()
+			this._m[name] := val
+		}
+		return (val is Map) ? DotMap(val) : val
+	}
+
+	__Set(name, params, value) {
+		this._m[name] := DotMap._unwrap(value)
+		return value
+	}
+
+	__Item[key] {
+		get {
+			if (this._m.Has(key))
+				return this._m[key]
+			return ""
+		}
+		set {
+			this._m[key] := DotMap._unwrap(value)
+			return value
+		}
+	}
+
+	__Enum(n) {
+		return this._m.__Enum(n)
+	}
+
+	Has(key) {
+		return this._m.Has(key)
+	}
+
+	Get(key, default := "") {
+		return this._m.Has(key) ? this._m[key] : default
+	}
+
+	Delete(key) {
+		return this._m.Delete(key)
+	}
+
+	raw() {
+		return this._m
+	}
+
+	static _unwrap(val) {
+		return (val is DotMap) ? val.raw() : val
+	}
+}
+
 
 /**
  * Class: JSON
@@ -74,7 +133,7 @@ class JSON
 					next := (is_key := !is_array && ch == ",") ? quot : json_value
 
 				} else if InStr("}]", ch) {
-					ObjRemoveAt(stack, 1)
+					stack.RemoveAt(1)
 					next := stack[1]==root ? "" : stack[1].IsArray ? ",]" : ",}"
 
 				} else {
@@ -93,7 +152,7 @@ class JSON
 							: ( value := json_array ? new json_array : []
 							  , next := json_value_or_array_closing )
 						
-						ObjInsertAt(stack, 1, value)
+						stack.InsertAt(1, value)
 
 						if (this.keys)
 							this.keys[value] := []
@@ -157,7 +216,7 @@ class JSON
 						next := holder==root ? "" : is_array ? ",]" : ",}"
 					} ; If InStr("{[", ch) { ... } else
 
-					is_array? key := ObjPush(holder, value) : holder[key] := value
+					is_array? key := holder.Push(value) : holder[key] := value
 
 					if (this.keys && this.keys.HasKey(holder))
 						this.keys[holder].Push(key)
@@ -165,7 +224,8 @@ class JSON
 			
 			} ; while ( ... )
 
-			return this.rev ? this.Walk(root, "") : root[""]
+			value := this.rev ? this.Walk(root, "") : root[""]
+			return (value is Map) ? DotMap(value) : value
 		}
 
 		ParseError(expect, text, pos, len:=1)
@@ -226,6 +286,8 @@ class JSON
 	{
 		Call(self, value, replacer:="", space:="2")
 		{
+			if (value is DotMap)
+				value := value.raw()
 			this.rep := IsObject(replacer) ? replacer : ""
 
 			this.gap := ""

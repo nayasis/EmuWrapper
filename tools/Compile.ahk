@@ -56,6 +56,7 @@ compilerDir := RegExReplace(ahk2exe, "\\[^\\]+$", "")
 if (envCompilerDir != "" && FileExist(envCompilerDir))
 	compilerDir := envCompilerDir
 base := resolveBase(compilerDir, ahkDir)
+base := toShortPath(base)
 
 try {
 	compileOne(src, ahk2exe, base)
@@ -68,8 +69,23 @@ ExitApp
 
 compileOne(src, ahk2exe, base) {
 	trg := getDir(src) "\" getName(src, false) ".exe"
+	outFile := A_Temp "\ahk2exe_out_" A_TickCount ".log"
+	errFile := A_Temp "\ahk2exe_err_" A_TickCount ".log"
 	cmd := '"' ahk2exe '" /in "' src '" /out "' trg '" /base "' base '" /compress 0 /cp 65001 /silent verbose'
-	exitCode := RunWait(cmd, , "Hide")
+	cmdLine := A_ComSpec ' /d /s /c "' cmd ' 1> "' outFile '" 2> "' errFile '""'
+	exitCode := RunWait(cmdLine, , "Hide")
+	if FileExist(outFile) {
+		outText := FileRead(outFile)
+		if (outText != "")
+			writeOut(outText)
+		try FileDelete(outFile)
+	}
+	if FileExist(errFile) {
+		errText := FileRead(errFile)
+		if (errText != "")
+			writeErr(errText)
+		try FileDelete(errFile)
+	}
 	if (exitCode != 0)
 		throw Error("Ahk2Exe exit code: " exitCode)
 	writeOut("컴파일 완료: " trg)
@@ -95,6 +111,14 @@ getName(path, withExt := true) {
 
 normalizePath(path) {
 	return RegExReplace(path, "\\+", "\")
+}
+
+toShortPath(path) {
+	if !FileExist(path)
+		return path
+	buf := Buffer(260 * 2, 0)
+	len := DllCall("GetShortPathNameW", "Str", path, "Ptr", buf, "UInt", buf.Size // 2, "UInt")
+	return len ? StrGet(buf) : path
 }
 
 resolveBase(compilerDir, ahkDir) {
