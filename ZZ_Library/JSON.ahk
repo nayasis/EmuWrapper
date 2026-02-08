@@ -19,22 +19,39 @@
 #Warn All, Off
 
 class DotMap {
-	__New(map) {
-		this._m := map
+	__New(args*) {
+		if !DotMap._store.Has(this)
+			DotMap._store[this] := Map()
+		if (args.Length == 0)
+			return
+		if (args.Length == 1 && (args[1] is Map)) {
+			DotMap._store[this] := args[1]
+			return
+		}
+		if (Mod(args.Length, 2) != 0)
+			throw Error("DotMap() expects Map or key/value pairs", -1)
+		m := DotMap._store[this]
+		i := 1
+		while (i <= args.Length) {
+			m[args[i]] := DotMap._unwrap(args[i + 1])
+			i += 2
+		}
 	}
 
 	__Get(name, params) {
-		if (this._m.Has(name)) {
-			val := this._m[name]
+		m := DotMap._store[this]
+		if (m.Has(name)) {
+			val := m[name]
 		} else {
 			val := Map()
-			this._m[name] := val
+			m[name] := val
 		}
 		return (val is Map) ? DotMap(val) : val
 	}
 
 	__Set(name, params, value) {
-		this._m[name] := DotMap._unwrap(value)
+		m := DotMap._store[this]
+		m[name] := DotMap._unwrap(value)
 		return value
 	}
 
@@ -50,29 +67,38 @@ class DotMap {
 		}
 	}
 
-	__Enum(n) {
-		return this._m.__Enum(n)
+	__Enum(n := 1) {
+		try {
+			m := DotMap._store[this]
+			return m.__Enum(n)
+		} catch {
+			m := Map()
+			return m.__Enum(n)
+		}
 	}
 
 	Has(key) {
-		return this._m.Has(key)
+		return DotMap._store[this].Has(key)
 	}
 
 	Get(key, default := "") {
-		return this._m.Has(key) ? this._m[key] : default
+		m := DotMap._store[this]
+		return m.Has(key) ? m[key] : default
 	}
 
 	Delete(key) {
-		return this._m.Delete(key)
+		return DotMap._store[this].Delete(key)
 	}
 
 	raw() {
-		return this._m
+		return DotMap._store[this]
 	}
 
 	static _unwrap(val) {
 		return (val is DotMap) ? val.raw() : val
 	}
+
+	static _store := Map()
 }
 
 
@@ -87,6 +113,14 @@ class DotMap {
  */
 class JSON
 {
+	static load(text, reviver:="") {
+		return (JSON._load()).Call(text, reviver)
+	}
+
+	static dump(value, replacer:="", space:="2") {
+		return (JSON._dump()).Call(value, replacer, space)
+	}
+
 	/**
 	 * Method: load
 	 *     Parses a JSON string into an AHK value
@@ -98,15 +132,15 @@ class JSON
 	 *     reviver   [in, opt] - function object, similar to JavaScript's
 	 *                           JSON.parse() 'reviver' parameter
 	 */
-	class load extends JSON.Functor
+	class _load extends JSON.Functor
 	{
-		Call(self, text, reviver:="")
+		Call(text, reviver:="")
 		{
 			this.rev := IsObject(reviver) ? reviver : false
 		; Object keys(and array indices) are temporarily stored in arrays so that
 		; we can enumerate them in the order they appear in the document/text instead
 		; of alphabetically. Skip if no reviver function is specified.
-			this.keys := this.rev ? {} : false
+			this.keys := this.rev ? Map() : false
 
 			static quot := Chr(34), bashq := "\" . quot
 			     , json_value := quot . "{[01234567890-tfn"
@@ -114,8 +148,10 @@ class JSON
 			     , object_key_or_object_closing := quot . "}"
 
 			key := ""
+			resultSet := false
+			result := ""
 			is_key := false
-			root := {}
+			root := Map()
 			stack := [root]
 			next := json_value
 			pos := 0
@@ -127,30 +163,25 @@ class JSON
 					this.ParseError(next, text, pos)
 
 				holder := stack[1]
-				is_array := holder.IsArray
+				is_array := (holder is Array)
 
 				if InStr(",:", ch) {
 					next := (is_key := !is_array && ch == ",") ? quot : json_value
 
 				} else if InStr("}]", ch) {
 					stack.RemoveAt(1)
-					next := stack[1]==root ? "" : stack[1].IsArray ? ",]" : ",}"
+					next := (ObjPtr(stack[1]) == ObjPtr(root)) ? "" : (stack[1] is Array) ? ",]" : ",}"
 
 				} else {
 					if InStr("{[", ch) {
-					; Check if Array() is overridden and if its return value has
-					; the 'IsArray' property. If so, Array() will be called normally,
-					; otherwise, use a custom base object for arrays
-						static json_array := Func("Array").IsBuiltIn || ![].IsArray ? {IsArray: true} : 0
-					
-					; sacrifice readability for minor(actually negligible) performance gain
-						(ch == "{")
-							? ( is_key := true
-							  , value := {}
-							  , next := object_key_or_object_closing )
-						; ch == "["
-							: ( value := json_array ? new json_array : []
-							  , next := json_value_or_array_closing )
+					if (ch == "{") {
+						is_key := true
+						value := Map()
+						next := object_key_or_object_closing
+					} else {
+						value := []
+						next := json_value_or_array_closing
+					}
 						
 						stack.InsertAt(1, value)
 
@@ -163,21 +194,20 @@ class JSON
 							while (i := InStr(text, quot,, i+1)) {
 								value := StrReplace(SubStr(text, pos+1, i-pos-1), "\\", "\u005c")
 
-								static tail := A_AhkVersion<"2" ? 0 : -1
-								if (SubStr(value, tail) != "\")
+								if (SubStr(value, -1) != "\")
 									break
 							}
 
 							if (!i)
 								this.ParseError("'", text, pos)
 
-							  value := StrReplace(value,  "\/",  "/")
-							, value := StrReplace(value, bashq, quot)
-							, value := StrReplace(value,  "\b", "`b")
-							, value := StrReplace(value,  "\f", "`f")
-							, value := StrReplace(value,  "\n", "`n")
-							, value := StrReplace(value,  "\r", "`r")
-							, value := StrReplace(value,  "\t", "`t")
+							value := StrReplace(value,  "\/",  "/")
+							value := StrReplace(value, bashq, quot)
+							value := StrReplace(value,  "\b", "`b")
+							value := StrReplace(value,  "\f", "`f")
+							value := StrReplace(value,  "\n", "`n")
+							value := StrReplace(value,  "\r", "`r")
+							value := StrReplace(value,  "\t", "`t")
 
 							pos := i ; update pos
 							
@@ -213,18 +243,25 @@ class JSON
 							pos += i-1
 						}
 
-						next := holder==root ? "" : is_array ? ",]" : ",}"
+						next := (ObjPtr(holder) == ObjPtr(root)) ? "" : is_array ? ",]" : ",}"
 					} ; If InStr("{[", ch) { ... } else
 
-					is_array? key := holder.Push(value) : holder[key] := value
+					if (is_array)
+						key := holder.Push(value)
+					else
+						holder[key] := value
+					if (ObjPtr(holder) == ObjPtr(root) && !resultSet) {
+						result := value
+						resultSet := true
+					}
 
-					if (this.keys && this.keys.HasKey(holder))
+					if (this.keys && this.keys.Has(holder))
 						this.keys[holder].Push(key)
 				}
 			
 			} ; while ( ... )
 
-			value := this.rev ? this.Walk(root, "") : root[""]
+			value := this.rev ? this.Walk(root, "") : (resultSet ? result : (root.Has("") ? root[""] : root))
 			return (value is Map) ? DotMap(value) : value
 		}
 
@@ -261,7 +298,7 @@ class JSON
 					if (v != JSON.Undefined)
 						value[k] := v
 					else
-						ObjDelete(value, k)
+						value.Delete(k)
 				}
 			}
 			
@@ -282,9 +319,9 @@ class JSON
 	 *     space     [in, opt] - similar to JavaScript's JSON.stringify()
 	 *                           'space' parameter
 	 */
-	class dump extends JSON.Functor
+	class _dump extends JSON.Functor
 	{
-		Call(self, value, replacer:="", space:="2")
+		Call(value, replacer:="", space:="2")
 		{
 			if (value is DotMap)
 				value := value.raw()
@@ -309,7 +346,7 @@ class JSON
 			value := holder[key]
 
 			if (this.rep)
-				value := this.rep.Call(holder, key, ObjHasKey(holder, key) ? value : JSON.Undefined)
+				value := this.rep.Call(holder, key, ObjHasOwnProp(holder, key) ? value : JSON.Undefined)
 
 			if IsObject(value) {
 			; Check object type, skip serialization for other object types such as
@@ -321,7 +358,7 @@ class JSON
 						this.indent .= this.gap
 					}
 
-					is_array := value.IsArray
+					is_array := (value is Array)
 				; Array() is not overridden, rollback to old method of
 				; identifying array-like objects. Due to the use of a for-loop
 				; sparse arrays such as '[1,,3]' are detected as objects({}). 
@@ -374,14 +411,14 @@ class JSON
 			static quot := Chr(34), bashq := "\" . quot
 
 			if (string != "") {
-				  string := StrReplace(string,  "\",  "\\")
-				; , string := StrReplace(string,  "/",  "\/") ; optional in ECMAScript
-				, string := StrReplace(string, quot, bashq)
-				, string := StrReplace(string, "`b",  "\b")
-				, string := StrReplace(string, "`f",  "\f")
-				, string := StrReplace(string, "`n",  "\n")
-				, string := StrReplace(string, "`r",  "\r")
-				, string := StrReplace(string, "`t",  "\t")
+				string := StrReplace(string,  "\",  "\\")
+				; string := StrReplace(string,  "/",  "\/") ; optional in ECMAScript
+				string := StrReplace(string, quot, bashq)
+				string := StrReplace(string, "`b",  "\b")
+				string := StrReplace(string, "`f",  "\f")
+				string := StrReplace(string, "`n",  "\n")
+				string := StrReplace(string, "`r",  "\r")
+				string := StrReplace(string, "`t",  "\t")
 
 				static rx_escapable := A_AhkVersion<"2" ? "O)[^\x20-\x7e]" : "[^\x20-\x7e]"
 				while RegExMatch(string, rx_escapable, m)

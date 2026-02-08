@@ -1,4 +1,4 @@
-#Requires AutoHotkey >=2.0
+﻿#Requires AutoHotkey >=2.0
 #WinActivateForce
 #Include "..\ZZ_Library\Include.ahk"
 

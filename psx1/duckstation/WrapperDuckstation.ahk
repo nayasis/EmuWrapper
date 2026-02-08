@@ -1,4 +1,4 @@
-#NoEnv
+﻿#NoEnv
 #include d:\app\emulator\ZZ_Library\Include.ahk
 
 global emulatorPid := ""

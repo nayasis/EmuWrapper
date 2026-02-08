@@ -1,4 +1,4 @@
-#Requires AutoHotkey >=2.0
+﻿#Requires AutoHotkey >=2.0
 #Include "%A_ScriptDir%\..\..\ZZ_Library\IncludeAppleWin.ahk"
 
 try DllCall("AttachConsole", "UInt", -1)
@@ -173,9 +173,9 @@ getOption(imageDir) {
     jsonText := FileRead(filePath)
     option := JSON.load(jsonText)
     if !option.Has("core")
-      option["core"] := Map()
+      option["core"] := DotMap()
   } else {
-    option := Map("core", Map())
+    option := DotMap("core", DotMap())
   }
   return option
 }

@@ -1,5 +1,5 @@
 #Requires AutoHotkey >=2.0
-#Warn VarUnset, Off  ; xml is class from Xml.ahk (included via Include.ahk)
+#Warn VarUnset, Off  ; Xml is class from Xml.ahk (included via Include.ahk)
 
 class FileUtil {
 
@@ -139,10 +139,9 @@ class FileUtil {
   }
 
   static readXml(path) {
-    global xml  ; class from Xml.ahk
   	if (!this.exist(path))
-  		return xml()
-  	return xml(path)
+  		return Xml()
+  	return Xml(path)
   }
 
   static read(path) {

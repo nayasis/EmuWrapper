@@ -1,4 +1,4 @@
-#NoEnv
+﻿#NoEnv
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
 imageDir := %0%

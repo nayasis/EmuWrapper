@@ -1,4 +1,4 @@
-#Requires AutoHotkey >=2.0
+﻿#Requires AutoHotkey >=2.0
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 emulatorPid    := ""
@@ -186,3 +186,4 @@ setConfig( imageFilePath ) {
 	return false
 
 }
+

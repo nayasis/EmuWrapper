@@ -1,4 +1,4 @@
-#NoEnv
+ï»¿#NoEnv
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 global optionCgaComposite := false
@@ -149,10 +149,10 @@ setConfig( imageFilePath, cdContainer, windowsVersion ) {
 		dosboxConfText := dosboxConfText "mount w """ A_ScriptDir "\mount\os\win3kr""`n"
 		dosboxConfText := dosboxConfText "PATH %PATH%;W:\WINDOWS;W:\WINDOWS\SYSTEM32`n"
 		dosboxConfText := dosboxConfText "SET TEMP=W:\WINDOWS\TEMP`n"
-		dosboxConfText := dosboxConfText "copy W:\WINDOWS\½ÃÀÛÇÁ·Î.GRP.bak W:\WINDOWS\½ÃÀÛÇÁ·Î.GRP`n"
+		dosboxConfText := dosboxConfText "copy W:\WINDOWS\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.GRP.bak W:\WINDOWS\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.GRP`n"
 		dosboxConfText := dosboxConfText "copy W:\WINDOWS\IMEINFO.INI.bak W:\WINDOWS\IMEINFO.INI`n"
 		
-		dosboxConfText := dosboxConfText "copy c:\_EL_CO~1\os\win3\½ÃÀÛÇÁ·Î.GRP W:\WINDOWS\`n"
+		dosboxConfText := dosboxConfText "copy c:\_EL_CO~1\os\win3\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.GRP W:\WINDOWS\`n"
 		dosboxConfText := dosboxConfText "copy c:\_EL_CO~1\os\win3\SYSTEM.INI W:\WINDOWS\`n"
 		dosboxConfText := dosboxConfText "copy c:\_EL_CO~1\os\win3\WIN.INI W:\WINDOWS\`n"
 		dosboxConfText := dosboxConfText "copy c:\_EL_CO~1\os\win3\IMEINFO.INI W:\WINDOWS\`n"
@@ -160,7 +160,7 @@ setConfig( imageFilePath, cdContainer, windowsVersion ) {
 		dosboxConfText := dosboxConfText "ADDKEY p500 enter`n"
 		dosboxConfText := dosboxConfText "W:\WINDOWS\WIN`n"
 
-		dosboxConfText := dosboxConfText "copy W:\WINDOWS\½ÃÀÛÇÁ·Î.GRP c:\_EL_CO~1\os\win3`n"
+		dosboxConfText := dosboxConfText "copy W:\WINDOWS\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.GRP c:\_EL_CO~1\os\win3`n"
 		dosboxConfText := dosboxConfText "copy W:\WINDOWS\SYSTEM.INI c:\_EL_CO~1\os\win3`n"
 		dosboxConfText := dosboxConfText "copy W:\WINDOWS\WIN.INI c:\_EL_CO~1\os\win3`n"
 		dosboxConfText := dosboxConfText "copy W:\WINDOWS\IMEINFO.INI c:\_EL_CO~1\os\win3`n"

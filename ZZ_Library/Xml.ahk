@@ -108,7 +108,7 @@ ________________________________________________________________________________
 
 */
 
-class xml
+class Xml
 {
 	
 	/*
@@ -119,8 +119,8 @@ class xml
 	               filepattern specifying the location of an XML resource.
 	               Omit to start off with an empty document.
 	USAGE: Use the 'new' keyword
-	    xmlDoc := new xml("<root><child/></root>") ; XML string
-	    xmlDoc := new xml("MyFile.xml") ; XML file
+	    xmlDoc := new Xml("<root><child/></root>") ; XML string
+	    xmlDoc := new Xml("MyFile.xml") ; XML file
 	RETURN VALUE: A derived object
 	REMARKS: Throws an exception
 	*/
@@ -140,7 +140,7 @@ class xml
 		if src {
 			if (src ~= "s)^<.*>$")  ; XML string
 				this.loadXML(src)
-			else if (src ~= "[^<>:""/\\|?*]+\.[^<>:""/\\|?*\s]+$") {
+			else if (src ~= '[^!=:"/\\|?*]+\.[^!=:"/\\|?*\s]+$') {
 				if FileExist(src) ; Path/URL to XML file/resource
 					this.load(src)
 				this.file := ""
@@ -158,7 +158,7 @@ class xml
 				. "`nURL: " pe.url "`n", -1, m.2)
 			}
 			
-			if (this.file <> false)
+			if (this.file != false)
 				this.file := src
 		}
 		
@@ -172,7 +172,7 @@ class xml
 	__Set(property, value) {
 		if (property ~= "i)^(doc|file)$") { ; Class property
 			if (property = "file") {
-				if (value ~= "(^$|[^<>:""/\\|?*]+\.[^<>:""/\\|?*\s]+$)")
+				if (value ~= '(^$|[^!=:"/\\|?*]+\.[^!=:"/\\|?*\s]+$)')
 					return this._[property] := value
 				else return false
 			}
@@ -205,7 +205,7 @@ class xml
 		static BF := "i)^(Insert|Remove|(Min|Max)Index|(Set|Get)Capacity"
 			. "|GetAddress|_NewEnum|HasKey|Clone)$"
 		
-		if !ObjHasKey(xml, method) {
+		if !ObjHasKey(Xml, method) {
 			if RegExMatch(method, "iJ)^(add|insert)((?P<_>E)lement|(?P<_>C)hild)$", m)
 				return this["addInsert" m_](method, params*)
 			else {
@@ -315,7 +315,10 @@ class xml
 		e := IsObject(element) ? element : this.selectSingleNode(element)
 		
 		if (t := this.getChild(e, "t", idx)) {
-			text <> "" ? t.nodeValue := text : e.removeChild(t)
+			if (text != "")
+				t.nodeValue := text
+			else
+				e.removeChild(t)
 			return true
 		} else {
 			t := this.createTextNode(text)
@@ -436,15 +439,16 @@ class xml
 	}
 	
 	toEntity(&str) {
-		static e := [["&", "&amp;"], ["<", "&lt;"], [">", "&gt;"], ["'", "&apos;"], ["""", "&quot;"]]
+		static e := [["&", "&amp;"], ["<", "&lt;"], [">", "&gt;"], ["'", "&apos;"], ['"', "&quot;"]]
 		
 		for a, b in e
 			str := RegExReplace(str, b.1, b.2)
-		return !(str ~= "s)([<>'""]|&(?!(amp|lt|gt|apos|quot);))")
+		rx := "s)([!'" Chr(34) "]|&(?!(amp|lt|gt|apos|quot);))"
+		return !(str ~= rx)
 	}
 	
 	toChar(&str) {
-		static e := [["<", "&lt;"], [">", "&gt;"], ["'", "&apos;"], ["""", "&quot;"], ["&", "&amp;"]]
+		static e := [["<", "&lt;"], [">", "&gt;"], ["'", "&apos;"], ['"', "&quot;"], ["&", "&amp;"]]
 		
 		for a, b in e
 			str := RegExReplace(str, b.2, b.1)
@@ -520,7 +524,7 @@ class xml
 				t := prm.Remove(prm.maxIndex())
 				if prm.1
 					this.setAtt(e, prm*)
-				if (t <> "")
+				if (t != "")
 					e.text := t
 			} else this.setAtt(e, prm*)
 		}
@@ -626,3 +630,4 @@ class xml
 	}
 	
 }
+
