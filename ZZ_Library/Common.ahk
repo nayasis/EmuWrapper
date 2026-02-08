@@ -1,5 +1,36 @@
 #Requires AutoHotkey >=2.0
 
+; Route runtime errors to stdout/log when available (for compiled executables too).
+OnError(_AhkStdOnError)
+try DllCall("AttachConsole", "UInt", -1)
+_AhkStdEnsureLog()
+
+_AhkStdOnError(err, mode) {
+  msg := "Error: " err.Message "`n"
+  if (err.What != "")
+    msg .= "`n▶" err.Line ": " err.What "`n"
+  if (err.Stack)
+    msg .= "`nCall stack:`n" err.Stack "`n"
+  msg .= "`n> " (A_IsCompiled ? A_ScriptFullPath : A_LineFile)
+  _AhkStdWrite(msg)
+  return 1
+}
+
+_AhkStdWrite(msg) {
+  log := EnvGet("AHK_STDOUT_LOG")
+  if (log != "") {
+    FileAppend(msg "`n", log)
+    return
+  }
+  FileAppend(msg "`n", "**")
+}
+
+_AhkStdEnsureLog() {
+  log := EnvGet("AHK_STDOUT_LOG")
+  if (log != "")
+    try FileAppend("", log)
+}
+
 ; debug( "merong" )
 ; debug( "jake" )
 ; ExitApp

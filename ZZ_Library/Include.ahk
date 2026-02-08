@@ -1,4 +1,5 @@
 #Requires AutoHotkey >=2.0
+#ErrorStdOut
 #Include Common.ahk
 #Include FileUtil.ahk
 #Include VirtualDisk.ahk
