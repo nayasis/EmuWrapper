@@ -8,9 +8,10 @@ There is no unified build system; wrappers are compiled individually via AutoHot
 ```powershell
 .\tools\run_ahk.ps1 .\apple2e\AppleWin1.30.20\WrapperAppleWin.ahk
 ```
-This uses `tools/run_ahk.ps1` which auto-detects file extensions: `.ahk` routes to `tools/Compile.ahk` for compilation, `.exe` runs directly. Examples:
+This uses `tools/run_ahk.ps1` which auto-detects file extensions: `.ahk` runs directly, `.exe` runs directly. Use `-Compile` to build `.ahk` into `.exe` via `tools/Compile.ahk`. Examples:
 ```powershell
 .\tools\run_ahk.ps1 .\apple2e\AppleWin1.30.20\WrapperAppleWin.ahk
+.\tools\run_ahk.ps1 .\apple2e\AppleWin1.30.20\WrapperAppleWin.ahk -compile
 .\tools\run_ahk.ps1 .\apple2e\AppleWin1.30.20\WrapperAppleWin.exe
 ```
 

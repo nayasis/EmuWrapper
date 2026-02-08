@@ -2,6 +2,8 @@ param(
   [Parameter(Mandatory = $true, Position = 0)]
   [string]$Target,
 
+  [switch]$compile,
+
   [string]$AhkExe = "$env:ProgramFiles\AutoHotkey\v2\AutoHotkey64.exe"
 )
 
@@ -45,10 +47,15 @@ if ($Target -match '\.exe$') {
 }
 
 $compileScript = Join-Path $PSScriptRoot "Compile.ahk"
-if ($Target -match '\.ahk$' -and (Test-Path $compileScript)) {
-  $targetPath = (Resolve-Path $Target).Path
-  $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001",$compileScript,$targetPath) + $Args) -PassThru
-  Wait-Process -Id $p.Id
+if ($Target -match '\.ahk$') {
+  if ($compile -and (Test-Path $compileScript)) {
+    $targetPath = (Resolve-Path $Target).Path
+    $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001",$compileScript,$targetPath) + $Args) -PassThru
+    Wait-Process -Id $p.Id
+  } else {
+    $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001",$Target) + $Args) -PassThru
+    Wait-Process -Id $p.Id
+  }
 } else {
   $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001",$Target) + $Args) -PassThru
   Wait-Process -Id $p.Id
