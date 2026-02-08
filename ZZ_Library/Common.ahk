@@ -35,9 +35,12 @@ _AhkStdEnsureLog() {
 ; debug( "jake" )
 ; ExitApp
 
-debug(message := "") {
+debug(params*) {
   if (A_IsCompiled)
     return
+  message := ""
+  for _, p in params
+    message .= p
   message .= "`r`n"
   FileAppend(message, "*")
 }

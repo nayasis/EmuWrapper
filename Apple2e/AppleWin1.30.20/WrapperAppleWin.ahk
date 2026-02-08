@@ -19,6 +19,7 @@ _StdErrHandler(err, mode) {
   return 1
 }
 
+
 global option
 
 imageDir  := A_Args.Length > 0 ? A_Args[1] : ""
@@ -36,7 +37,8 @@ configStr := setConfig( imageDir, fddContainer )
 ; cmd := "AppleWin.exe -no-full-screen -conf apple.ini -fs-height=best -no-printscreen-dlg"
 cmd := "AppleWin.exe -conf apple.ini -fs-height=best " configStr
 ; cmd := "AppleWin.exe -no-full-screen -conf apple.ini -fs-height=best "
-debug("cmd : " cmd)
+if (!A_IsCompiled)
+  debug("cmd : " cmd)
 
 ; ExitApp
 
@@ -44,7 +46,8 @@ Run(cmd, , , &emulatorPid)
 waitEmulator()
 if WinExist("ahk_class APPLE2FRAME")
 {
-  debug("Found window !!")
+  if (!A_IsCompiled)
+    debug("Found window !!")
   activateEmulator()
   reset()
   waitCloseEmulator()
@@ -73,7 +76,7 @@ waitCloseEmulator() {
 }
 
 ^+PGDN:: { ; Insert Disk in Drive#2
-  if (option.core.fdd != "2")
+  if (option["core"].Get("fdd", "") != "2")
     return
 
   if GetKeyState("z", "P") { ; Ctrl + Shift + Z + PgDn :: Remove Disk in Drive#2
@@ -144,6 +147,7 @@ removeDisk(slotNo) {
 getConfig(imageDir, diskContainer) {
   dirBase := FileUtil.getDir(imageDir) "\_EL_CONFIG"
   option  := getOption(imageDir)
+  core    := option["core"]
 
   config := " "
   config .= " --portable"
@@ -155,7 +159,7 @@ getConfig(imageDir, diskContainer) {
     }
   }
 
-  if (option.core.renderer == "software") {
+  if (core.Get("renderer", "") == "software") {
     config .= " --cfgpath=" . Chr(34) . ".\inis-software" . Chr(34)
   }
 
@@ -181,52 +185,54 @@ setConfig(imageDir, fddContainer) {
   global option
   dirBase := imageDir "\_EL_CONFIG"
   option  := getOption(imageDir)
+  core    := option["core"]
   fileIni := A_ScriptDir "\apple.ini"
 
-  debug(">> option`n" . JSON.dump(option))
+  if (!A_IsCompiled)
+    debug(">> option`n" . JSON.dump(option))
 
   config := " -no-printscreen-dlg"
 
   ; Default
   IniWrite("1", fileIni, "Configuration", "Custom Speed")
   IniWrite("1", fileIni, "Configuration", "ScrollLock Toggle")
-  IniWrite(nvl(option.core["clock_multiplier"], "1"), fileIni, "Configuration", "Emulation Speed")
+  IniWrite(core.Get("clock_multiplier", "1"), fileIni, "Configuration", "Emulation Speed")
 
   ; fullscreen
-  if (option.core.full_screen != "true") {
+  if (core.Get("full_screen", "") != "true") {
     config .= " -no-full-screen"
   }
 
-  if (option.core.card_vidHD == "true") {
+  if (core.Get("card_vidHD", "") == "true") {
     IniWrite("21", fileIni, "Configuration\Slot 3", "Card type")
   } else {
     IniWrite("0", fileIni, "Configuration\Slot 3", "Card type")
   }
 
   ; model
-  config .= " -model " nvl(option.core.model, "apple2ee")
+  config .= " -model " nvl(core.Get("model", ""), "apple2ee")
 
   ; video
-  IniWrite(nvl(option.core["video_mode"], ""), fileIni, "Configuration", "Video Emulation")
+  IniWrite(core.Get("video_mode", ""), fileIni, "Configuration", "Video Emulation")
 
   ; video refresh
-  config .= " -" nvl(option.core.video_refresh, "60hz")
+  config .= " -" nvl(core.Get("video_refresh", ""), "60hz")
 
   ; sound
-  if (option.core.sound_card == "mocking_board" || option.core.sound_card == "") {
+  if (core.Get("sound_card", "") == "mocking_board" || core.Get("sound_card", "") == "") {
     IniWrite("3", fileIni, "Configuration\Slot 4", "Card type")
     IniWrite("3", fileIni, "Configuration\Slot 5", "Card type")
-  } else if (option.core.sound_card == "phasor") {
+  } else if (core.Get("sound_card", "") == "phasor") {
     IniWrite("9", fileIni, "Configuration\Slot 4", "Card type")
-  } else if (option.core.sound_card == "sam_dac") {
+  } else if (core.Get("sound_card", "") == "sam_dac") {
     IniWrite("11", fileIni, "Configuration\Slot 5", "Card type")
-  } else if (option.core.sound_card == "no_sound") {
+  } else if (core.Get("sound_card", "") == "no_sound") {
     IniWrite("0", fileIni, "Configuration\Slot 4", "Card type")
     IniWrite("0", fileIni, "Configuration\Slot 5", "Card type")
   }
 
   ; Enhance disk access speed
-  IniWrite(nvl(option.core.enhance_disk_access, 1), fileIni, "Configuration", "Enhance Disk Speed")
+  IniWrite(nvl(core.Get("enhance_disk_access", ""), 1), fileIni, "Configuration", "Enhance Disk Speed")
 
   ; fdd
   IniDelete(fileIni, "Configuration\Slot 6", "Last Disk Image 1")
@@ -234,21 +240,21 @@ setConfig(imageDir, fddContainer) {
   IniDelete(fileIni, "Configuration\Slot 5", "Last Disk Image 1")
   IniDelete(fileIni, "Configuration\Slot 5", "Last Disk Image 2")
   fdCnt := fddContainer.size()
-  if (option.core.fdd == "0") {
+  if (core.Get("fdd", "") == "0") {
     config .= " -d1-disconnected"
     config .= " -d2-disconnected"
-  } else if (option.core.fdd == "1") {
+  } else if (core.Get("fdd", "") == "1") {
     config .= " -d2-disconnected"
     loop Min(1, fdCnt) {
       i := A_Index
       config .= " -s6d" i " " wrap(fddContainer.getFile(i))
     }
-  } else if (option.core.fdd == "2") {
+  } else if (core.Get("fdd", "") == "2") {
     loop Min(2, fdCnt) {
       i := A_Index
       config .= " -s6d" i " " wrap(fddContainer.getFile(i))
     }
-  } else if (option.core.fdd == "4") {
+  } else if (core.Get("fdd", "") == "4") {
     loop Min(2, fdCnt) {
       i := A_Index
       config .= " -s6d" i " " wrap(fddContainer.getFile(i))
@@ -271,15 +277,15 @@ setConfig(imageDir, fddContainer) {
   }
 
   ; joystick
-  IniWrite(nvl(option.core["joystick1"], ""), fileIni, "Configuration", "Joystick0 Emu Type v3")
-  IniWrite(nvl(option.core["joystick2"], ""), fileIni, "Configuration", "Joystick1 Emu Type v3")
+  IniWrite(core.Get("joystick1", ""), fileIni, "Configuration", "Joystick0 Emu Type v3")
+  IniWrite(core.Get("joystick2", ""), fileIni, "Configuration", "Joystick1 Emu Type v3")
 
-  IniWrite(nvl(option.core["xtrim"], 0), fileIni, "Configuration", "PDL X-Trim")
-  IniWrite(nvl(option.core["ytrim"], 0), fileIni, "Configuration", "PDL Y-Trim")
+  IniWrite(nvl(core.Get("xtrim", ""), 0), fileIni, "Configuration", "PDL X-Trim")
+  IniWrite(nvl(core.Get("ytrim", ""), 0), fileIni, "Configuration", "PDL Y-Trim")
 
-  IniWrite(nvl(option.core["auto_fire"], ""), fileIni, "Configuration", "Autofire")
-  IniWrite(nvl(option.core["auto_center"], ""), fileIni, "Configuration", "Joystick Centering Control")
-  IniWrite(nvl(option.core["input_swap"], ""), fileIni, "Configuration", "Swap buttons 0 and 1")
+  IniWrite(core.Get("auto_fire", ""), fileIni, "Configuration", "Autofire")
+  IniWrite(core.Get("auto_center", ""), fileIni, "Configuration", "Joystick Centering Control")
+  IniWrite(core.Get("input_swap", ""), fileIni, "Configuration", "Swap buttons 0 and 1")
 
   return config
 

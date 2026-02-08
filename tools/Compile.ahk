@@ -1,6 +1,5 @@
 #Requires AutoHotkey >=2.0
 #ErrorStdOut
-#Include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 #SingleInstance Force
 
 ; Usage:
@@ -19,6 +18,8 @@ if !FileExist(src) {
 	writeErr("입력 스크립트가 없습니다: " srcInput)
 	ExitApp(1)
 }
+
+writeOut("컴파일 시작: " src)
 
 ; Ahk2Exe는 AutoHotkey와 같은 폴더에 있음 (v2 우선)
 ahkDir := A_AhkPath ? RegExReplace(A_AhkPath, "\\[^\\]+$", "") : ""
@@ -66,32 +67,34 @@ try {
 ExitApp
 
 compileOne(src, ahk2exe, base) {
-	trg := FileUtil.getDir(src) "\" FileUtil.getName(src, false) ".exe"
+	trg := getDir(src) "\" getName(src, false) ".exe"
 	cmd := '"' ahk2exe '" /in "' src '" /out "' trg '" /base "' base '" /compress 0 /cp 65001 /silent verbose'
-	debug(cmd)
-	result := execCapture(cmd)
-	if (result.stdout != "")
-		writeOut(result.stdout)
-	if (result.stderr != "")
-		writeErr(result.stderr)
-	if (result.exitCode != 0)
-		throw Error("Ahk2Exe exit code: " result.exitCode)
+	exitCode := RunWait(cmd, , "Hide")
+	if (exitCode != 0)
+		throw Error("Ahk2Exe exit code: " exitCode)
 	writeOut("컴파일 완료: " trg)
-}
-
-execCapture(cmd) {
-	shell := ComObject("WScript.Shell")
-	exec := shell.Exec(cmd)
-	stdout := exec.StdOut.ReadAll()
-	stderr := exec.StdErr.ReadAll()
-	exitCode := exec.ExitCode
-	return { stdout: stdout, stderr: stderr, exitCode: exitCode }
 }
 
 resolveInput(path) {
 	if RegExMatch(path, "i)^(?:[a-z]:\\|\\\\)")
 		return path
-	return FileUtil.resolvePath(A_WorkingDir, path)
+	return normalizePath(A_WorkingDir "\" path)
+}
+
+getDir(path) {
+	path := RegExReplace(path, "^(.*?)\\$", "$1")
+	SplitPath(path, , &dir)
+	return dir
+}
+
+getName(path, withExt := true) {
+	path := RegExReplace(path, "^(.*?)\\$", "$1")
+	SplitPath(path, &fileName, , &fileExt, &nameNoExt)
+	return withExt ? fileName : nameNoExt
+}
+
+normalizePath(path) {
+	return RegExReplace(path, "\\+", "\")
 }
 
 resolveBase(compilerDir, ahkDir) {

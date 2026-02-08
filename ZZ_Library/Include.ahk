@@ -1,15 +1,15 @@
 #Requires AutoHotkey >=2.0
 #ErrorStdOut
-#Include Common.ahk
-#Include FileUtil.ahk
-#Include VirtualDisk.ahk
-#Include DiskContainer.ahk
-#Include ResolutionChanger.ahk
-#Include Tray.ahk
-#Include Taskbar.ahk
-#Include Xml.ahk
-#Include SevenZip.ahk
-#Include JSON.ahk
-#Include Jxon.ahk
-#Include Cli.ahk
-#Include Registry.ahk
+#Include "%A_LineFile%\..\Common.ahk"
+#Include "%A_LineFile%\..\FileUtil.ahk"
+#Include "%A_LineFile%\..\VirtualDisk.ahk"
+#Include "%A_LineFile%\..\DiskContainer.ahk"
+#Include "%A_LineFile%\..\ResolutionChanger.ahk"
+#Include "%A_LineFile%\..\Tray.ahk"
+#Include "%A_LineFile%\..\Taskbar.ahk"
+#Include "%A_LineFile%\..\Xml.ahk"
+#Include "%A_LineFile%\..\SevenZip.ahk"
+#Include "%A_LineFile%\..\JSON.ahk"
+#Include "%A_LineFile%\..\Jxon.ahk"
+#Include "%A_LineFile%\..\Cli.ahk"
+#Include "%A_LineFile%\..\Registry.ahk"

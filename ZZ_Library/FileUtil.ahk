@@ -11,7 +11,7 @@ class FileUtil {
 		throw Error("FileUtil is a static class, dont instantiate it!", -1)
 	}
 
-	getDir( path ) {
+	static getDir( path ) {
 		path := RegExReplace( path, "^(.*?)\\$", "$1" )
 		if( ! this.exist(path) )
 		  return ""
@@ -20,7 +20,7 @@ class FileUtil {
 		return this.getParentDir( path )
 	}
 
-	getParentDir( path ) {
+	static getParentDir( path ) {
 		path := RegExReplace( path, "^(.*?)\\$", "$1" )
 		path := RegExReplace( path, "^(.*)\\.+?$", "$1" )
 		return path
@@ -30,11 +30,11 @@ class FileUtil {
 	* get user home
 	* @return user home directory path
 	*/
-	getHomeDir() {
+	static getHomeDir() {
 		return EnvGet("userprofile")
 	}
 
-	getExt(filePath) {
+	static getExt(filePath) {
 		SplitPath(filePath, , , &fileExtention)
 		return StrLower(fileExtention)
 	}
@@ -47,7 +47,7 @@ class FileUtil {
   * @exmaple
   *   FileUtil.isExt("cue|mdx")
   */
-	isExt(filePath, extentionPattern) {
+	static isExt(filePath, extentionPattern) {
 		if (!FileExist(filePath))
 			return false
 		if (RegExMatch(filePath, "i).*\.(" extentionPattern ")$")) {
@@ -57,7 +57,7 @@ class FileUtil {
 		}
 	}
 	
-	getName(filePath, withExt := true) {
+	static getName(filePath, withExt := true) {
 		filePath := RegExReplace(filePath, "^(.*?)\\$", "$1")
 		SplitPath(filePath, &fileName, &fileDir, &fileExtention, &fileNameWithoutExtension)
 		if (withExt == true)
@@ -65,7 +65,7 @@ class FileUtil {
 		return fileNameWithoutExtension
 	}
 	
-	getFiles(path, pattern := ".*", includeDir := false, depth := 0) {
+	static getFiles(path, pattern := ".*", includeDir := false, depth := 0) {
 		files := []
 		if (this.isFile(path) && includeDir == false) {
 			if RegExMatch(path, pattern)
@@ -80,7 +80,7 @@ class FileUtil {
 		return files
 	}
 
-	_getFilesRecursive(dir, pattern, includeDir, depth, files) {
+	static _getFilesRecursive(dir, pattern, includeDir, depth, files) {
 		dirs := []
 		Loop Files, dir "\*", "FD" {
 			if (InStr(A_LoopFileAttrib, "D")) {
@@ -103,7 +103,7 @@ class FileUtil {
 		}
 	}
 
-	getFile(pathDirOrFile, pattern := ".*", includeDir := false, depth := 0) {
+	static getFile(pathDirOrFile, pattern := ".*", includeDir := false, depth := 0) {
 		if (!this.exist(pathDirOrFile) && includeDir == false) {
 			return ""
 		}
@@ -118,38 +118,38 @@ class FileUtil {
 		}
 	}
 	
-	isDir(path) {
+	static isDir(path) {
 		if (!this.exist(path))
 			return false
 		attr := FileGetAttrib(path)
 		return InStr(attr, "D") > 0
 	}
 	
-	isFile(path) {
+	static isFile(path) {
 		if (!this.exist(path))
 			return false
 		attr := FileGetAttrib(path)
 		return !InStr(attr, "D")
 	}
 
-  readJson(path) {
+  static readJson(path) {
   	if (!this.exist(path))
   		return Map()
   	return JSON.load(this.read(path))
   }
 
-  readXml(path) {
+  static readXml(path) {
     global xml  ; class from Xml.ahk
   	if (!this.exist(path))
   		return xml()
   	return xml(path)
   }
 
-  read(path) {
+  static read(path) {
   	return FileRead(path)
   }
 
-	readProperties(path) {
+	static readProperties(path) {
 		prop := Map()
 		loop read, path {
 			if RegExMatch(A_LoopReadLine, "^#.*")
@@ -167,11 +167,11 @@ class FileUtil {
 		return prop
 	}
 
-	makeDir(path) {
+	static makeDir(path) {
 		DirCreate(path)
 	}
 
-	makeParentDir(path, forDirectory := true) {
+	static makeParentDir(path, forDirectory := true) {
 		if (forDirectory == true) {
 			parentDir := this.getParentDir(path)
 		} else {
@@ -180,11 +180,11 @@ class FileUtil {
 		DirCreate(parentDir)
 	}
 
-	exist( path ) {
+	static exist( path ) {
 		return FileExist( path ) != ""
 	}
 
-	delete(path, recursive := 1) {
+	static delete(path, recursive := 1) {
 		if (this.isFile(path)) {
 			FileDelete(path)
 		} else if (this.isDir(path)) {
@@ -192,14 +192,14 @@ class FileUtil {
 		}
 	}
 
-	move(src, trg, overwrite := 1) {
+	static move(src, trg, overwrite := 1) {
 		if (!this.exist(src))
 			return
 		this.makeParentDir(trg, this.isDir(src))
 		FileMove(src, trg, overwrite ? 1 : 0)
 	}
 
-	copy(src, trg, overwrite := 1) {
+	static copy(src, trg, overwrite := 1) {
 		if (!this.exist(src))
 			return
 		this.makeParentDir(trg, this.isDir(src))
@@ -210,7 +210,7 @@ class FileUtil {
 		}
 	}
 
-	write(path, content := "") {
+	static write(path, content := "") {
 		this.makeParentDir(path)
 		try FileDelete(path)
 		FileAppend(content, path)
@@ -222,7 +222,7 @@ class FileUtil {
   * @param {path} filePath
   * @return size (byte)
   */
-	getSize(path) {
+	static getSize(path) {
 		return FileGetSize(path)
 	}
 
@@ -233,7 +233,7 @@ class FileUtil {
   * @param {witchTime} M: modification time (default), C: creation time, A: last access time
   * @return YYYYMMDDHH24MISS
   */
-	getTime(path, whichTime := "M") {
+	static getTime(path, whichTime := "M") {
 		return FileGetTime(path, whichTime)
 	}
 
@@ -243,12 +243,12 @@ class FileUtil {
   * @param {path} file path
   * @return true if path is symlink
   */
-  isSymlink(path) {
+  static isSymlink(path) {
   	attr := FileGetAttrib(path)
   	return InStr(attr, "L") > 0
   }
 
-  hasSymlinkAuth() {
+  static hasSymlinkAuth() {
 		testFilePath := A_Temp "\ahkSymlinkTestfile.txt"
 		testLinkPath := A_Temp "\ahkSymlinkTestlink.txt"
 
@@ -266,7 +266,7 @@ class FileUtil {
 		return hasAuth
   }
 
-  createSymlinkAuth() {
+  static createSymlinkAuth() {
   	cmd := "fsutil behavior set SymlinkEvaluation L2L:1 R2R:1 L2R:1 R2L:1"
   	RunWait(A_ComSpec " " cmd, , "Hide")
   }
@@ -278,7 +278,7 @@ class FileUtil {
   * @param trg        target path (path to used as link)
   * @param deleteTrg  delete trg forcidly
   */
-  makeLink(src, trg, deleteTrg:=false) {
+  static makeLink(src, trg, deleteTrg:=false) {
 
     if( ! this.exist(src) )
     	return false
@@ -307,7 +307,7 @@ class FileUtil {
   * @param  command	 command
   * @return command execution result
   */
-	cli(command) {
+	static cli(command) {
 		dhw := A_DetectHiddenWindows
 		DetectHiddenWindows(true)
 		try {
@@ -334,7 +334,7 @@ class FileUtil {
 		return result
 	}
 
-	_sortArray(Array) {
+	static _sortArray(Array) {
 	  t := Map()
 	  for k, v in Array
 	    t[RegExReplace(v, "\s")] := v
@@ -344,13 +344,13 @@ class FileUtil {
 	  return Array
 	}
 
-	resolvePath(absolutePath, relativePath) {
+	static resolvePath(absolutePath, relativePath) {
 		dest := Buffer(260 * 2, 0)
 		DllCall("Shlwapi.dll\PathCombine", "Ptr", dest, "Str", absolutePath, "Str", relativePath)
 		return StrGet(dest)
 	}
 
-  normalizePath( path ) {
+  static normalizePath( path ) {
   	return RegExReplace( path, "\\+", "\" )
   }
 
