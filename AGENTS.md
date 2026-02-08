@@ -21,6 +21,7 @@ Compiler selection for v2:
 Stdout/stderr capture:
 - `tools/run_ahk.ps1` writes stdout/stderr to a temp log via `AHK_STDOUT_LOG` and echoes it back to the console.
 - Runtime errors in compiled wrappers are routed to stdout via `OnError` in `WrapperAppleWin.ahk` (pattern to be reused).
+- When running `.exe` targets, `tools/run_ahk.ps1` stops the launched process after output capture, matching by executable path.
 ```
 
 ## Coding Style & Naming Conventions

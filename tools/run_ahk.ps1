@@ -29,6 +29,10 @@ if ($Target -match '\.exe$') {
     Get-Content -Raw $logFile
     Remove-Item $logFile -ErrorAction SilentlyContinue
   }
+  try {
+    $exePath = (Resolve-Path $Target).Path
+    Get-CimInstance Win32_Process | Where-Object { $_.ExecutablePath -eq $exePath } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
+  } catch {}
   exit $LASTEXITCODE
 }
 
