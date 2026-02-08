@@ -42,7 +42,14 @@ debug(params*) {
   for _, p in params
     message .= p
   message .= "`r`n"
-  FileAppend(message, "*")
+  log := EnvGet("AHK_STDOUT_LOG")
+  if (log != "") {
+    FileAppend(message, log)
+  } else {
+    FileAppend(message, "*")
+    if (EnvGet("AHK_DEBUG_STDERR") != "")
+      FileAppend(message, "**")
+  }
 }
 
 sendKey(key) {
