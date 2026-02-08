@@ -10,6 +10,5 @@
 #Include "%A_LineFile%\..\Xml.ahk"
 #Include "%A_LineFile%\..\SevenZip.ahk"
 #Include "%A_LineFile%\..\JSON.ahk"
-#Include "%A_LineFile%\..\Jxon.ahk"
 #Include "%A_LineFile%\..\Cli.ahk"
 #Include "%A_LineFile%\..\Registry.ahk"
