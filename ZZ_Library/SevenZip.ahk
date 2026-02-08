@@ -86,7 +86,7 @@ class SevenZip {
   * 
   */
   list() {
-    commandline := "l """ this.archiveFile """"
+    commandline := 'l "' . this.archiveFile . '"'
     commandline .= this.option._hide()
     commandline .= this.option._password()
     return this._run( commandline )
@@ -99,7 +99,7 @@ class SevenZip {
   * @return {String} response on success, 0 on failure.
   */
   add( file ) {
-    commandline := "a """ this.archiveFile """ """ file """"
+    commandline := 'a "' . this.archiveFile . '" "' . file . '"'
     commandline .= this.option._hide()
     commandline .= this.option._password()
     commandline .= this.option._compressLevel()
@@ -119,7 +119,7 @@ class SevenZip {
   * @return {String} response on success, 0 on failure.
   */  
   delete( file ) {
-    commandline := "d """ this.archiveFile """ """ file """"
+    commandline := 'd "' . this.archiveFile . '" "' . file . '"'
     commandline .= this.option._hide()
     commandline .= this.option._password()
     commandline .= this.option._compressLevel()
@@ -139,7 +139,7 @@ class SevenZip {
   * @return {String} response on success, 0 on failure.
   */
   extract( path:="" ) {
-    commandline := ( this.option.extractPaths ? "x" : "e" ) " """ this.archiveFile """"
+    commandline := (this.option.extractPaths ? "x" : "e") . ' "' . this.archiveFile . '"'
     commandline .= this.option._hide()
     commandline .= this.option._recurse()
     commandline .= this.option._overwrite()
@@ -154,7 +154,7 @@ class SevenZip {
 
     if ( path != "" ) {
       DirCreate(path)
-      commandline .= " -o""" path """"
+      commandline .= ' -o"' . path . '"'
     }
 
     return this._run( commandline )
@@ -537,9 +537,9 @@ class SevenZip {
     }
 
     toIncludeOption( key, val ) {
-      if ! (val)
-        return
-        val := """" val """"
+      if (!val)
+        return ""
+      val := '"' . val . '"'
       return (SubStr(val,1,1) == "@") ? " -" key val : " -" key "!" val
     }
 

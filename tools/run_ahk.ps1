@@ -19,6 +19,15 @@ function Write-LogText([string]$path) {
   [Console]::Out.Write($enc.GetString($bytes))
 }
 
+function Stop-AhkScript([string]$scriptPath) {
+  try {
+    $pattern = [regex]::Escape($scriptPath)
+    Get-CimInstance Win32_Process |
+      Where-Object { $_.Name -like "AutoHotkey*" -and $_.CommandLine -match $pattern } |
+      ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
+  } catch {}
+}
+
 if ($Target -match '\.exe$') {
   & $Target /ErrorStdOut @Args 2>&1
   $found = $false
@@ -48,13 +57,21 @@ if ($Target -match '\.exe$') {
 
 $compileScript = Join-Path $PSScriptRoot "Compile.ahk"
 if ($Target -match '\.ahk$') {
+  $targetPath = (Resolve-Path $Target).Path
+  Stop-AhkScript $targetPath
   if ($compile -and (Test-Path $compileScript)) {
-    $targetPath = (Resolve-Path $Target).Path
     $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001",$compileScript,$targetPath) + $Args) -PassThru
     Wait-Process -Id $p.Id
   } else {
-    $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001",$Target) + $Args) -PassThru
-    Wait-Process -Id $p.Id
+    $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001","/restart",$Target) + $Args) -PassThru
+    $finished = Wait-Process -Id $p.Id -Timeout 120 -ErrorAction SilentlyContinue
+    if (-not $finished) {
+      try {
+        if (Get-Process -Id $p.Id -ErrorAction SilentlyContinue) {
+          Stop-Process -Id $p.Id -Force
+        }
+      } catch {}
+    }
   }
 } else {
   $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001",$Target) + $Args) -PassThru

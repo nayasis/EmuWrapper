@@ -267,30 +267,43 @@ class Network {
 * Range
 */
 range(start := 0, stop := "", step := 1) {
-  static rangeBase := { _NewEnum: _RangeNewEnum }
   if (!step)
     throw Error("range(): Parameter 'step' must not be 0 or blank")
   if (stop == "")
     stop := start
-  ; Formula: r[i] := start + step*i ; r = range object, i = 0-based index
-  ; For a postive 'step', the constraints are i >= 0 and r[i] < stop
-  ; For a negative 'step', the constraints are i >= 0 and r[i] > stop
-  ; No result is returned if r[0] does not meet the value constraint
-  if (step > 0 ? start < stop : start > stop) ;// start == start + step*0
-    return { base: rangeBase, start: start, stop: stop, step: step }
+  return RangeIter(start, stop, step)
 }
 
-_RangeNewEnum(r) {
-  static enum := { Next: _RangeEnumNext }
-  return { base: enum, r: r, i: 0 }
-}
+class RangeIter {
+  __New(start, stop, step) {
+    this.start := start
+    this.stop := stop
+    this.step := step
+  }
 
-_RangeEnumNext(enum, &k, &v := "") {
-  stop := enum.r.stop
-  step := enum.r.step
-  k := enum.r.start + step*enum.i
-  ret := step > 0 ? k < stop : k > stop
-  if (ret)
-    enum.i += 1
-  return ret
+  __Enum(n := 1) {
+    i := 0
+    start := this.start
+    stop := this.stop
+    step := this.step
+    if (n == 1) {
+      return (&k) => (
+        val := start + step * i,
+        (step > 0 ? val < stop : val > stop) ? (
+          i += 1,
+          k := val,
+          true
+        ) : false
+      )
+    }
+    return (&k, &v) => (
+      val := start + step * i,
+      (step > 0 ? val < stop : val > stop) ? (
+        i += 1,
+        k := val,
+        v := val,
+        true
+      ) : false
+    )
+  }
 }

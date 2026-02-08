@@ -126,29 +126,27 @@ class Xml
 	*/
 	
 	__New(src:="") {
-		static MSXML := "MSXML2.DOMDocument" (A_OSVersion ~= "WIN_(7|8)" ? ".6.0" : "")
+		static MSXML := "MSXML2.DOMDocument" . (A_OSVersion ~= "WIN_(7|8)" ? ".6.0" : "")
 		
-		; Create object to store "file" property
-		; this is to make sure that __Set() is always called everytime
-		; there's an attempt to alter the property's value
-		ObjInsert(this, "_", []) ; ByPass __Set()/__Call()?
+		; Create object to store "file" property.
+		this.DefineProp("_", {Value: {}})
 		
 		; Create IXMLDOMDocument object
-		this.doc := ComObjCreate(MSXML)
-		, this.setProperty("SelectionLanguage", "XPath")
+		this.DefineProp("doc", {Value: ComObject(MSXML)})
+		this.doc.setProperty("SelectionLanguage", "XPath")
 		
 		if src {
 			if (src ~= "s)^<.*>$")  ; XML string
-				this.loadXML(src)
+				this.doc.loadXML(src)
 			else if (src ~= '[^!=:"/\\|?*]+\.[^!=:"/\\|?*\s]+$') {
 				if FileExist(src) ; Path/URL to XML file/resource
-					this.load(src)
-				this.file := ""
+					this.doc.load(src)
+				this._.file := ""
 			} else throw Exception("The parameter '" src "' is neither an XML file "
 				. " nor a string containing XML string.`n", -1, src)
 			
 			; Get last parsing error
-			if (pe := this.parseError).errorCode {
+			if (pe := this.doc.parseError).errorCode {
 				m := pe.url ? ["file", "load"] : ["string", "loadXML"]
 				
 				; throw exception
@@ -158,15 +156,14 @@ class Xml
 				. "`nURL: " pe.url "`n", -1, m.2)
 			}
 			
-			if (this.file != false)
-				this.file := src
+			if (this._.file != false)
+				this._.file := src
 		}
 		
 	}
 	
 	__Delete() {
-		ObjRelease(Object(this.doc)) ; Is this necessary??
-		OutputDebug("Object freed.")
+		try ObjRelease(this.doc)
 	}
 	
 	__Set(property, value) {
@@ -174,8 +171,11 @@ class Xml
 			if (property = "file") {
 				if (value ~= '(^$|[^!=:"/\\|?*]+\.[^!=:"/\\|?*\s]+$)')
 					return this._[property] := value
-				else return false
+				else
+					return false
 			}
+			this.DefineProp("doc", {Value: value})
+			return value
 		} else { ; XML DOM property
 			try return (this.doc)[property] := value
 			catch
@@ -184,9 +184,9 @@ class Xml
 	}
 	
 	__Get(property) {
-		if !ObjHasKey(this, property) { ; Redundant??
+		if !ObjHasOwnProp(this, property) { ; Redundant??
 			if (property = "file")
-				return this._.HasKey(property)
+				return this._.Has(property)
 					? this._[property]
 					: false
 			else {
@@ -205,16 +205,52 @@ class Xml
 		static BF := "i)^(Insert|Remove|(Min|Max)Index|(Set|Get)Capacity"
 			. "|GetAddress|_NewEnum|HasKey|Clone)$"
 		
-		if !ObjHasKey(Xml, method) {
-			if RegExMatch(method, "iJ)^(add|insert)((?P<_>E)lement|(?P<_>C)hild)$", m)
-				return this["addInsert" m_](method, params*)
+		if !ObjHasOwnProp(Xml, method) {
+			if RegExMatch(method, "iJ)^(add|insert)((?P<_>E)lement|(?P<_>C)hild)$", &m)
+				return this.%("addInsert" m["_"])%(method, params*)
 			else {
-				try return (this.doc)[method](params*)
-				catch e
+				try return this.doc.%method%(params*)
+				catch as e
 					if !(method ~= BF)
 						throw e
 			}
 		}
+	}
+
+	addChild(pr, type := "element", prm*) {
+		return this.addInsertC("addChild", pr, type, prm*)
+	}
+
+	insertChild(pr, type := "element", prm*) {
+		return this.addInsertC("insertChild", pr, type, prm*)
+	}
+
+	addElement(en, pr := "", prm*) {
+		return this.addInsertE("addElement", en, pr, prm*)
+	}
+
+	insertElement(en, pr := "", prm*) {
+		return this.addInsertE("insertElement", en, pr, prm*)
+	}
+
+	selectSingleNode(xpath) {
+		return this.doc.selectSingleNode(xpath)
+	}
+
+	selectNodes(xpath) {
+		return this.doc.selectNodes(xpath)
+	}
+
+	save(path := "") {
+		return path == "" ? this.doc.save(this._.file) : this.doc.save(path)
+	}
+
+	load(path) {
+		return this.doc.load(path)
+	}
+
+	loadXML(text) {
+		return this.doc.loadXML(text)
 	}
 	
 	/*
@@ -265,8 +301,13 @@ class Xml
 		for a, b in att {
 			if !IsObject(b)
 				continue
-			for x, y in b
-				e.setAttribute(x, y)
+			if (b is Map) {
+				for x, y in b
+					e.setAttribute(x, y)
+			} else {
+				for x in b.OwnProps()
+					e.setAttribute(x, b.%x%)
+			}
 		}
 	}
 	
@@ -374,7 +415,7 @@ class Xml
 		if !type
 			return n.childNodes.item(idx-1)
 		cn := this.getChildren(n, type)
-		return ObjHasKey(cn, idx) ? cn[idx] : (idx<0 ? cn[cn.MaxIndex()+idx+1] : false)
+		return cn.Has(idx) ? cn[idx] : (idx<0 ? cn[cn.Length+idx+1] : false)
 	}
 	
 	/*
@@ -410,7 +451,7 @@ class Xml
 			nType := _NT
 		else if (type ~= "^[[:alpha:]]+$") {
 			if (t := (StrLen(type)<=3))
-				nType := ObjHasKey(nts, type) ? _NTS : false
+				nType := ObjHasOwnProp(nts, type) ? _NTS : false
 			else {
 				for a, b in nts
 					continue
@@ -422,9 +463,10 @@ class Xml
 			return false
 		
 		c := []
+		i := 1
 		Loop cn.length {
 			if (cn.item(A_Index-1)[nType] == (t ? nts[type] : type))
-				c[(i := i ? i : 1)] := cn.item(A_Index-1), i+=1
+				c[i] := cn.item(A_Index-1), i+=1
 		}
 		return c
 	}
@@ -486,9 +528,11 @@ class Xml
 		static xsl
 		
 		if !IsObject(xsl) {
-			RegExMatch(ComObjType(this.doc, "Name"), "IXMLDOMDocument\K(?:\d|$)", m)
-			MSXML := "MSXML2.DOMDocument" (m < 3 ? "" : ".6.0")
-			xsl := ComObjCreate(MSXML)
+			ver := 0
+			if RegExMatch(ComObjType(this.doc, "Name"), "IXMLDOMDocument\K(?:\d|$)", &m)
+				ver := (m[0] != "") ? (m[0] + 0) : 0
+			MSXML := "MSXML2.DOMDocument" . (ver < 3 ? "" : ".6.0")
+			xsl := ComObject(MSXML)
 			style := "
 			(LTrim
 			<xsl:stylesheet version=`"1.0`" xmlns:xsl=`"http://www.w3.org/1999/XSL/Transform`">
@@ -517,7 +561,7 @@ class Xml
 		n := pr
 			? (IsObject(pr) ? pr : this.selectSingleNode(pr))
 			: (m = "addElement" ? this.doc : false)
-		e := IsObject(en) ? en : this.createElement(en)
+		e := IsObject(en) ? en : this.doc.createElement(en)
 		
 		if prm.1 {
 			if !IsObject(prm[prm.maxIndex()]) {
@@ -548,18 +592,22 @@ class Xml
 		
 		n := IsObject(pr) ? pr : this.selectSingleNode(pr)
 		
-		if (type ~= "^(1($|0|1|2)|[3-8])$")
-			_m := ntm[t := type]
-		else if (type ~= "^[[:alpha:]]+$")
-			_m := ntm[t := nt[type]]
+		if (type ~= "^(1($|0|1|2)|[3-8])$") {
+			t := type
+			_m := ntm.%t%
+		} else if (type ~= "^[[:alpha:]]+$") {
+			t := nt.%type%
+			_m := ntm.%t%
+		}
 		else return false
 		
 		if !_m
 			return false
 		
 		if (_m == "createNode")
-			_n := this[_m](t, prm*)
-		else (_n := this[_m](prm*))
+			_n := this.doc.%_m%(t, prm*)
+		else
+			_n := this.doc.%_m%(prm*)
 		
 		if (m = "addChild")
 			return _n ? n.appendChild(_n) : false

@@ -21,10 +21,10 @@
 class DotMap {
 	__New(args*) {
 		if !DotMap._store.Has(this)
-			DotMap._store[this] := Map()
+			DotMap._store[this] := {}
 		if (args.Length == 0)
 			return
-		if (args.Length == 1 && (args[1] is Map)) {
+		if (args.Length == 1 && Type(args[1]) == "Object") {
 			DotMap._store[this] := args[1]
 			return
 		}
@@ -33,36 +33,35 @@ class DotMap {
 		m := DotMap._store[this]
 		i := 1
 		while (i <= args.Length) {
-			m[args[i]] := DotMap._unwrap(args[i + 1])
+			m.%args[i]% := DotMap._unwrap(args[i + 1])
 			i += 2
 		}
 	}
 
 	__Get(name, params) {
 		m := DotMap._store[this]
-		if (m.Has(name)) {
-			val := m[name]
-		} else {
-			val := Map()
-			m[name] := val
-		}
-		return (val is Map) ? DotMap(val) : val
+		if (!ObjHasOwnProp(m, name))
+			return ""
+		val := m.%name%
+		return (Type(val) == "Object") ? DotMap(val) : val
 	}
 
 	__Set(name, params, value) {
 		m := DotMap._store[this]
-		m[name] := DotMap._unwrap(value)
+		m.%name% := DotMap._unwrap(value)
 		return value
 	}
 
 	__Item[key] {
 		get {
-			if (this._m.Has(key))
-				return this._m[key]
+			m := DotMap._store[this]
+			if (ObjHasOwnProp(m, key))
+				return m.%key%
 			return ""
 		}
 		set {
-			this._m[key] := DotMap._unwrap(value)
+			m := DotMap._store[this]
+			m.%key% := DotMap._unwrap(value)
 			return value
 		}
 	}
@@ -78,12 +77,12 @@ class DotMap {
 	}
 
 	Has(key) {
-		return DotMap._store[this].Has(key)
+		return ObjHasOwnProp(DotMap._store[this], key)
 	}
 
 	Get(key, default := "") {
 		m := DotMap._store[this]
-		return m.Has(key) ? m[key] : default
+		return ObjHasOwnProp(m, key) ? m.%key% : default
 	}
 
 	Delete(key) {
@@ -118,6 +117,8 @@ class JSON
 	}
 
 	static dump(value, replacer:="", space:="2") {
+		if (Type(value) == "DotMap")
+			value := value.raw()
 		return (JSON._dump()).Call(value, replacer, space)
 	}
 
@@ -151,7 +152,8 @@ class JSON
 			resultSet := false
 			result := ""
 			is_key := false
-			root := Map()
+			u := 0
+			root := {}
 			stack := [root]
 			next := json_value
 			pos := 0
@@ -176,7 +178,7 @@ class JSON
 					if InStr("{[", ch) {
 					if (ch == "{") {
 						is_key := true
-						value := Map()
+						value := {}
 						next := object_key_or_object_closing
 					} else {
 						value := []
@@ -213,12 +215,11 @@ class JSON
 							
 							i := 0
 							while (i := InStr(value, "\",, i+1)) {
-								if !(SubStr(value, i+1, 1) == "u")
+								if (SubStr(value, i+1, 1) != "u")
 									this.ParseError("\", text, pos - StrLen(SubStr(value, i+1)))
 
-								uffff := Abs("0x" . SubStr(value, i+2, 4))
-								if (A_IsUnicode || uffff < 0x100)
-									value := SubStr(value, 1, i-1) . Chr(uffff) . SubStr(value, i+6)
+								uCode := Abs("0x" . SubStr(value, i+2, 4))
+								value := SubStr(value, 1, i-1) . Chr(uCode) . SubStr(value, i+6)
 							}
 
 							if (is_key) {
@@ -249,7 +250,7 @@ class JSON
 					if (is_array)
 						key := holder.Push(value)
 					else
-						holder[key] := value
+						holder.%key% := value
 					if (ObjPtr(holder) == ObjPtr(root) && !resultSet) {
 						result := value
 						resultSet := true
@@ -261,8 +262,8 @@ class JSON
 			
 			} ; while ( ... )
 
-			value := this.rev ? this.Walk(root, "") : (resultSet ? result : (root.Has("") ? root[""] : root))
-			return (value is Map) ? DotMap(value) : value
+			value := this.rev ? this.Walk(root, "") : (resultSet ? result : (ObjHasOwnProp(root, "") ? root[""] : root))
+			return (Type(value) == "Object") ? DotMap(value) : value
 		}
 
 		ParseError(expect, text, pos, len:=1)
@@ -284,7 +285,7 @@ class JSON
 			    :                      "Expecting JSON value(string, number, true, false, null, object or array)"
 			, line, col, pos)
 
-			static offset := A_AhkVersion<"2" ? -3 : -4
+			static offset := -4
 			throw Exception(msg, offset, SubStr(text, pos, len))
 		}
 
@@ -323,7 +324,7 @@ class JSON
 	{
 		Call(value, replacer:="", space:="2")
 		{
-			if (value is DotMap)
+			if (Type(value) == "DotMap")
 				value := value.raw()
 			this.rep := IsObject(replacer) ? replacer : ""
 
@@ -348,11 +349,31 @@ class JSON
 			if (this.rep)
 				value := this.rep.Call(holder, key, ObjHasOwnProp(holder, key) ? value : JSON.Undefined)
 
+			if (value is DotMap)
+				value := value.raw()
+
+			if (Type(value) == "Object") {
+				objMap := Map()
+				for k in value.OwnProps()
+					objMap[k] := value.%k%
+				value := objMap
+			}
+
 			if IsObject(value) {
 			; Check object type, skip serialization for other object types such as
 			; ComObject, Func, BoundFunc, FileObject, RegExMatchObject, Property, etc.
-				static type := A_AhkVersion<"2" ? "" : Func("Type")
-				if (type ? type.Call(value) == "Object" : (Type(value) == "Object")) {
+				if (Type(value) == "Object" || value is Map || value is Array) {
+					canEnum := true
+					try {
+						for k, v in value {
+							break
+						}
+					} catch {
+						canEnum := false
+					}
+					if (!canEnum)
+						return "null"
+
 					if (this.gap) {
 						stepback := this.indent
 						this.indent .= this.gap
@@ -363,9 +384,17 @@ class JSON
 				; identifying array-like objects. Due to the use of a for-loop
 				; sparse arrays such as '[1,,3]' are detected as objects({}). 
 					if (!is_array) {
-						for i in value
-							is_array := i == A_Index
-						until !is_array
+						idx := 0
+						is_array := true
+						for i, v in value {
+							idx++
+							if (i != idx) {
+								is_array := false
+								break
+							}
+						}
+						if (idx == 0)
+							is_array := false
 					}
 
 					str := ""
@@ -379,7 +408,7 @@ class JSON
 						}
 					} else {
 						colon := this.gap ? ": " : ":"
-						for k in value {
+						for k, v in value {
 							v := this.Str(value, k)
 							if (v != "") {
 								if (this.gap)
@@ -403,7 +432,7 @@ class JSON
 				}
 			
 			} else ; is_number ? value : "value"
-				return (value is "Number") ? value : this.Quote(value)
+				return IsNumber(value) ? value : this.Quote(value)
 		}
 
 		Quote(string)
@@ -420,8 +449,8 @@ class JSON
 				string := StrReplace(string, "`r",  "\r")
 				string := StrReplace(string, "`t",  "\t")
 
-				static rx_escapable := A_AhkVersion<"2" ? "O)[^\x20-\x7e]" : "[^\x20-\x7e]"
-				while RegExMatch(string, rx_escapable, m)
+			static rx_escapable := "[^\x20-\x7e]"
+				while RegExMatch(string, rx_escapable, &m)
 					string := StrReplace(string, m.Value, Format("\u{1:04x}", Ord(m.Value)))
 			}
 

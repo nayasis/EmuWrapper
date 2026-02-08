@@ -68,45 +68,45 @@ class Registry {
 				regVal := regVal line
 			} else {
 		
-				regName := RegExReplace( line, "^(@|"".+?"")=.*$", "$1" )
-				regName := RegExReplace( regName, "^""(.+?)""$","$1" )
-				regName := RegExReplace( regName, "\\""", """" )
+				regName := RegExReplace(line, '^(@|".+?")=.*$', '$1')
+				regName := RegExReplace(regName, '^"(.+?)"$', '$1')
+				regName := StrReplace(regName, '\\"', '"')
 				regName := Registry._bindValue( regName, properties )
-				regVal := RegExReplace(line, "^(@|"".*?"")=(.*)$", "$2")
-				regVal := RegExReplace(regVal, "\\""", """")
+				regVal := RegExReplace(line, '^(@|".*?")=(.*)$', '$2')
+				regVal := StrReplace(regVal, '\\"', '"')
 				regType := "REG_SZ"
 
 				if (regName == "@")
 					regName := ""
 
-				if RegExMatch( regVal, "^"".*""$" ) {
+				if RegExMatch(regVal, '^".*"$') {
 					regType := "REG_SZ"
-					regVal  := Registry._bindValue( RegExReplace( regVal, "^""(.*)""$", "$1" ), properties )
+					regVal  := Registry._bindValue(RegExReplace(regVal, '^"(.*)"$', '$1'), properties)
 					isHex   := false
-				} else if RegExMatch( regVal, "^dword:" ) {
+				} else if RegExMatch(regVal, '^dword:') {
 					regType := "REG_DWORD"
-					regVal  := RegExReplace( regVal, "^dword:(.*)$", "$1" )
+					regVal  := RegExReplace(regVal, '^dword:(.*)$', '$1')
 					isHex   := false
-				} else if RegExMatch( regVal, "^hex\(b\):" ) {
+				} else if RegExMatch(regVal, '^hex\(b\):') {
 					regType := "REG_QWORD"
-					regVal  := RegExReplace( regVal, "^hex\(b\):(.*)$", "$1" )
+					regVal  := RegExReplace(regVal, '^hex\(b\):(.*)$', '$1')
 					isHex   := true
-				} else if RegExMatch( regVal, "^hex\(7\):" ) {
+				} else if RegExMatch(regVal, '^hex\(7\):') {
 					regType := "REG_MULTI_SZ"
-					regVal  := RegExReplace( regVal, "^hex\(7\):(.*)$", "$1" )
+					regVal  := RegExReplace(regVal, '^hex\(7\):(.*)$', '$1')
 					isHex   := true
-				} else if RegExMatch( regVal, "^hex\(2\):" ) {
+				} else if RegExMatch(regVal, '^hex\(2\):') {
 					regType := "REG_EXPAND_SZ"
-					regVal  := RegExReplace( regVal, "^hex\(2\):(.*)$", "$1" )
+					regVal  := RegExReplace(regVal, '^hex\(2\):(.*)$', '$1')
 					isHex   := true
-				} else if (RegExMatch(regVal, "^hex:")) {
+				} else if (RegExMatch(regVal, '^hex:')) {
 					regType := "REG_BINARY"
-					regVal := RegExReplace(regVal, "^hex:(.*)$", "$1")
+					regVal := RegExReplace(regVal, '^hex:(.*)$', '$1')
 					isHex := true
 				}
 			}
 
-			if (RegExMatch(line, "^.*\\$")) {
+			if (RegExMatch(line, '^.*\\$')) {
 				readNextLine := true
 				continue
 			} else {
@@ -118,9 +118,9 @@ class Registry {
 			}
 
 			if (regType == "REG_DWORD") {
-				regVal := "0x" regVal
+				regVal := "0x" . regVal
 			} else if (regType == "REG_QWORD") {
-				regVal := "0x" Registry._toNumberFromHex(regVal)
+				regVal := "0x" . Registry._toNumberFromHex(regVal)
 			} else if (regType == "REG_MULTI_SZ") {
 				regVal := Registry._toStringFromHex(regVal)
 			} else if (regType == "REG_EXPAND_SZ") {

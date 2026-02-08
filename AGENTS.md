@@ -8,7 +8,7 @@ There is no unified build system; wrappers are compiled individually via AutoHot
 ```powershell
 .\tools\run_ahk.ps1 .\apple2e\AppleWin1.30.20\WrapperAppleWin.ahk
 ```
-This uses `tools/run_ahk.ps1` which auto-detects file extensions: `.ahk` runs directly, `.exe` runs directly. Use `-Compile` to build `.ahk` into `.exe` via `tools/Compile.ahk`. Examples:
+This uses `tools/run_ahk.ps1` which auto-detects file extensions: `.ahk` runs directly, `.exe` runs directly. Use `-compile` to build `.ahk` into `.exe` via `tools/Compile.ahk`. Examples:
 ```powershell
 .\tools\run_ahk.ps1 .\apple2e\AppleWin1.30.20\WrapperAppleWin.ahk
 .\tools\run_ahk.ps1 .\apple2e\AppleWin1.30.20\WrapperAppleWin.ahk -compile
@@ -21,8 +21,13 @@ Compiler selection for v2:
 
 Stdout/stderr capture:
 - `tools/run_ahk.ps1` writes stdout/stderr to a temp log via `AHK_STDOUT_LOG` and echoes it back to the console.
-- Runtime errors in compiled wrappers are routed to stdout via `OnError` in `WrapperAppleWin.ahk` (pattern to be reused).
+- For `.ahk` runs, it starts AutoHotkey with `/ErrorStdOut /CP65001 /restart`.
+- If a `.ahk` run does not exit within 2 minutes, the AutoHotkey process is force-terminated.
 - When running `.exe` targets, `tools/run_ahk.ps1` stops the launched process after output capture, matching by executable path.
+
+Test scripts:
+- Local test scripts are kept under `.test/` (e.g., `.test/CliTest.ahk`, `.test/ExecScriptTest.ahk`, `.test/JsonDumpTest.ahk`).
+- Any ad-hoc test artifacts originally created in `tools/` must be moved into `.test/tools/` (including test `.ahk`, `.exe`, and log files).
 ```
 
 ## Coding Style & Naming Conventions

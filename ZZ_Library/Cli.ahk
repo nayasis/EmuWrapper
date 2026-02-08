@@ -9,56 +9,59 @@ class Cli {
 
  	__New( commandLine, showConsole:=true ) {
 
+		hStdInputReadPipe := 0
+		hStdInputWritePipe := 0
+		hStdOutputReadPipe := 0
+		hStdOutputWritePipe := 0
+
  		DllCall( "CreatePipe", "Ptr*", hStdInputReadPipe,  "Ptr*", hStdInputWritePipe,  "UInt", 0, "UInt", 0 )
  		DllCall( "CreatePipe", "Ptr*", hStdOutputReadPipe, "Ptr*", hStdOutputWritePipe, "UInt", 0, "UInt", 0 )
 
  		DllCall( "SetHandleInformation", "Ptr", hStdInputReadPipe,   "UInt", 1, "UInt", 1 )
  		DllCall( "SetHandleInformation", "Ptr", hStdOutputWritePipe, "UInt", 1, "UInt", 1 )
 
-		if ( a_ptrSize == 4 ) {
+		if ( A_PtrSize == 4 ) {
+	 		startupInfoSize := 68
+	 		startupInfo := BufferAlloc(startupInfoSize, 0)
+	 		processInfo := BufferAlloc(16, 0)
 
-	 		VarSetCapacity( processInfo, 16, 0 )
-	 		startupInfoSize := VarSetCapacity( startupInfo, 68, 0 )
-
-	 		NumPut( startupInfoSize,     startupInfo,  0, "UInt" )
-	 		NumPut( 0x00000100,          startupInfo, 44, "UInt" )
-	 		NumPut( hStdInputReadPipe,   startupInfo, 56, "Ptr"  )
-	 		NumPut( hStdOutputWritePipe, startupInfo, 60, "Ptr"  )
-	 		NumPut( hStdOutputWritePipe, startupInfo, 64, "Ptr"  )
-
+	 		NumPut("UInt", startupInfoSize, startupInfo, 0)
+	 		NumPut("UInt", 0x00000100, startupInfo, 44)
+	 		NumPut("Ptr", hStdInputReadPipe, startupInfo, 56)
+	 		NumPut("Ptr", hStdOutputWritePipe, startupInfo, 60)
+	 		NumPut("Ptr", hStdOutputWritePipe, startupInfo, 64)
 		} else {
+	 		startupInfoSize := 96
+	 		startupInfo := BufferAlloc(startupInfoSize, 0)
+	 		processInfo := BufferAlloc(24, 0)
 
-	 		VarSetCapacity( processInfo, 24, 0 )
-	 		startupInfoSize := VarSetCapacity( startupInfo, 96, 0 )
-
-	 		NumPut( startupInfoSize,     startupInfo,  0, "UInt" )
-	 		NumPut( 0x00000100,          startupInfo, 60, "UInt" )
-	 		NumPut( hStdInputReadPipe,   startupInfo, 80, "Ptr"  )
-	 		NumPut( hStdOutputWritePipe, startupInfo, 88, "Ptr"  )
-	 		NumPut( hStdOutputWritePipe, startupInfo, 96, "Ptr"  )
-
+	 		NumPut("UInt", startupInfoSize, startupInfo, 0)
+	 		NumPut("UInt", 0x00000100, startupInfo, 60)
+	 		NumPut("Ptr", hStdInputReadPipe, startupInfo, 80)
+	 		NumPut("Ptr", hStdOutputWritePipe, startupInfo, 88)
+	 		NumPut("Ptr", hStdOutputWritePipe, startupInfo, 96)
 		}
 
- 		DllCall( "CreateProcessW"
- 			, "UInt", 0
- 			, "Ptr",  &commandLine
- 			, "UInt", 0
- 			, "UInt", 0
+ 	DllCall( "CreateProcessW"
+ 			, "Ptr",  0
+ 			, "Ptr",  StrPtr(commandLine)
+ 			, "Ptr",  0
+ 			, "Ptr",  0
  			, "Int",  1
  			, "UInt", showConsole == true ? 0 : 0x08000000 ; Create_NO_WINDOW
- 			, "UInt", 0
- 			, "Ptr",  &A_ScriptDir
+ 			, "Ptr",  0
+ 			, "Ptr",  A_ScriptDir
  			, "Ptr",  &startupInfo
  			, "Ptr",  &processInfo )
 
- 		this.processId := NumGet( processInfo, a_ptrSize * 2, "UInt" )
+ 		this.processId := NumGet( processInfo, A_PtrSize * 2, "UInt" )
 
  		; MsgBox, % "processId : " this.processId "`nhStdOutputWritePipe : " hStdOutputWritePipe "`nhStdInputReadPipe : " hStdInputReadPipe
 
  		ProcessWait(this.processId)
 
- 		DllCall( "CloseHandle", "Ptr", NumGet(processInfo, 0)         )
- 		DllCall( "CloseHandle", "Ptr", NumGet(processInfo, a_ptrSize) )
+ 		DllCall( "CloseHandle", "Ptr", NumGet(processInfo, 0, "Ptr")         )
+ 		DllCall( "CloseHandle", "Ptr", NumGet(processInfo, A_PtrSize, "Ptr") )
  		DllCall( "CloseHandle", "Ptr", hStdOutputWritePipe            )
  		DllCall( "CloseHandle", "Ptr", hStdInputReadPipe              )
 
@@ -134,10 +137,9 @@ class Cli {
 }
 
 cmdlet( command, Callback := "", WorkingDir:=0, &ProcessID := 0 ) {
-  Static StrGet := "StrGet"
   tcWrk := WorkingDir=0 ? "Int" : "Str"
-  DllCall( "CreatePipe", UIntP,hPipeRead, UIntP,hPipeWrite, UInt,0, UInt,0 )
-  DllCall( "SetHandleInformation", UInt,hPipeWrite, UInt,1, UInt,1 )
+  DllCall( "CreatePipe", "Ptr*", hPipeRead, "Ptr*", hPipeWrite, "Ptr", 0, "UInt", 0 )
+  DllCall( "SetHandleInformation", "Ptr", hPipeWrite, "UInt", 1, "UInt", 1 )
   If A_PtrSize = 8
   {
     VarSetCapacity( STARTUPINFO, 104, 0  )     ; STARTUPINFO
@@ -228,13 +230,13 @@ cmdlet( command, Callback := "", WorkingDir:=0, &ProcessID := 0 ) {
   ;
   ;ALL : 12+4=16=4*4
   
-  If ! DllCall( "CreateProcess", UInt,0, UInt,&command, UInt,0, UInt,0
-              , UInt,1, UInt,0x08000000, UInt,0, tcWrk, WorkingDir
-              , UInt,&STARTUPINFO, UInt,&PROCESS_INFORMATION ) 
+  If ! DllCall( "CreateProcessW", "Ptr", 0, "Ptr", StrPtr(command), "Ptr", 0, "Ptr", 0
+              , "Int", 1, "UInt", 0x08000000, "Ptr", 0, tcWrk, WorkingDir
+              , "Ptr", &STARTUPINFO, "Ptr", &PROCESS_INFORMATION )
   {
-    DllCall( "CloseHandle", UInt,hPipeWrite ) 
-    DllCall( "CloseHandle", UInt,hPipeRead )
-    DllCall( "SetLastError", Int,-1 )     
+    DllCall( "CloseHandle", "Ptr", hPipeWrite )
+    DllCall( "CloseHandle", "Ptr", hPipeRead )
+    DllCall( "SetLastError", "Int", -1 )
     Return "" 
   }
    
@@ -242,28 +244,25 @@ cmdlet( command, Callback := "", WorkingDir:=0, &ProcessID := 0 ) {
   hThread  := NumGet( PROCESS_INFORMATION, A_PtrSize )  
   ProcessID:= NumGet( PROCESS_INFORMATION, A_PtrSize*2 )  
 
-  DllCall( "CloseHandle", UInt,hPipeWrite )
+  DllCall( "CloseHandle", "Ptr", hPipeWrite )
 
-  AIC := ( SubStr( A_AhkVersion, 1, 3 ) = "1.0" )
-  VarSetCapacity( Buffer, 4096, 0 ), nSz := 0 
+  Buffer := BufferAlloc(4096)
+  nSz := 0
   
-  While DllCall( "ReadFile", UInt,hPipeRead, UInt,&Buffer, UInt,4094, UIntP,nSz, Int,0 ) {
-    tOutput := ( AIC && NumPut( 0, Buffer, nSz, "Char" ) && VarSetCapacity( Buffer,-1 ) ) 
-              ? Buffer : %StrGet%( &Buffer, nSz, "UTF-8" ) ; formerly CP850, but I guess CP0 is suitable for different locales
+  While DllCall( "ReadFile", "Ptr", hPipeRead, "Ptr", Buffer, "UInt", 4094, "UIntP", nSz, "Ptr", 0 ) {
+    tOutput := StrGet(Buffer, nSz, "UTF-8") ; formerly CP850, but I guess CP0 is suitable for different locales
               ; ? Buffer : %StrGet%( &Buffer, nSz, "CP936" ) ; formerly CP850, but I guess CP0 is suitable for different locales
               ; ? Buffer : %StrGet%( &Buffer, nSz, "CP0" ) ; formerly CP850, but I guess CP0 is suitable for different locales
-    Isfunc( Callback ) ? %Callback%( tOutput, A_Index ) : sOutput .= tOutput
+    IsFunc(Callback) ? Callback.Call(tOutput, A_Index) : sOutput .= tOutput
   }                   
  
-  DllCall( "GetExitCodeProcess", UInt,hProcess, UIntP,ExitCode )
-  DllCall( "CloseHandle",  UInt,hProcess  )
-  DllCall( "CloseHandle",  UInt,hThread   )
-  DllCall( "CloseHandle",  UInt,hPipeRead )
-  DllCall( "SetLastError", UInt,ExitCode  )
-  VarSetCapacity(STARTUPINFO, 0)
-  VarSetCapacity(PROCESS_INFORMATION, 0)
+  DllCall( "GetExitCodeProcess", "Ptr", hProcess, "UIntP", ExitCode )
+  DllCall( "CloseHandle",  "Ptr", hProcess  )
+  DllCall( "CloseHandle",  "Ptr", hThread   )
+  DllCall( "CloseHandle",  "Ptr", hPipeRead )
+  DllCall( "SetLastError", "UInt", ExitCode  )
 
-  Return Isfunc( Callback ) ? %Callback%( "", 0 ) : sOutput      
+  Return IsFunc(Callback) ? Callback.Call("", 0) : sOutput      
 
 }
 

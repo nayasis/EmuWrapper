@@ -48,34 +48,42 @@ ExecScript(script, args:="", kwargs*)
 	, ahk  := A_AhkPath
 	, cp   := 0
 
-	for i, kwarg in kwargs
-		if ( option := SubStr(kwarg, 1, (i := InStr(kwarg, "="))-1) )
-		; the RegEx check is not really needed but is done anyways to avoid
-		; accidental override of internal local var(s)
-		&& ( option ~= "i)^child|name|dir|ahk|cp$" )
-			%option% := SubStr(kwarg, i+1)
+	for i, kwarg in kwargs {
+		if !(pos := InStr(kwarg, "="))
+			continue
+		option := SubStr(kwarg, 1, pos - 1)
+		if !(option ~= "i)^(child|name|dir|ahk|cp)$")
+			continue
+		value := SubStr(kwarg, pos + 1)
+		switch StrLower(option) {
+			case "child": child := value
+			case "name":  name := value
+			case "dir":   dir := value
+			case "ahk":   ahk := value
+			case "cp":    cp := value
+		}
+	}
 
 	pipe := (run_file := FileExist(script)) || (name == "*") ? 0 : []
-	Loop % pipe ? 2 : 0
+	Loop (pipe ? 2 : 0)
 	{
 		;// Create named pipe(s), throw exception on failure
 		if (( pipe[A_Index] := DllCall(
-		(Join, Q C
 			"CreateNamedPipe"            ; http://goo.gl/3aJQg7
-			"Str",  "\\.\pipe\" . name   ; lpName
-			"UInt", 2                    ; dwOpenMode = PIPE_ACCESS_OUTBOUND
-			"UInt", 0                    ; dwPipeMode = PIPE_TYPE_BYTE
-			"UInt", 255                  ; nMaxInstances
-			"UInt", 0                    ; nOutBufferSize
-			"UInt", 0                    ; nInBufferSize
-			"Ptr",  0                    ; nDefaultTimeOut
-			"Ptr",  0                    ; lpSecurityAttributes
-		)) ) == -1) ; INVALID_HANDLE_VALUE
-			throw Exception("ExecScript() - Failed to create named pipe", -1, A_LastError)
+			, "Str",  "\\.\pipe\" . name   ; lpName
+			, "UInt", 2                    ; dwOpenMode = PIPE_ACCESS_OUTBOUND
+			, "UInt", 0                    ; dwPipeMode = PIPE_TYPE_BYTE
+			, "UInt", 255                  ; nMaxInstances
+			, "UInt", 0                    ; nOutBufferSize
+			, "UInt", 0                    ; nInBufferSize
+			, "Ptr",  0                    ; nDefaultTimeOut
+			, "Ptr",  0                    ; lpSecurityAttributes
+		) ) == -1) ; INVALID_HANDLE_VALUE
+			throw Error("ExecScript() - Failed to create named pipe", -1, A_LastError)
 	}
 
 	; Command = {ahk_exe} /ErrorStdOut /CP{codepage} {file}
-	static fso := ComObjCreate("Scripting.FileSystemObject")
+	static fso := ComObject("Scripting.FileSystemObject")
 	static q := Chr(34) ;// quotes("), for v1.1 and v2.0-a compatibility
 	cmd := Format("{4}{1}{4} /ErrorStdOut /CP{2} {4}{3}{4}"
 	    , fso.GetAbsolutePathName(ahk)
@@ -93,13 +101,13 @@ ExecScript(script, args:="", kwargs*)
 	}
 
 	if cwd := (dir != "" ? A_WorkingDir : "") ;// change working directory if needed
-		SetWorkingDir %dir%
+		SetWorkingDir(dir)
 
-	static WshShell := ComObjCreate("WScript.Shell")
+	static WshShell := ComObject("WScript.Shell")
 	exec := (child || name == "*") ? WshShell.Exec(cmd) : WshShell.Run(cmd)
 	
 	if cwd ;// restore working directory if altered above
-		SetWorkingDir %cwd%
+		SetWorkingDir(cwd)
 	
 	if !pipe ;// file or stdin(*)
 	{
