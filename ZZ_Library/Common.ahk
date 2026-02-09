@@ -60,7 +60,7 @@ sendKey(key) {
 }
 
 wrap(command, escapeChar := "") {
-  return escapeChar . "`"" . command . "`"" . escapeChar . "`""
+  return escapeChar . "`"" . command . escapeChar . "`""
 }
 
 nvl(val, defaultVal := "") {
