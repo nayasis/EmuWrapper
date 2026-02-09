@@ -142,21 +142,21 @@ cmdlet( command, Callback := "", WorkingDir:=0, &ProcessID := 0 ) {
   DllCall( "SetHandleInformation", "Ptr", hPipeWrite, "UInt", 1, "UInt", 1 )
   If A_PtrSize = 8
   {
-    VarSetCapacity( STARTUPINFO, 104, 0  )     ; STARTUPINFO
-    NumPut( 68,         STARTUPINFO,  0 )      ; cbSize
-    NumPut( 0x100,      STARTUPINFO, 60 )      ; dwFlags    =>  STARTF_USESTDHANDLES = 0x100
-    NumPut( hPipeWrite, STARTUPINFO, 88 )      ; hStdOutput
-    NumPut( hPipeWrite, STARTUPINFO, 96 )      ; hStdError
-    VarSetCapacity( PROCESS_INFORMATION, 24 )  ; PROCESS_INFORMATION
+    STARTUPINFO := BufferAlloc(104, 0)     ; STARTUPINFO
+    NumPut("UInt", 68, STARTUPINFO, 0)      ; cbSize
+    NumPut("UInt", 0x100, STARTUPINFO, 60)  ; dwFlags    =>  STARTF_USESTDHANDLES = 0x100
+    NumPut("Ptr", hPipeWrite, STARTUPINFO, 88)      ; hStdOutput
+    NumPut("Ptr", hPipeWrite, STARTUPINFO, 96)      ; hStdError
+    PROCESS_INFORMATION := BufferAlloc(24, 0)  ; PROCESS_INFORMATION
   }
   Else
   {
-    VarSetCapacity( STARTUPINFO, 68, 0  )
-    NumPut( 68,         STARTUPINFO,  0 )
-    NumPut( 0x100,      STARTUPINFO, 44 )
-    NumPut( hPipeWrite, STARTUPINFO, 60 )
-    NumPut( hPipeWrite, STARTUPINFO, 64 )
-    VarSetCapacity( PROCESS_INFORMATION, 16 )
+    STARTUPINFO := BufferAlloc(68, 0)
+    NumPut("UInt", 68, STARTUPINFO, 0)
+    NumPut("UInt", 0x100, STARTUPINFO, 44)
+    NumPut("Ptr", hPipeWrite, STARTUPINFO, 60)
+    NumPut("Ptr", hPipeWrite, STARTUPINFO, 64)
+    PROCESS_INFORMATION := BufferAlloc(16, 0)
   }
 
   ;Tip for struct calculation
@@ -240,9 +240,9 @@ cmdlet( command, Callback := "", WorkingDir:=0, &ProcessID := 0 ) {
     Return "" 
   }
    
-  hProcess := NumGet( PROCESS_INFORMATION, 0 )                 
-  hThread  := NumGet( PROCESS_INFORMATION, A_PtrSize )  
-  ProcessID:= NumGet( PROCESS_INFORMATION, A_PtrSize*2 )  
+  hProcess := NumGet( PROCESS_INFORMATION, 0, "Ptr" )
+  hThread  := NumGet( PROCESS_INFORMATION, A_PtrSize, "Ptr" )
+  ProcessID:= NumGet( PROCESS_INFORMATION, A_PtrSize*2, "UInt" )
 
   DllCall( "CloseHandle", "Ptr", hPipeWrite )
 

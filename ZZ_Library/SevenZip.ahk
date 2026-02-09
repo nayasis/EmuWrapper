@@ -339,8 +339,8 @@ class SevenZip {
     }
     if ! IsObject(o7zip__info)
       o7zip__info := {}
-    VarSetCapacity(tINDIVIDUALINFO , 558, 0)
-    If DllCall(this.dllName "\SevenZipFindFirst", "Ptr", hArc, "AStr", sSearch, "ptr", &tINDIVIDUALINFO)
+    tINDIVIDUALINFO := BufferAlloc(558, 0)
+    If DllCall(this.dllName "\SevenZipFindFirst", "Ptr", hArc, "AStr", sSearch, "ptr", tINDIVIDUALINFO)
       Return 0
     o7zip__info.OriginalSize   := NumGet(tINDIVIDUALINFO , 0, "UInt")
     o7zip__info.CompressedSize := NumGet(tINDIVIDUALINFO , 4, "UInt")
@@ -349,9 +349,9 @@ class SevenZip {
   ; uOSType                    := NumGet(tINDIVIDUALINFO , 16, "UInt") ;always 0  
     o7zip__info.Ratio          := NumGet(tINDIVIDUALINFO , 20, "UShort")
     o7zip__info.Date           := this._dosDateTimeToStr(NumGet(tINDIVIDUALINFO , 22, "UShort"),NumGet(tINDIVIDUALINFO , 24, "UShort"))
-    o7zip__info.FileName       := StrGet(&tINDIVIDUALINFO+26 ,513,"CP0")
-    o7zip__info.Attribute      := StrGet(&tINDIVIDUALINFO+542,8  ,"CP0")
-    o7zip__info.Mode           := StrGet(&tINDIVIDUALINFO+550,8  ,"CP0")
+    o7zip__info.FileName       := StrGet(tINDIVIDUALINFO.Ptr + 26 ,513,"CP0")
+    o7zip__info.Attribute      := StrGet(tINDIVIDUALINFO.Ptr + 542,8  ,"CP0")
+    o7zip__info.Mode           := StrGet(tINDIVIDUALINFO.Ptr + 550,8  ,"CP0")
     
     return o7zip__info
   }
@@ -383,8 +383,8 @@ class SevenZip {
     }
     if !IsObject(o7zip__info)
       o7zip__info := {}
-    VarSetCapacity(tINDIVIDUALINFO , 558, 0)
-    if DllCall(this.dllName "\SevenZipFindNext","Ptr", hArc, "ptr", &tINDIVIDUALINFO)
+    tINDIVIDUALINFO := BufferAlloc(558, 0)
+    if DllCall(this.dllName "\SevenZipFindNext","Ptr", hArc, "ptr", tINDIVIDUALINFO)
       Return 0 
 
     o7zip__info.OriginalSize   := NumGet(tINDIVIDUALINFO , 0, "UInt")
@@ -392,9 +392,9 @@ class SevenZip {
     o7zip__info.CRC            := NumGet(tINDIVIDUALINFO , 8, "UInt")
     o7zip__info.Ratio          := NumGet(tINDIVIDUALINFO , 20, "UShort")
     o7zip__info.Date           := this._dosDateTimeToStr(NumGet(tINDIVIDUALINFO , 22, "UShort"),NumGet(tINDIVIDUALINFO , 24, "UShort"))  
-    o7zip__info.FileName       := StrGet(&tINDIVIDUALINFO+26 ,513,"CP0")
-    o7zip__info.Attribute      := StrGet(&tINDIVIDUALINFO+542,8  ,"CP0")
-    o7zip__info.Mode           := StrGet(&tINDIVIDUALINFO+550,8  ,"CP0")
+    o7zip__info.FileName       := StrGet(tINDIVIDUALINFO.Ptr + 26 ,513,"CP0")
+    o7zip__info.Attribute      := StrGet(tINDIVIDUALINFO.Ptr + 542,8  ,"CP0")
+    o7zip__info.Mode           := StrGet(tINDIVIDUALINFO.Ptr + 550,8  ,"CP0")
     
     return o7zip__info
   }
@@ -423,9 +423,9 @@ class SevenZip {
   ;      file:example_archive_info.ahk
   ;
   getFileName(hArc) {
-    VarSetCapacity( tNameBuffer,513 )
-    If !DllCall(this.dllName "\SevenZipGetFileName", "Ptr", hArc, "ptr", &tNameBuffer, "int", 513)
-      Return StrGet(&tNameBuffer,513,"CP0")
+    tNameBuffer := BufferAlloc(513, 0)
+    If !DllCall(this.dllName "\SevenZipGetFileName", "Ptr", hArc, "ptr", tNameBuffer, "int", 513)
+      Return StrGet(tNameBuffer,513,"CP0")
   }
 
   getArcOriginalSize(hArc) {
@@ -457,24 +457,24 @@ class SevenZip {
   }
 
   getMethod(hArc) {
-    VarSetCapacity(sBUFFER,8)
-    if !DllCall(this.dllName "\SevenZipGetMethod" , "Ptr", hArc , "ptr", &sBuffer,"int", 8)
-      Return StrGet(&sBUFFER, 8, "CP0")
+    sBUFFER := BufferAlloc(8, 0)
+    if !DllCall(this.dllName "\SevenZipGetMethod" , "Ptr", hArc , "ptr", sBUFFER,"int", 8)
+      Return StrGet(sBUFFER, 8, "CP0")
   }
 
   ; FUNCTIONS FOR INTERNAL USE --------------------------------------------------------------------------------------------------
   _run( commandLine ) {
     debug( commandLine )
     nSize := 32768
-    VarSetCapacity(tOutBuffer,nSize)
+    tOutBuffer := BufferAlloc(nSize, 0)
     retVal := DllCall(this.dllName "\SevenZip", "Ptr", ""
             ,"AStr", commandLine
-            ,"Ptr", &tOutBuffer
+            ,"Ptr", tOutBuffer
             ,"Int", nSize)
     If !ErrorLevel {
       global ErrorLevel
       ErrorLevel := retVal
-      return StrGet(&tOutBuffer,nSize,"CP0")
+      return StrGet(tOutBuffer,nSize,"CP0")
     } else
       return 0
   }
@@ -494,12 +494,12 @@ class SevenZip {
   }
 
   _dosDateTimeToStr( DosDate, DosTime ) {
-    VarSetCapacity(FileTime,8)
-    DllCall("DosDateTimeToFileTime", "UShort", DosDate, "UShort", DosTime, "UInt", &FileTime)
-    VarSetCapacity(SystemTime, 16, 0)
+    FileTime := BufferAlloc(8, 0)
+    DllCall("DosDateTimeToFileTime", "UShort", DosDate, "UShort", DosTime, "Ptr", FileTime)
+    SystemTime := BufferAlloc(16, 0)
     If (!NumGet(FileTime,"UInt") && !NumGet(FileTime,4,"UInt"))
      Return 0
-    DllCall("FileTimeToSystemTime", "PTR", &FileTime, "PTR", &SystemTime)
+    DllCall("FileTimeToSystemTime", "PTR", FileTime, "PTR", SystemTime)
     Return NumGet(SystemTime,6,"short") ;date
       . "/" . NumGet(SystemTime,2,"short") ;month
       . "/" . NumGet(SystemTime,0,"short") ;year
