@@ -5,7 +5,7 @@ global EMUL_ROOT := A_ScriptDir "\0.276"
 global emulPid := ""
 
 romName := A_Args.Length > 0 ? A_Args[1] : ""
-; romName := "ctower"
+romName := "ctower"
 
 if (FileUtil.isDir(romName)) {
 	romName := FileUtil.getFile(romName, "i).*\.(zip|7z)$")

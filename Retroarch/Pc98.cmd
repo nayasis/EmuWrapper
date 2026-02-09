@@ -1,1 +1,1 @@
-np2kai "\\NAS2\emul\image\PC98\Giten Megami Tensei (T-en 0.3 by Sneikkimies)\boot.fdi" "\\NAS2\emul\image\PC98\Giten Megami Tensei (T-en 0.3 by Sneikkimies)\hdd.hdi"
+np2kai "\\NAS2\emul\image\PC98\Uncharted Water (koei)(T-ko 1.0 by k66google)\KOUKAI1_Disk_A.FDI" "\\NAS2\emul\image\PC98\Uncharted Water (koei)(T-ko 1.0 by k66google)\KOUKAI1_Disk_B.FDI" "\\NAS2\emul\image\PC98\Uncharted Water (koei)(T-ko 1.0 by k66google)\KOUKAI1_Disk_Data(SAVE).FDI"

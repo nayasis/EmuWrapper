@@ -4,7 +4,7 @@
 
 ; https://wiki.mamedev.org/index.php/Driver:Apple_II
 
-global EMUL_ROOT := A_ScriptDir "\0.251"
+global EMUL_ROOT := A_ScriptDir "\0.276"
 global BIOS_ROOT := "\\NAS2\emul\image\Mame"
 global emulPid := ""
 global option
@@ -49,9 +49,10 @@ optionMame .= " -priority 1"
 ; optionMame .= " -hlsl_enable 0"
 
 option := getConfig(imageDir, fddContainer)
-debug(">> here ??")
+debug(">> here ????")
+debug( wrap("merong??") )
 
-command := wrap(EMUL_ROOT "\mame.exe") " " optionMame " -rompath " wrap(romPath)
+command := wrap(EMUL_ROOT . "\mame.exe") . " " . optionMame . " -rompath " . wrap(romPath)
 command .= option
 debug(command)
 Run(command, EMUL_ROOT, "Hide", &emulPid)
