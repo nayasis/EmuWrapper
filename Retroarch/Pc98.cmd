@@ -1,1 +1,1 @@
-np2kai "\\NAS2\emul\image\PC98\Uncharted Water (koei)(T-ko 1.0 by k66google)\KOUKAI1_Disk_A.FDI" "\\NAS2\emul\image\PC98\Uncharted Water (koei)(T-ko 1.0 by k66google)\KOUKAI1_Disk_B.FDI" "\\NAS2\emul\image\PC98\Uncharted Water (koei)(T-ko 1.0 by k66google)\KOUKAI1_Disk_Data(SAVE).FDI"
+np2kai "\\NAS2\emul\image\PC98\Suikoden - Tenmei no chikai\hdd.hdi"

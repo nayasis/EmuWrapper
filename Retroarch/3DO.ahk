@@ -2,7 +2,7 @@
 #Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := A_Args.Length ? A_Args[1] : ""
-;imageDir := "\\NAS2\emul\image\3DO\Policenauts (konami)(ja)"
+imageDir := "\\NAS2\emul\image\3DO\Policenauts (konami)(ja)"
 
 option    := getOption( imageDir )
 config    := setConfig( "opera_libretro", option )

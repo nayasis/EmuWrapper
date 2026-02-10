@@ -8,8 +8,10 @@ param(
 )
 
 $logFile = Join-Path $env:TEMP ("ahk_stdout_{0}.log" -f ([guid]::NewGuid().ToString("n")))
+$errFile = Join-Path $env:TEMP ("ahk_stderr_{0}.log" -f ([guid]::NewGuid().ToString("n")))
 $env:AHK_STDOUT_LOG = $logFile
 New-Item -ItemType File -Path $logFile -Force | Out-Null
+New-Item -ItemType File -Path $errFile -Force | Out-Null
 
 function Write-LogText([string]$path) {
   if (!(Test-Path $path)) { return }
@@ -29,7 +31,7 @@ function Stop-AhkScript([string]$scriptPath) {
 }
 
 if ($Target -match '\.exe$') {
-  & $Target /ErrorStdOut @Args 2>&1
+  & $Target /ErrorStdOut @Args 2> $errFile
   $found = $false
   for ($i = 0; $i -lt 40; $i++) {
     if (Test-Path $logFile) { $found = $true; break }
@@ -48,6 +50,12 @@ if ($Target -match '\.exe$') {
     Write-LogText $logFile
     Remove-Item $logFile -ErrorAction SilentlyContinue
   }
+  if (Test-Path $errFile) {
+    if ((Get-Item $errFile).Length -gt 0) {
+      Write-LogText $errFile
+    }
+    Remove-Item $errFile -ErrorAction SilentlyContinue
+  }
   try {
     $exePath = (Resolve-Path $Target).Path
     Get-CimInstance Win32_Process | Where-Object { $_.ExecutablePath -eq $exePath } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
@@ -60,10 +68,10 @@ if ($Target -match '\.ahk$') {
   $targetPath = (Resolve-Path $Target).Path
   Stop-AhkScript $targetPath
   if ($compile -and (Test-Path $compileScript)) {
-    $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001",$compileScript,$targetPath) + $Args) -PassThru
+    $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001",$compileScript,$targetPath) + $Args) -PassThru -RedirectStandardError $errFile
     Wait-Process -Id $p.Id
   } else {
-    $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001","/restart",$Target) + $Args) -PassThru
+    $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001","/restart",$Target) + $Args) -PassThru -RedirectStandardError $errFile
     $finished = Wait-Process -Id $p.Id -Timeout 120 -ErrorAction SilentlyContinue
     if (-not $finished) {
       try {
@@ -74,7 +82,7 @@ if ($Target -match '\.ahk$') {
     }
   }
 } else {
-  $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001",$Target) + $Args) -PassThru
+  $p = Start-Process -FilePath $AhkExe -ArgumentList (@("/ErrorStdOut","/CP65001",$Target) + $Args) -PassThru -RedirectStandardError $errFile
   Wait-Process -Id $p.Id
 }
 $found = $false
@@ -94,5 +102,11 @@ if ($found) {
   }
   Write-LogText $logFile
   Remove-Item $logFile -ErrorAction SilentlyContinue
+}
+if (Test-Path $errFile) {
+  if ((Get-Item $errFile).Length -gt 0) {
+    Write-LogText $errFile
+  }
+  Remove-Item $errFile -ErrorAction SilentlyContinue
 }
 exit $LASTEXITCODE

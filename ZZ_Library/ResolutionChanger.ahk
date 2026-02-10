@@ -9,7 +9,7 @@ class ResolutionChanger {
   static void := ResolutionChanger._init()
   static changed := false
 
-  change(width, height, colorDepth := 32, refreshRate := 60) {
+  static change(width, height, colorDepth := 32, refreshRate := 60) {
     if (RegExMatch(width, "^\d+$") == false || RegExMatch(height, "^\d+$") == false) {
       MsgBox("Resolution must be consisted with digit values ( input values : [" width "]x[" height "])")
       return
@@ -30,11 +30,11 @@ class ResolutionChanger {
     ResolutionChanger.changed := true
   }
 
-  restore() {
-    if (ResolutionChanger.changed == true && (A_ScreenWidth != this.srcWidth || A_ScreenHeight != this.srcHeight)) {
-      this.change(this.srcWidth, this.srcHeight)
+  static restore() {
+    if (ResolutionChanger.changed == true && (A_ScreenWidth != ResolutionChanger.srcWidth || A_ScreenHeight != ResolutionChanger.srcHeight)) {
+      ResolutionChanger.change(ResolutionChanger.srcWidth, ResolutionChanger.srcHeight)
       ResolutionChanger.changed := false
-      debug("restore resolution : " this.srcWidth "x" this.srcHeight)
+      debug("restore resolution : " ResolutionChanger.srcWidth "x" ResolutionChanger.srcHeight)
     }
   }
 }
