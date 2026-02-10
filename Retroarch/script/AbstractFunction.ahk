@@ -5,6 +5,7 @@
 global EMUL_ROOT := A_ScriptDir "\1.22"
 global diskContainer
 global CFG_RA_APPEND := EMUL_ROOT "\retroarch.append.cfg"
+DetectHiddenWindows(true)
 
 if (!FileUtil.hasSymlinkAuth()) {
 	MsgBox("You must be granted to use [mklink]")
@@ -55,8 +56,8 @@ runEmulator(imageFile, config, appendCommand := "", callback := "", appendImageF
 	if (WinExist("ahk_class RetroArch ahk_exe retroarch.exe")) {
 		if (imageFile != "" && Type(callback) = "Func")
 			callback.Call(emulPid, core, imageFile, option)
-		waitCloseEmulator(emulPid)
 	}
+	waitCloseEmulator()
 }
 
 getOption(imageDir) {
@@ -180,7 +181,7 @@ activateEmulator(delay := "") {
 }
 
 waitCloseEmulator(emulPid := "") {
-	WinWaitClose("ahk_class RetroArch ahk_exe retroarch.exe", , 0)
+	WinWaitClose("ahk_class RetroArch ahk_exe retroarch.exe")
 	if (emulPid != "")
 		ProcessWaitClose(emulPid)
 	ResolutionChanger.restore()
