@@ -251,7 +251,7 @@ class FileUtil {
 		testFilePath := A_Temp "\ahkSymlinkTestfile.txt"
 		testLinkPath := A_Temp "\ahkSymlinkTestlink.txt"
 
-		debug("symlink test file path: " testFilePath)
+		; debug("symlink test file path: " testFilePath)
 
 		FileAppend("", testFilePath)
 		RunWait(A_ComSpec ' /c mklink "' testLinkPath '" "' testFilePath '"', , "Hide")
@@ -261,7 +261,7 @@ class FileUtil {
 		try FileDelete(testFilePath)
 		try FileDelete(testLinkPath)
 
-		debug("has auth: " hasAuth)
+		; debug("has auth: " hasAuth)
 		return hasAuth
   }
 
