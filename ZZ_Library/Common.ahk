@@ -8,8 +8,12 @@ sendKey(key) {
   Sleep(50)
 }
 
-wrap(command, escapeChar := "") {
-  return escapeChar . "`"" . command . escapeChar . "`""
+wrap(command, quote := '"') {
+  if (quote = '"')
+    command := StrReplace(command, '"', "``" . "`"")
+  else if (quote = "'")
+    command := StrReplace(command, "'", "``'")
+  return quote . command . quote
 }
 
 nvl(val, defaultVal := "") {
@@ -66,6 +70,7 @@ class Detector {
 
   static 64 := true
   static version := Trim( RegExReplace( A_OSVersion, "i)^(\d+?)\..*?$", "$1" ) )
+
   static _init() {
     ThisProcess := DllCall("GetCurrentProcess")
     IsWow64Process := 0
@@ -74,10 +79,6 @@ class Detector {
   }
   static _void := Detector._init()
     
-  __New() {
-    throw Error("Detector is static class, dont instantiate it!", -1)
-  }
-
 }
 
 /**
@@ -127,12 +128,12 @@ class MouseCursor {
   }
   static void := MouseCursor._init()
 
-  show() {
+  static show() {
     SetTimer(MouseCursor.no_move_check, 0)
     MouseCursor._setSystemCursor("On")
   }
 
-  hide(duration := 500) {
+  static hide(duration := 500) {
     SetTimer(MouseCursor.no_move_check, duration)
     MouseCursor._setSystemCursor("Off")
   }
@@ -150,31 +151,21 @@ class MouseCursor {
 
 }
 
-
-
 /**
 * Environment
 */
 class Environment {
 
-  static _init() {
-  }
-  static _void := Environment._init()
-
-  __New() {
-    throw Error("Environment is static class", -1)
-  }
-
-  getEnv(environmentName) {
+  static getEnv(environmentName) {
     env := EnvGet(environmentName)
     return env
   }
 
-  getUserHome() {
+  static getUserHome() {
     return this.getEnv("userprofile")
   }
 
-  restartAsAdmin() {
+  static restartAsAdmin() {
     if (!A_IsAdmin) {
       try { ; leads to having the script re-launching itself as administrator
         if (A_IsCompiled)
@@ -193,15 +184,7 @@ class Environment {
 */
 class Network {
 
-  static _init() {
-  }
-  static _void := Network._init()
-
-  __New() {
-    throw Error("Network is static class", -1)
-  }
-
-  block(ruleName, path) {
+  static block(ruleName, path) {
     Environment.restartAsAdmin()
     RunWait("netsh advfirewall firewall delete rule name=" wrap(ruleName), , "Hide")
     cmd := "netsh advfirewall firewall add rule name=" wrap(ruleName) " dir=out program=" wrap(path) " action=block"
@@ -210,7 +193,6 @@ class Network {
   }
 
 }
-
 
 /**
 * Range
