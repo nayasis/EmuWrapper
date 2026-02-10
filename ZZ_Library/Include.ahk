@@ -1,6 +1,7 @@
 #Requires AutoHotkey >=2.0
 #ErrorStdOut
 #Include "%A_LineFile%\..\Common.ahk"
+#Include "%A_LineFile%\..\DotMap.ahk"
 #Include "%A_LineFile%\..\FileUtil.ahk"
 #Include "%A_LineFile%\..\VirtualDisk.ahk"
 #Include "%A_LineFile%\..\DiskContainer.ahk"

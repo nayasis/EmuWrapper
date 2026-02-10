@@ -1,4 +1,4 @@
-﻿#NoEnv
+#NoEnv
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 emulatorPid := ""
@@ -87,7 +87,7 @@ getOption( imageDir ) {
 	IfExist %dirConf%\option\option.json
 	{
 		FileRead, jsonText, %dirConf%\option\option.json
-		option := JSON.load( jsonText )
+		option := JSON.parse( jsonText )
 	} else {
 		option := {}
 	}

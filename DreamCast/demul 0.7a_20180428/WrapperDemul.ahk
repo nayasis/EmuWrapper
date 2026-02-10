@@ -1,4 +1,4 @@
-﻿#NoEnv
+#NoEnv
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 imageDir := %0%
@@ -10,8 +10,8 @@ option  := getOption( imageDir )
 runType := nvl( option.option.run_type, "dc" )
 padini  := getPadIniFiles( option )
 
-debug( JSON.dump(option) )
-debug( JSON.dump(padini) )
+debug( JSON.stringify(option) )
+debug( JSON.stringify(padini) )
 
 writeConfig( option )
 
@@ -116,7 +116,7 @@ getOption( imageDir ) {
 	IfExist %dirConf%\option\option.json
 	{
 		FileRead, jsonText, %dirConf%\option\option.json
-		option := JSON.load( jsonText )
+		option := JSON.parse( jsonText )
 	} else {
 		option := {}
 	}
@@ -133,7 +133,7 @@ getGameMeta( imageDir ) {
 	IfExist %dirConf%\option\gameMeta.json
 	{
 		FileRead, jsonText, %dirConf%\option\gameMeta.json
-		return JSON.load( jsonText )
+		return JSON.parse( jsonText )
 	}
 	return {}
 }

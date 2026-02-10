@@ -1,4 +1,4 @@
-﻿#NoEnv
+#NoEnv
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 global optionCgaComposite := false
@@ -173,7 +173,7 @@ setConfig( imageFilePath, cdContainer, windowsVersion ) {
 	{
 
 		FileRead, jsonText, %dirConf%\option\option.json
-		jsonObj := JSON.load( jsonText )
+		jsonObj := JSON.parse( jsonText )
 
 		; set default option
 		jsonObj.ipx := {}

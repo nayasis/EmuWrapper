@@ -1,11 +1,11 @@
-﻿#NoEnv
+#NoEnv
 #include %A_ScriptDir%\..\ZZ_Library\Include.ahk
 
 imageDir := %0%
 ; imageDir := "G:\emuloader\PC\PC001044"
 
 option := getOption(imageDir)
-; debug( ">> option`n" . JSON.dump(option) )
+; debug( ">> option`n" . JSON.stringify(option) )
 
 file     := option.execution.executable
 runAdmin := option.execution.runAdmin
@@ -42,7 +42,7 @@ getOption(imageDir) {
 	IfExist %dirConf%\option\option.json
 	{
 		FileRead, jsonText, %dirConf%\option\option.json
-		return JSON.load(jsonText)
+		return JSON.parse(jsonText)
 	}
 	return {}
 }

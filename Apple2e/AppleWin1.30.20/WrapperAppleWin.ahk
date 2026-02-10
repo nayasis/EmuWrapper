@@ -1,4 +1,4 @@
-﻿#Requires AutoHotkey >=2.0
+#Requires AutoHotkey >=2.0
 #Include "%A_ScriptDir%\..\..\ZZ_Library\IncludeAppleWin.ahk"
 
 try DllCall("AttachConsole", "UInt", -1)
@@ -171,7 +171,7 @@ getOption(imageDir) {
   filePath := dirConf "\option\option.json"
   if FileExist(filePath) {
     jsonText := FileRead(filePath)
-    option := JSON.load(jsonText)
+    option := JSON.parse(jsonText)
     if !option.Has("core")
       option["core"] := DotMap()
   } else {
@@ -189,7 +189,7 @@ setConfig(imageDir, fddContainer) {
   fileIni := A_ScriptDir "\apple.ini"
 
   if (!A_IsCompiled)
-    debug(">> option`n" . JSON.dump(option))
+    debug(">> option`n" . JSON.stringify(option))
 
   config := " -no-printscreen-dlg"
 

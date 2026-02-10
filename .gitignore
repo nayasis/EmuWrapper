@@ -591,3 +591,4 @@ psx3/rpcs3-*/config
 psx3/rpcs3-*/patches
 psx4/shadPS4Gui_0.12.5/qt.conf
 psx3/rpcs3-*/log
+.vscode/

@@ -1,4 +1,4 @@
-﻿#NoEnv
+#NoEnv
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 global emulatorPid := ""
@@ -10,7 +10,7 @@ imageDir := %0%
 ;imageDir := "\\NAS2\emul\image\PSX2\Blood - The Last Vampire - Joukan (production ig)(T-ko 1.0 by passion_pay)"
 
 option := getOption(imageDir)
-; debug( ">> option`n" . JSON.dump(option) )
+; debug( ">> option`n" . JSON.stringify(option) )
 
 container := new DiskContainer(imageDir, "i).*\.(chd|cso|iso|bin)$")
 container.initSlot( 1 )
@@ -137,7 +137,7 @@ getOption( imageDir ) {
 	IfExist %dirConf%\option\option.json
 	{
 		FileRead, jsonText, %dirConf%\option\option.json
-		option := JSON.load( jsonText )
+		option := JSON.parse( jsonText )
 	} else {
 		option := {}
 	}

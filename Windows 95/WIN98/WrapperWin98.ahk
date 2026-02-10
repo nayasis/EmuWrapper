@@ -1,4 +1,4 @@
-﻿#NoEnv
+#NoEnv
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 imageFilePath := %0%
@@ -108,7 +108,7 @@ setConfig( imageFilePath, cdContainer ) {
 	{
 
 		FileRead, jsonText, %dirConf%\option\option.json
-		jsonObj := JSON.load( jsonText )
+		jsonObj := JSON.parse( jsonText )
 
 		; set default option
 		jsonObj.ipx := {}

@@ -26,7 +26,7 @@ getExecutableRom(imageDir) {
 	IfExist %dirConf%\option\option.json
 	{
 		FileRead, jsonText, %dirConf%\option\option.json
-		jsonObj := JSON.load( jsonText )
+		jsonObj := JSON.parse( jsonText )
 		romName := FileUtil.getFile(imageDir, jsonObj.run.rom ".*")
 	}
 	if(romName != "")

@@ -1,4 +1,4 @@
-﻿#Requires AutoHotkey >=2.0
+#Requires AutoHotkey >=2.0
 #WinActivateForce
 #Include "..\..\ZZ_Library\Include.ahk"
 
@@ -63,7 +63,7 @@ getOption(imageDir) {
 	dirConf := imageDir "\_EL_CONFIG"
 	if (FileExist(dirConf "\option\option.json")) {
 		jsonText := FileRead(dirConf "\option\option.json")
-		option := flattenJson(JSON.load(jsonText))
+		option := flattenJson(JSON.parse(jsonText))
 	} else {
 		option := {}
 	}
@@ -116,7 +116,7 @@ getGameMeta(imageDirPath) {
 	dirConf := imageDirPath "\_EL_CONFIG"
 	if (FileExist(dirConf "\option\gameMeta.json")) {
 		jsonText := FileRead(dirConf "\option\gameMeta.json")
-		return JSON.load(jsonText)
+		return JSON.parse(jsonText)
 	}
 	return {}
 }
@@ -214,8 +214,8 @@ setConfig(defaultCore, option, log := false) {
 	}
 
 	if (log) {
-		debug(">> FROM option`n" . JSON.dump(option))
-		debug(">> TO config`n" . JSON.dump(config))
+		debug(">> FROM option`n" . JSON.stringify(option))
+		debug(">> TO config`n" . JSON.stringify(config))
 	}
 	return config
 }
@@ -283,7 +283,7 @@ getCoreName(core) {
 
 writeConfig(config, imageFile := "") {
 	global EMUL_ROOT
-	debug(">> config`n" JSON.dump(config))
+	debug(">> config`n" JSON.stringify(config))
 	romName := FileUtil.getName(imageFile, false)
 	debug(">> romName : " romName)
 

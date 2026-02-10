@@ -22,7 +22,7 @@ json_str := "(
 }
 )"
 
-parsed := JSON.load(json_str, true)
+parsed := JSON.parse(json_str, true)
 
 parsed_out := Format("
 (
@@ -39,7 +39,7 @@ object: {{A:""{}"", H:""{}"", K:""{}""}}
 , parsed.array[1], parsed.array[2], parsed.array[3]
 , parsed.object.A, parsed.object.H, parsed.object.K)
 
-stringified := JSON.dump(parsed, 4)
+stringified := JSON.stringify(parsed, 4)
 
 FileAppend("[PARSED]`n" parsed_out "`n`n[STRINGIFIED]`n" stringified "`n", "*")
 ExitApp

@@ -57,7 +57,7 @@ getOption(imageDir) {
 	IfExist %dirConf%\option\option.json
 	{
 		FileRead, jsonText, %dirConf%\option\option.json
-		option := JSON.load( jsonText )
+		option := JSON.parse( jsonText )
 	} else {
 		option := {}
 	}
@@ -92,7 +92,7 @@ getGameMeta( imageDirPath ) {
 	IfExist %dirConf%\option\gameMeta.json
 	{
 		FileRead, jsonText, %dirConf%\option\gameMeta.json
-		return JSON.load( jsonText )
+		return JSON.parse( jsonText )
 	}
 	return {}
 }
@@ -184,14 +184,14 @@ setConfig(defaultCore, option, log:=false) {
   if(option.option_overwrite != "") {
   	overwrite := toMapFromProperties(option.option_overwrite)
   	; if(log)
-  	; 	debug( ">> overwrite option`n" JSON.dump(overwrite) )
+  	; 	debug( ">> overwrite option`n" JSON.stringify(overwrite) )
 		for key, val in overwrite
 			config[key] := val
   }
 
   if(log) {
-	  debug( ">> FROM option`n" . JSON.dump(option) )
-	  debug( ">> TO config`n" . JSON.dump(config) )
+	  debug( ">> FROM option`n" . JSON.stringify(option) )
+	  debug( ">> TO config`n" . JSON.stringify(config) )
   }
   return config
 
@@ -255,7 +255,7 @@ getCoreName(core) {
 
 writeConfig(config, imageFile="") {
 
-	; debug( ">> config`n" JSON.dump(config) )
+	; debug( ">> config`n" JSON.stringify(config) )
   romName := FileUtil.getName(imageFile, false)
   debug( ">> romName : " romName )
 

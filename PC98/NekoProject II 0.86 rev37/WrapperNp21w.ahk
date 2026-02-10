@@ -63,7 +63,7 @@ getOption( imageDirPath ) {
 	IfExist %dirConf%\option\option.json
 	{
 		FileRead, jsonText, %dirConf%\option\option.json
-		return JSON.load( jsonText )
+		return JSON.parse( jsonText )
 	}
 	return {}
 }

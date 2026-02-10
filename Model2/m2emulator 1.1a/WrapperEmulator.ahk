@@ -38,7 +38,7 @@ getExecutableRom( imageFilePath ) {
 	{
 
 		FileRead, jsonText, %dirConf%\option\option.json
-		jsonObj := JSON.load( jsonText )
+		jsonObj := JSON.parse( jsonText )
 
 		if( jsonObj.run.rom != "" )
 			return jsonObj.run.rom
