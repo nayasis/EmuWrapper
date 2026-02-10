@@ -77,7 +77,7 @@ getOption(imageDir) {
 }
 
 flattenJson(jsonObj) {
-	res := {}
+	res := DotMap()
 	for i, obj in jsonObj {
 		for key, val in obj {
 			res[key] := val
@@ -300,12 +300,10 @@ writeConfig(config, imageFile := "") {
 	}
 
 	configDir := EMUL_ROOT "\config\" coreName
-	FileUtil.makeDir(configDir)
 	FileUtil.write(configDir "\" coreName ".cfg", opt)
 	FileUtil.write(configDir "\" coreName ".opt", opt)
 
 	remapDir := EMUL_ROOT "\config\remaps\" coreName
-	FileUtil.makeDir(remapDir)
 	FileUtil.write(EMUL_ROOT "\config\remaps\" coreName "\" coreName ".rmp", remap)
 }
 

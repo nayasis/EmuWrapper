@@ -68,6 +68,12 @@ class DotMap {
 	__Enum(n := 1) {
 		try {
 			m := DotMap._store[this]
+			if (Type(m) == "DotMap")
+				m := m.raw()
+			if (!IsObject(m))
+				return Map().__Enum(n)
+			if (Type(m) == "Object")
+				return m.OwnProps()
 			return m.__Enum(n)
 		} catch {
 			m := Map()

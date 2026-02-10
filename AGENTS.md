@@ -28,6 +28,7 @@ Stdout/stderr capture:
 Test scripts:
 - Local test scripts are kept under `.test/` (e.g., `.test/CliTest.ahk`, `.test/ExecScriptTest.ahk`, `.test/JsonDumpTest.ahk`).
 - Debugging tests live at `.test/tools/DebuggingTest.ahk` and should be kept (do not delete).
+- All test scripts under `.test/` are permanent and must be kept (do not delete).
 - Any ad-hoc test artifacts originally created in `tools/` must be moved into `.test/tools/` (including test `.ahk`, `.exe`, and log files).
 ```
 
