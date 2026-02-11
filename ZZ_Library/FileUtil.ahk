@@ -133,9 +133,9 @@ class FileUtil {
 	}
 
   static readJson(path) {
-   	if (!this.exist(path))
-   		return DotMap()
-  	return JSON.parse(this.read(path))
+  	if (!this.exist(path))
+  		return JSON.Obj()
+ 	return JSON.parse(this.read(path))
   }
 
   static readXml(path) {

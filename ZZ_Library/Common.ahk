@@ -16,8 +16,8 @@ wrap(command, quote := '"') {
   return quote . command . quote
 }
 
-nvl(val, defaultVal := "") {
-  if (val != "")
+nvl(val?, defaultVal := "") {
+  if (IsSet(val) && val != "")
     return val
   return defaultVal
 }

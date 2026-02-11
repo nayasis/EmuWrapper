@@ -35,6 +35,11 @@ _AhkStdEnsureLog() {
 ; debug( "jake" )
 ; ExitApp
 
+Assert(cond, msg) {
+  if !cond
+    throw Error("Assert failed: " msg)
+}
+
 debug(params*) {
   if (A_IsCompiled)
     return
@@ -42,7 +47,7 @@ debug(params*) {
   for _, p in params {
     o := ""
     switch Type(p) {
-      case "DotMap", "Map", "Array", "Object":
+      case "JSON.Obj", "Map", "Array", "Object":
         try o := JSON.stringify(p)
         catch
           try o := String(p)

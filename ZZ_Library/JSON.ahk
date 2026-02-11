@@ -6,20 +6,8 @@
  * @version 1.0.8
  ***********************************************************************/
 
-#Include "%A_LineFile%\..\DotMap.ahk"
-
 class JSON {
 	static null := ComValue(1, 0), true := ComValue(0xB, 1), false := ComValue(0xB, 0)
-
-	; Compatibility with existing codebase (JSON.parse/JSON.stringify + DotMap)
-	static load(text, reviver := "") {
-		parsed := this.parse(text, false, true)
-		return this._toDotMap(parsed)
-	}
-
-	static dump(value, replacer := "", space := "2") {
-		return this.stringify(this._unwrapDotMap(value), unset, space)
-	}
 
 	/**
 	 * Converts a AutoHotkey Object Notation JSON string into an object.
@@ -27,13 +15,13 @@ class JSON {
 	 * @param keepbooltype convert true/false/null to JSON.true / JSON.false / JSON.null where it's true, otherwise 1 / 0 / ''
 	 * @param as_map object literals are converted to map, otherwise to object
 	 */
-static parse(text, keepbooltype := false, as_map := true) {
-	return this._toDotMap(this._parse(text, keepbooltype, as_map))
+static parse(text, keepbooltype := false, as_map := false) {
+	return this._parse(text, keepbooltype, as_map)
 }
 
-static _parse(text, keepbooltype := false, as_map := true) {
+static _parse(text, keepbooltype := false, as_map := false) {
 	keepbooltype ? (_true := this.true, _false := this.false, _null := this.null) : (_true := true, _false := false, _null := "")
-		as_map ? (map_set := (maptype := Map).Prototype.Set) : (map_set := (obj, key, val) => obj.%key% := val, maptype := Object)
+		as_map ? (map_set := (maptype := Map).Prototype.Set) : (map_set := (obj, key, val) => obj.%key% := val, maptype := JSON.Obj)
 		NQ := "", LF := "", LP := 0, P := "", R := "", text := LTrim(text, " `t`r`n")
 		if !text || !InStr('{[', SubStr(text, 1, 1))
 			throw Error("Malformed JSON - unrecognized character.", 0, SubStr(text, 1, 1))
@@ -111,6 +99,45 @@ static _parse(text, keepbooltype := false, as_map := true) {
 		}
 	}
 
+	class Obj extends Object {
+		__Get(name, params) {
+			if this.HasOwnProp(name)
+				return this.%name%
+		}
+
+		__Item[key] {
+			get {
+				if this.HasOwnProp(key)
+					return this.%key%
+			}
+			set => this.%key% := value
+		}
+
+		__Enum(n := 2) {
+			return ObjOwnProps(this)
+		}
+
+		toMap() {
+			return JSON._toMap(this)
+		}
+
+		has(key) {
+			return this.HasOwnProp(key)
+		}
+
+		get(key, default := "") {
+			return this.HasOwnProp(key) ? this.%key% : default
+		}
+
+		delete(key) {
+			return this.HasOwnProp(key) ? (this.DeleteProp(key), true) : false
+		}
+	}
+
+	static fromMap(val) {
+		return this._toObj(val)
+	}
+
 	/**
 	 * Converts a AutoHotkey Array/Map/Object to a Object Notation JSON string.
 	 * @param obj A AutoHotkey value, usually an object or array or map, to be converted.
@@ -119,7 +146,7 @@ static _parse(text, keepbooltype := false, as_map := true) {
 	 */
 static stringify(obj, expandlevel := unset, space := "  ") {
 	expandlevel := IsSet(expandlevel) ? Abs(expandlevel) : 10000000
-	obj := this._unwrapDotMap(obj)
+	obj := this._unwrapObj(obj)
 		return Trim(CO(obj, expandlevel))
 		CO(O, J := 0, R := 0, Q := 0) {
 			static M1 := "{", M2 := "}", S1 := "[", S2 := "]", N := "`n", C := ",", S := "- ", E := "", K := ":"
@@ -177,50 +204,76 @@ static stringify(obj, expandlevel := unset, space := "  ") {
 		}
 	}
 
-	static _toDotMap(val) {
-		if (val is DotMap)
+	static _toObj(val) {
+		if (val is JSON.Obj)
 			return val
 		if (val is Map) {
-			m := Map()
+			o := JSON.Obj()
 			for k, v in val
-				m[k] := this._toDotMap(v)
-			return DotMap(m)
+				o.%k% := this._toObj(v)
+			return o
 		}
 		if (val is Array) {
 			arr := []
 			for _, v in val
-				arr.Push(this._toDotMap(v))
+				arr.Push(this._toObj(v))
 			return arr
 		}
 		if (val is Object) {
-			m := Map()
+			o := JSON.Obj()
 			for k, v in val.OwnProps()
-				m[k] := this._toDotMap(v)
-			return DotMap(m)
+				o.%k% := this._toObj(v)
+			return o
 		}
 		return val
 	}
 
-	static _unwrapDotMap(val) {
-		if (val is DotMap)
-			val := val.raw()
+	static _toMap(val) {
+		if (val is Map) {
+			m := Map()
+			for k, v in val
+				m[k] := this._toMap(v)
+			return m
+		}
+		if (val is JSON.Obj) {
+			m := Map()
+			for k, v in val.OwnProps()
+				m[k] := this._toMap(v)
+			return m
+		}
 		if (val is Array) {
 			arr := []
 			for _, v in val
-				arr.Push(this._unwrapDotMap(v))
+				arr.Push(this._toMap(v))
+			return arr
+		}
+		if (val is Object) {
+			m := Map()
+			for k, v in val.OwnProps()
+				m[k] := this._toMap(v)
+			return m
+		}
+		return val
+	}
+
+	static _unwrapObj(val) {
+		if (val is Array) {
+			arr := []
+			for _, v in val
+				arr.Push(this._unwrapObj(v))
 			return arr
 		}
 		if (val is Map) {
 			m := Map()
 			for k, v in val
-				m[k] := this._unwrapDotMap(v)
+				m[k] := this._unwrapObj(v)
 			return m
 		}
 		if (val is Object) {
-			m := Map()
+			o := JSON.Obj()
 			for k, v in val.OwnProps()
-				m[k] := this._unwrapDotMap(v)
-			return m
+				o.%k% := this._unwrapObj(v)
+			return o
 		}
 		return val
 	}

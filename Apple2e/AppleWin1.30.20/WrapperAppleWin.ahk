@@ -173,9 +173,10 @@ getOption(imageDir) {
     jsonText := FileRead(filePath)
     option := JSON.parse(jsonText)
     if !option.Has("core")
-      option["core"] := DotMap()
+      option["core"] := JSON.Obj()
   } else {
-    option := DotMap("core", DotMap())
+    option := JSON.Obj()
+    option.core := JSON.Obj()
   }
   return option
 }

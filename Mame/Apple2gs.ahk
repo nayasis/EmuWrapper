@@ -143,7 +143,7 @@ getConfig(imageDir, fddContainer) {
 	dirBase := imageDir "\_EL_CONFIG"
 	option := getOption(imageDir)
 	if !option.Has("core")
-		option.core := DotMap()
+		option.core := JSON.Obj()
 
 	if (option.core.fdd == "")
 		option.core.fdd := "2"

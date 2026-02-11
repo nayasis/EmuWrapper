@@ -5,6 +5,7 @@ imageDir := A_Args.Length ? A_Args[1] : ""
 ;imageDir := "\\NAS2\emul\image\DOS\WIN98SE"
 ;imageDir := "\\NAS2\emul\image\DOS\Brandish 3 (falcom)(ko)"
 ;imageDir := "\\NAS2\emul\image\DOS\CRW Metal Jacket (team kikai)(ko)"
+;imageDir := "\\NAS2\emul\image\DOS\Uncharted Water (en)"
 
 option := getOption( imageDir )
 config := setConfig( "dosbox_pure_libretro", option, true )

@@ -66,10 +66,10 @@ getOption(imageDir) {
 		jsonText := FileRead(dirConf "\option\option.json")
 		option := flattenJson(JSON.parse(jsonText))
 	} else {
-		option := {}
+		option := JSON.Obj()
 	}
-	if (Type(option) != "DotMap")
-		option := DotMap(option)
+	if (Type(option) != "JSON.Obj")
+		option := JSON.fromMap(option)
 	option.rgui_browser_directory := imageDir
 	option.custom_core := FileUtil.getFile(dirConf "\core", "i).*_libretro\.dll$")
 
@@ -78,7 +78,7 @@ getOption(imageDir) {
 }
 
 flattenJson(jsonObj) {
-	res := DotMap()
+	res := JSON.Obj()
 	for i, obj in jsonObj {
 		for key, val in obj {
 			res[key] := val
@@ -188,12 +188,10 @@ waitCloseEmulator(emulPid := "") {
 }
 
 setConfig(defaultCore, option, log := false) {
-	config := DotMap()
+	config := JSON.Obj()
 	if (!IsObject(option))
 		option := Map()
 	optEnum := option
-	if (IsObject(option) && HasMethod(option, "raw"))
-		optEnum := option.raw()
 	try {
 		for key, val in optEnum
 			config[key] := val
