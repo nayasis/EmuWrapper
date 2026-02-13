@@ -1,3 +1,4 @@
+# Global
 .ahk-debug.log
 *.wav
 *.png
@@ -5,35 +6,29 @@
 *.dll
 *.exe
 *.bin
-*.md
 *.rom
+*.sym
+
 **/LICENSE
-**/readme.txt
 **/license.txt
+**/readme.txt
 **/README.md
 **/faq.txt
 
-ZZ_Util/installLibrary
-ZZ_Util/wit*
+.idea/
+.vscode/
+emulator.sublime-workspace
 
-Mednafen/*/Documentation/
-Mednafen/*/mcs/
-Mednafen/*/ru/
-Mednafen/*/sav/
-Mednafen/*/b/
-Mednafen/*/de/
-Mednafen/*/stdout.txt
-Mednafen/*/ChangeLog
-Mednafen/*/COPYING
-Mednafen/*/mednafen.lck
-Mednafen/*/stderr.txt
+# Shared Utilities
+ZZ_Util/installLibrary/
+ZZ_Util/wit*/
+ZZ_Util/obsidian/*/.obsidian/
+ZZ_Util/obsidian/*/description
+ZZ_Util/obsidian/emuloader/.obsidian/
+ZZ_Util/msx/COPYING
+ZZ_Study/run/etc/install font/*.ttf
 
-Windows 95/WIN98/0/
-Windows 95/WIN98/SHADERS/
-Windows 95/WIN98/WIN_IMG/
-Windows 95/WIN98/glide.log
-Windows 95/WIN98/stderr.txt
-
+# 3DS (Citra)
 3DS/_tool/
 3DS/*/fix/
 3DS/*/updater.cfg
@@ -41,555 +36,287 @@ Windows 95/WIN98/stderr.txt
 3DS/Citra*/user/
 3DS/Citra*/installationLog.txt
 3DS/Citra*/components.xml
-3DS/Citra*/maintenancetool.ini
+3DS/Citra*/maintenancetool.*
 3DS/Citra*/network.xml
 3DS/Citra*/nightly-mingw/scripting/citra.py
-3DS/Citra*/maintenancetool.dat
-3DS/Citra/save_bak/
+3DS/Citra*/save_bak/
+3DS/Citra*/save/config/custom/
+3DS/Citra*/save/config/qt-config.ini
+3DS/Citra*/save/config/telemetry_id
+3DS/Citra*/qt.conf
+3ds/Citra*/qt.conf
+3ds/Citra*/**/qt.conf
 
-PSX2/PCSX2*/Bios/
-PSX2/PCSX2*/cheats/
-PSX2/PCSX2*/docs/
-PSX2/PCSX2*/Langs/
-PSX2/PCSX2*/logs/
-PSX2/PCSX2*/plugins/
-PSX2/PCSX2*/inis/
-PSX2/PCSX2*/shaders/
-PSX2/PCSX2*/memcards/
-PSX2/PCSX2*/run_spu2_replay.cmd
-PSX2/PCSX2*/cheats_ws/8897c208.pnach
-PSX2/PCSX2*/GameIndex.dbf
-PSX2/PCSX2*/bios
-PSX2/PCSX2*/Docs
-PSX2/PCSX2*/Langs
-PSX2/PCSX2*/logs
-PSX2/PCSX2*/memcards
-PSX2/PCSX2*/sstates
-PSX2/PCSX2*/Shaders
-PSX2/PCSX2*/logs
-PSX2/PCSX2*/memcards
-PSX2/PCSX2*/shaders
-PSX2/PCSX2*/Langs
-PSX2/PCSX2*/docs
-PSX2/PCSX2*/bios
-PSX2/PCSX2*/GameIndex.dbf
-PSX2/PCSX2*/ssates
-PSX2/PCSX2*/snaps
-PSX2/PCSX2*/ssates
-PSX2/PCSX2*/snaps
-PSX2/PCSX2*/inis-software/*.tmp
-PSX2/PCSX2*/sstates
+# PSX2 (PCSX2)
+psx2/pcsx2*/Bios/
+psx2/pcsx2*/bios/
+psx2/pcsx2*/cache/
+psx2/pcsx2*/cheats/
+psx2/pcsx2*/cheats_ws/
+psx2/pcsx2*/docs/
+psx2/pcsx2*/Docs/
+psx2/pcsx2*/Langs/
+psx2/pcsx2*/langs/
+psx2/pcsx2*/logs/
+psx2/pcsx2*/memcards/
+psx2/pcsx2*/plugins/
+psx2/pcsx2*/resources/
+psx2/pcsx2*/shaders/
+psx2/pcsx2*/Shaders/
+psx2/pcsx2*/snaps/
+psx2/pcsx2*/sstates/
+psx2/pcsx2*/translations/
+psx2/pcsx2*/GameIndex.dbf
+psx2/pcsx2*/qt.conf
+psx2/pcsx2*/portable.ini
+psx2/pcsx2*/updater.log
+psx2/pcsx2*/run_spu2_replay.cmd
+psx2/pcsx2*/inis/playtime.dat
+psx2/pcsx2*/inis-software/*.tmp
+psx2/pcsx2*/crash-*
+psx2/pcsx2*/bios
+psx2/pcsx2*/inis
+psx2/pcsx2*/memcards
+psx2/pcsx2*/snaps
+psx2/pcsx2*/sstates
+psx2/share/bios/
+psx2/share/memcards/
+psx2/share/snaps/
+psx2/share/ssates/
 
-PC88/M88 2.19a/2608_
-PC88/M88 2.19a/M88.exe
-PC88/M88 2.19a/KANJI1.ROM.src
-PC88/M88 2.19a/INI.txt
-PC88/M88 2.19a/ENHANCED.txt
+# Retroarch
+retroarch/*/assets/
+retroarch/*/autoconfig/
+retroarch/*/bearer/
+retroarch/*/cheats/
+retroarch/*/config/
+retroarch/*/cores/
+retroarch/*/database/
+retroarch/*/downloads/
+retroarch/*/filters/
+retroarch/*/iconengines/
+retroarch/*/imageformats/
+retroarch/*/info/
+retroarch/*/layouts/
+retroarch/*/logs/
+retroarch/*/overlays/
+retroarch/*/platforms/
+retroarch/*/playlists/
+retroarch/*/recordings/
+retroarch/*/saves/
+retroarch/*/screenshots/
+retroarch/*/shaders/
+retroarch/*/states/
+retroarch/*/styles/
+retroarch/*/system/
+retroarch/*/thumbnails/
+retroarch/*/*.lpl
+retroarch/*/AppleWin.log
+retroarch/*/np2.cfg
+retroarch/*/qt.conf
+retroarch/*/retroarch_qt.cfg
+retroarch/share/assets/
+retroarch/share/autoconfig/
+retroarch/share/bearer/
+retroarch/share/cheats/
+retroarch/share/config/
+retroarch/share/cores_backups/
+retroarch/share/database/
+retroarch/share/downloads/
+retroarch/share/filters/
+retroarch/share/iconengines/
+retroarch/share/imageformats/
+retroarch/share/info/
+retroarch/share/layouts/
+retroarch/share/logs/
+retroarch/share/overlays/
+retroarch/share/platforms/
+retroarch/share/playlists/
+retroarch/share/recordings/
+retroarch/share/saves/
+retroarch/share/screenshots/
+retroarch/share/shaders/
+retroarch/share/states/
+retroarch/share/styles/
+retroarch/share/system/
+retroarch/share/thumbnails/
+retroarch/Apple.cmd
+retroarch/Apple2e.cmd
+retroarch/Apple2gs.cmd
+retroarch/Arcade.cmd
 
-Mame/*/bgfx/
-Mame/*/docs/
-Mame/*/lx/
-Mame/*/history/
-Mame/*/plugins/
-Mame/*/glsl/
-Mame/*/hlsl/
-Mame/*/hash/
-Mame/*/cfg/
-Mame/*/nvram/
-Mame/*/ini/
-Mame/*/language/
-Mame/*/uismall.bdf
-Mame/*/artwork/dir.txt
-Mame/*/artwork/bgfx/
-Mame/*/ctrlr/
-Mame/*/diff/
-Mame/*/roms/
+# MAME
+mame/*/artwork/
+mame/*/bgfx/
+mame/*/cfg/
+mame/*/ctrlr/
+mame/*/diff/
+mame/*/docs/
+mame/*/glsl/
+mame/*/hash/
+mame/*/history/
+mame/*/hlsl/
+mame/*/ini/
+mame/*/language/
+mame/*/lx/
+mame/*/nvram/
+mame/*/plugins/
+mame/*/roms/
+mame/*/snap/
+mame/*/snap
+mame/*/artwork_/
+mame/*/COPYING
+mame/*/error.log
+mame/*/mame*.xml
+mame/**/dir.txt
+mame/**/whatsnew.txt
+mame/*/uismall.bdf
 
-Mame/**/dir.txt
-Mame/**/whatsnew.txt
-Mame/**/*.sym
-Mame/0.219/sta
-Mame/0.224/sta
+# mednafen
+mednafen/*/Documentation/
+mednafen/*/b/
+mednafen/*/de/
+mednafen/*/mcs/
+mednafen/*/ru/
+mednafen/*/sav/
+mednafen/*/ChangeLog
+mednafen/*/COPYING
+mednafen/*/mednafen.lck
+mednafen/*/stderr.txt
+mednafen/*/stdout.txt
 
-Retroarch/*/downloads
-Retroarch/*/cores
-Retroarch/*/states
-Retroarch/*/config
-Retroarch/*/cores
-Retroarch/*/states
-Mame/*/mame*.xml
-PSX2/PCSX2*/GameIndex.dbf
-ZZ_Util/CdToOggDiskConverter/util/TurboRip/
-PSX2/share/memcards/
-PSX2/share/ssates/
-WiiU/cemu/gameProfiles/
-WiiU/cemu/graphicPacks/
-WiiU/cemu/sharedFonts/
-WiiU/cemu/shaderCache/
-WiiU/cemu/resources/
-WiiU/cemu/log.txt
-WiiU/cemu/mlc01
+# WiiU (Cemu)
+wiiu/cemu*/controllerProfiles/
+wiiu/cemu*/controllerProfiles
+wiiu/cemu*/gameProfiles/
+wiiu/cemu*/gameProfiles
+wiiu/cemu*/graphicPacks/
+wiiu/cemu*/graphicPacks
+wiiu/cemu*/hfiomlc01/
+wiiu/cemu*/hfiomlc01
+wiiu/cemu*/keys.txt
+wiiu/cemu*/log*.txt
+wiiu/cemu*/mlc01/
+wiiu/cemu*/mlc01
+wiiu/cemu*/resources/
+wiiu/cemu*/rom/disk/
+wiiu/cemu*/rom
+wiiu/cemu*/screenshots/
+wiiu/cemu*/screenshots
+wiiu/cemu*/settings.xml
+wiiu/cemu*/shaderCache/
+wiiu/cemu*/shaderCache
+wiiu/cemu*/sharedFonts/
+wiiu/cemu*/sharedFonts
+wiiu/cemu*/title_list_cache.xml
+wiiu/share/controllerProfiles/
+wiiu/share/gameProfiles/
+wiiu/share/graphicPacks/
+wiiu/share/screenshots/
+wiiu/share/sharedFonts/
 
-WiiU/cemu*/graphicPacks/
-WiiU/cemu*/resources/
-WiiU/cemu*/screenshots
-WiiU/cemu*/sharedFonts
-WiiU/cemu*/shaderCache
-WiiU/share/gameProfiles
-WiiU/share/graphicPacks
-WiiU/share/sharedFonts
-WiiU/cemu*/shaderCache
-WiiU/cemu*/sdcard
-WiiU/cemu*/mlc01
-WiiU/cemu*/gameProfiles
-WiiU/cemu*/graphicPacks
-WiiU/cemu*/controllerProfiles
-WiiU/cemu*/log.txt
-WiiU/cemu*/log.txt
-WiiU/cemu*/mlc01
-WiiU/cemu*/keys.txt
-WiiU/cemu*/keys.txt
-WiiU/cemu*/controllerProfiles
-WiiU/cemu*/gameProfiles
-WiiU/cemu*/sharedFonts
-WiiU/cemu*/hfiomlc01
-WiiU/cemu*/screenshots
-WiiU/cemu*/hfiomlc01
-
-NSW/yuzu/yuzu_installer.log
-NSW/yuzu/yuzu-windows-msvc
-NSW/yuzu/metadata.json
-PC88/ePC8801MA/etc/source
-Retroarch/1.9.7/downloads/core_backups
-PC88/ePC8801MA/etc
-/Retroarch/share/downloads
-.idea/
-Mame/0.243/artwork/
-Mame/0.243/ui.ini
-Mame/0.243/COPYING
-nsw/ryujinx/emul/portable
-nsw/ryujinx/emul/lib
-nsw/ryujinx/entryStorage
-nsw/ryujinx/nodeStorage
-nsw/ryujinx/emul/share
+# NSW / Ryujinx / Yuzu
+nsw/yuzu/**/user/
+nsw/yuzu/**/qt.conf
+nsw/yuzu/**/metadata.json
+nsw/yuzu/**/yuzu_installer.log
+nsw/yuzu/**/yuzu-windows-msvc/
+nsw/citron/user/
+nsw/ryujinx*/**/Logs/
+nsw/ryujinx*/**/portable/
+nsw/ryujinx*/**/bis/
+nsw/ryujinx*/**/sdcard/
+nsw/ryujinx*/**/system/
+nsw/ryujinx*/**/lib/
+nsw/ryujinx*/**/etc/
+nsw/ryujinx*/**/share/
+nsw/ryujinx*/**/alsoft.ini
+nsw/ryujinx*/**/Ryujinx.SDL2.Common.dll.config
+nsw/ryujinx*/**/*.md
+nsw/ryujinx/emul
 nsw/util/
-nsw/ryujinx/emul/etc/
-nsw/ryujinx/emul/alsoft.ini
-nsw/ryujinx/emul/LICENSE-Ryujinx.Audio.txt
-nsw/ryujinx/emul/Ryujinx.SDL2.Common.dll.config
-nsw/yuzu/emul/icudtl.dat
-nsw/yuzu/emul/qt.conf
-nsw/yuzu/emul/user/
-PC88/M88 2.19a/~
-xb/xemu 0.6.1/xemu.log
-xb/xemu 0.6.1/bios/xbox_hdd.qcow2
-xb/xemu 0.6.2.78/xbox_hdd_prebuilt.7z
-xb/xemu 0.6.2.78/xemu.log
-xb/xemu 0.6.2.78/bios/xbox_hdd.qcow2
-Retroarch/1.10.2/qt.conf
-nsw/yuzu/emul/qtwebengine_resources_100p.pak
-nsw/yuzu/emul/qtwebengine_devtools_resources.pak
-nsw/yuzu/emul/qtwebengine_resources.pak
-nsw/yuzu/emul/qtwebengine_resources_200p.pak
-emulator.sublime-workspace
+
+# PSX3 / RPCS3
 psx3/rpcs3-*/cache/
+psx3/rpcs3-*/config/
 psx3/rpcs3-*/dev_flash/
 psx3/rpcs3-*/dev_hdd0/
+psx3/rpcs3-*/dev_hdd1/
+psx3/rpcs3-*/games/
 psx3/rpcs3-*/GuiConfigs/
+psx3/rpcs3-*/log/
+psx3/rpcs3-*/patches/
+psx3/rpcs3-*/qt6/
+psx3/rpcs3-*/screenshots/
+psx3/rpcs3-*/screenshots
 psx3/rpcs3-*/test/
-video/PotPlayer 1.7/
-xb/xemu/shaders/
-WiiU/cemu*/gameProfiles/
-WiiU/cemu*/resources/
-WiiU/cemu*/screenshots
-WiiU/cemu*/shaderCache
-WiiU/cemu*/sharedFonts
-WiiU/cemu*/log.1.txt
-WiiU/cemu*/keys.txt
-WiiU/cemu*/log.2.txt
-WiiU/cemu*/log.3.txt
-WiiU/cemu*/log.txt
-psx3/share/firmware/
-psx3/rpcs3-*/cacert.pem
-psx3/rpcs3-*/games.yml
-psx3/rpcs3-*/config/uuid
-psx3/rpcs3-*/update_history.log
-psx3/rpcs3-*/RPCS3.buf
-psx3/rpcs3-*/RPCS3.log
-psx3/rpcs3-*/rpcs3_vm_sparse.tmp
 psx3/rpcs3-*/TTY.log
+psx3/rpcs3-*/RPCS3.log
+psx3/rpcs3-*/RPCS3.buf
+psx3/rpcs3-*/cacert.pem
 psx3/rpcs3-*/git/
-WiiU/cemu*/mlc01
-WiiU/cemu*/controllerProfiles
-WiiU/cemu*/hfiomlc01
-WiiU/share/controllerProfiles/controller0.xml
+psx3/rpcs3-*/update_history.log
+psx3/share/firmware/
+
+# Xbox / Xemu
+xb/xemu*/bak/
+xb/xemu*/bios/
+xb/xemu*/shader_cache_list
+xb/xemu*/shaders/
+xb/xemu*/xemu.log
+xb/xemu*/xemu.toml
 xb/util/xbox_hdd_prebuilt.7z
-xb/xemu/shader_cache_list
-xb/xemu/xemu.log
-xb/xemu/xemu.toml
-xb/xemu/bios/xbox_hdd.qcow2
-xb/xemu/bak/
-WiiU/cemu*/settings.xml
-Mame/0.248/COPYING
-Mame/0.248/artwork/
-nsw/ryujinx LDN 2.5/emul/etc
-nsw/ryujinx LDN 2.5/emul/lib/
-nsw/ryujinx LDN 2.5/emul/Logs/
-nsw/ryujinx LDN 2.5/emul/portable/screenshots
-nsw/ryujinx LDN 2.5/emul/portable/bis/system/
-nsw/ryujinx LDN 2.5/emul/portable/bis/user/
-nsw/ryujinx LDN 2.5/emul/share/icons/
-nsw/ryujinx LDN 2.5/emul/portable/system/
-nsw/ryujinx LDN 2.5/emul/share/glib-2.0/schemas/gschemas.compiled
-nsw/ryujinx LDN 2.5/emul/share/themes/Breath-Dark/gtk-3.20/gtk.css
-nsw/ryujinx LDN 2.5/emul/portable/games
-nsw/ryujinx LDN 2.5/emul/alsoft.ini
-nsw/ryujinx LDN 2.5/emul/portable/mods/contents
-nsw/ryujinx LDN 2.5/emul/portable/profiles/controller/8bitdo.json
-nsw/ryujinx LDN 2.5/emul/libsoundio.so
-nsw/ryujinx LDN 2.5/emul/libsoundio.dylib
-nsw/ryujinx LDN 2.5/emul/Ryujinx.SDL2.Common.dll.config
-nsw/ryujinx LDN 3.0/emul/portable/bis/system/Contents/registered
-nsw/ryujinx LDN 3.0/emul/portable/bis/system/save
-nsw/ryujinx LDN 3.0/emul/portable/bis/user/save
-nsw/ryujinx LDN 3.0/emul/share/icons
-Retroarch/*/logs/
-nsw/ryujinx LDN 3.0/emul/lib/
-nsw/ryujinx LDN 3.0/emul/Logs/Ryujinx_1.1.0-ldn3.0.1_2022-12-02_22-47-53.log
-nsw/ryujinx LDN 3.0/emul/portable/system/
-nsw/ryujinx LDN 3.0/emul/Logs/
-Mame/0.251/artwork/
-Mame/0.251/COPYING
-nsw/ryujinx LDN 3.0/emul/alsoft.ini
-nsw/ryujinx LDN 3.0/emul/share/
-nsw/ryujinx LDN 3.0/emul/portable/
-nsw/ryujinx LDN 3.0/emul/Ryujinx.SDL2.Common.dll.config
-nsw/ryujinx LDN 3.0/emul/etc/gtk-3.0/settings.ini
-ZZ_Study/run/etc/install font/*.ttf
-psx2/PCSX2*/docs/
-psx2/PCSX2*/resources/
-psx2/PCSX2*/translations/
-psx2/share/bios/
-psx2/PCSX2*/snaps
-psx2/PCSX2*/sstates
-psx2/PCSX2*/cache/
-psx2/PCSX2*/inis/playtime.dat
-psx2/PCSX2*/qt.conf
-psx2/PCSX2*/portable.ini
-psx2/PCSX2*/bios
-Retroarch/Apple.cmd
-psx2/PCSX2*/memcards
-Mame/0.251/error.log
-Windows 95/win95/250MB_WIN95_KOR.img
-Windows 95/WIN98/dosbox.conf
-Retroarch/*/qt.conf
-Retroarch/share/assets_bak
-Retroarch/*/layouts
-Retroarch/*/assets
-Retroarch/*/autoconfig
-Retroarch/*/bearer
-Retroarch/*/cheats
-Retroarch/*/config
-Retroarch/*/cores
-Retroarch/*/database
-Retroarch/*/downloads
-Retroarch/*/filters
-Retroarch/*/iconengines
-Retroarch/*/imageformats
-Retroarch/*/info
-Retroarch/*/logs
-Retroarch/*/platforms
-Retroarch/*/recordings
-Retroarch/*/retroarch.cfg
-Retroarch/*/retroarch.default.cfg
-Retroarch/*/states
-Retroarch/*/styles
-Retroarch/*/thumbnails
-psx2/share/snaps
-Retroarch/*/assets
-Retroarch/*/autoconfig
-Retroarch/*/bearer
-Retroarch/*/cheats
-Retroarch/*/config
-Retroarch/*/cores
-Retroarch/*/database
-Retroarch/*/downloads
-Retroarch/*/filters
-Retroarch/*/iconengines
-Retroarch/*/imageformats
-Retroarch/*/info
-Retroarch/*/layouts
-Retroarch/*/platforms
-Retroarch/*/recordings
-Retroarch/*/states
-Retroarch/*/styles
-Retroarch/*/thumbnails
-Retroarch/*/assets
-Retroarch/*/autoconfig
-Retroarch/*/bearer
-Retroarch/*/cheats
-Retroarch/*/config
-Retroarch/*/cores
-Retroarch/*/database
-Retroarch/*/downloads
-Retroarch/*/filters
-Retroarch/*/iconengines
-Retroarch/*/imageformats
-Retroarch/*/info
-Retroarch/*/layouts
-Retroarch/*/platforms
-Retroarch/*/recordings
-Retroarch/*/states
-Retroarch/*/styles
-Retroarch/*/thumbnails
-WiiU/share/screenshots
-Retroarch/share/logs/retroarch.log
-Retroarch/*/retroarch.append.cfg
-Retroarch/*/retroarch.cfg.2023-02-17
-nsw/ryujinx/emul/libarmeilleure-jitsupport.dylib
-/Retroarch/share/assets/
-/Retroarch/share/autoconfig/
-/Retroarch/share/bearer/
-/Retroarch/share/cheats/
-/Retroarch/share/config/
-/Retroarch/share/cores_backups/
-/Retroarch/share/database/
-/Retroarch/share/downloads/
-/Retroarch/share/filters/
-/Retroarch/share/iconengines/
-/Retroarch/share/imageformats/
-/Retroarch/share/info/
-/Retroarch/share/layouts/
-/Retroarch/share/logs/
-/Retroarch/share/overlays/
-/Retroarch/share/platforms/
-/Retroarch/share/playlists/
-/Retroarch/share/recordings/
-/Retroarch/share/saves/
-/Retroarch/share/screenshots/
-/Retroarch/share/shaders/
-/Retroarch/share/states/
-/Retroarch/share/styles/
-/Retroarch/share/system/
-/Retroarch/share/thumbnails/
-psx3/rpcs3-v0.0.28/cache/
-Retroarch/share/autoconfig_2023-07-08
-Retroarch/1.15.0/shaders/
-Retroarch/1.15.0/info
-Retroarch/*/shaders
-Retroarch/*/saves
-Retroarch/*/screenshots
-Retroarch/*/system
-Retroarch/*/overlays
-Retroarch/*/playlists
-Retroarch/*/saves
-Retroarch/*/screenshots
-Retroarch/*/shaders
-Retroarch/*/system
-Retroarch/*/overlays
-Retroarch/*/playlists
-Retroarch/share/screenshots
-ZZ_core/Xbox Controller button remapper/ReadMe.html
-Retroarch/Apple2e.cmd
-Retroarch/Apple2gs.cmd
-psx3/rpcs3-v0.0.28/test/
-psx3/rpcs3-v0.0.28/dev_hdd1/
-psx3/rpcs3-v0.0.28/dev_hdd0/
-psx3/rpcs3-v0.0.28/dev_flash/
-psx3/rpcs3-v0.0.28/
-psx2/PCSX2 1.7/translations/
-psx2/PCSX2 1.7/resources/shaders/
-psx2/PCSX2 1.7/resources/
-psx2/PCSX2 1.7/bios/
-psx2/PCSX2 1.7/cache/
-psx2/PCSX2 1.7/docs/
-psx2/PCSX2 1.7/memcards/
-retroarch/*/content_history.lpl
-retroarch/*/content_image_history.lpl
-retroarch/*/content_music_history.lpl
-retroarch/*/content_video_history.lpl
-retroarch/*/content_history.lpl
-retroarch/*/content_image_history.lpl
-retroarch/*/content_music_history.lpl
-retroarch/*/content_video_history.lpl
-retroarch/1.15.0/content_history.lpl
-retroarch/1.15.0/content_image_history.lpl
-retroarch/1.15.0/content_music_history.lpl
-retroarch/1.15.0/content_video_history.lpl
-xb/xemu/bios/
-psx2/PCSX2 1.7/inis/playtime.dat
-psx2/PCSX2 1.7/updater.log
-psx2/PCSX2 1.7/qt.conf
-retroarch/Arcade.cmd
-retroarch/1.15.0/qt.conf
-retroarch/*/np2.cfg
-retroarch/*/retroarch_qt.cfg
-retroarch/1.17.0/assets
-retroarch/1.17.0/autoconfig
-retroarch/1.17.0/bearer
-retroarch/1.17.0/cheats
-retroarch/1.17.0/config
-retroarch/1.17.0/content_history.lpl
-retroarch/1.17.0/content_image_history.lpl
-retroarch/1.17.0/content_music_history.lpl
-retroarch/1.17.0/content_video_history.lpl
-retroarch/1.17.0/cores
-retroarch/1.17.0/database
-retroarch/1.17.0/downloads
-retroarch/1.17.0/filters
-retroarch/1.17.0/iconengines
-retroarch/1.17.0/imageformats
-retroarch/1.17.0/info
-retroarch/1.17.0/layouts
-retroarch/1.17.0/logs
-retroarch/1.17.0/overlays
-retroarch/1.17.0/platforms
-retroarch/1.17.0/playlists
-retroarch/1.17.0/qt.conf
-retroarch/1.17.0/recordings
-retroarch/1.17.0/saves
-retroarch/1.17.0/screenshots
-retroarch/1.17.0/shaders
-retroarch/1.17.0/states
-retroarch/1.17.0/styles
-retroarch/1.17.0/system
-retroarch/1.17.0/thumbnails
-ZZ_Util/obsidian/shell/.obsidian/
-ZZ_Util/obsidian/shell/description
-psx2/PCSX2 1.7/inis/PCSX2.ini
-PSX2/pcsx2_2.0.2/translations
 
-arcade/teknoparrot/bin/ElfLdr2
-arcade/teknoparrot/bin/intel_x64
-arcade/teknoparrot/bin/libs
-arcade/teknoparrot/bin/MD5
-
-ZZ_Util/obsidian/emuloader/description
-3DS/Citra/save/config/custom/
+# Arcade / TeknoParrot
+arcade/teknoparrot/bootstrapper/
+arcade/teknoparrot/bin/CrediarDolphin/
+arcade/teknoparrot/bin/ElfLdr2/
+arcade/teknoparrot/bin/GameProfiles/
+arcade/teknoparrot/bin/GameSetup/
+arcade/teknoparrot/bin/MD5/
 arcade/teknoparrot/bin/Metadata/
-psvita/vita3k/pref/sa0/data/
-psvita/vita3k/pref/
-psx2/pcsx2_1.7/memcards/
-psx2/pcsx2_2.0.2/crash-
-psx2/pcsx2_2.0.2/crash-*
-psx2/pcsx2_2.0.2/resources/shaders/
-retroarch/1.20.0/*.lpl
-wiiu/cemu_2.2/resources/
-wiiu/cemu_*/resources/
-wiiu/cemu_*/title_list_cache.xml
-wiiu/cemu_*/shaderCache
-wiiu/cemu_*/log.txt
-wiiu/cemu_2.2/hfiomlc01
-wiiu/cemu_*/keys.txt
-wiiu/cemu_*/mlc01
-wiiu/cemu_*/hfiomlc01
-retroarch/1.19.1/*.lpl
-retroarch/1.20.0/qt.conf
-psx2/pcsx2_2.0.2/resources/fonts/
-psx2/pcsx2_2.0.2/resources/game_controller_db.txt
-psx2/pcsx2_2.0.2/resources/GameIndex.yaml
-psx2/pcsx2_2.0.2/resources/RedumpDatabase.yaml
-psx2/pcsx2_2.0.2/cache/vulkan_shaders.idx
-psx2/pcsx2_2.0.2/docs/
-psx2/pcsx2_1.7/translations/
-psx2/pcsx2_1.7/resources/shaders/
-psx2/pcsx2_1.7/resources/fonts/
-psx2/pcsx2_1.7/docs/
-psx2/pcsx2_1.7/bios/
-psvita/vita3k/shaders-builtin/
-psvita/vita3k/lang/
+arcade/teknoparrot/bin/Play/
+arcade/teknoparrot/bin/intel_x64/
+arcade/teknoparrot/bin/libs/
+arcade/teknoparrot/bin/tpcache.dat
+arcade/teknoparrot/bin/HookedWindows.txt
+arcade/teknoparrot/bin/ParrotData.xml
+arcade/teknoparrot/bin/*.config
+arcade/teknoparrot/bin/*.pdb
+
+# Others
+pc88/M88 2.19a/2608_
+pc88/M88 2.19a/ENHANCED.txt
+pc88/M88 2.19a/INI.txt
+pc88/M88 2.19a/KANJI1.ROM.src
+pc88/M88 2.19a/M88.exe
+pc88/M88 2.19a/~/
+pc88/M88 2.19a/~
+pc88/ePC8801MA/etc/
+Windows 95/WIN98/0/
+Windows 95/WIN98/SHADERS/
+Windows 95/WIN98/WIN_IMG/
+Windows 95/WIN98/dosbox.conf
+Windows 95/WIN98/glide.log
+Windows 95/WIN98/stderr.txt
+Windows 95/win95/250MB_WIN95_KOR.img
+video/PotPlayer 1.7/
+psvita/vita3k/cache/
 psvita/vita3k/data/fonts/
+psvita/vita3k/lang/
+psvita/vita3k/pref/
+psvita/vita3k/shaders-builtin/
 psvita/vita3k/update-vita3k.bat
 psvita/vita3k/vita3k.log
-psvita/vita3k/cache/app_compat_db.xml
-mame/0.273/artwork_/
-mame/0.273/COPYING
-mame/0.273/error.log
-arcade/teknoparrot/bootstrapper/
-arcade/teknoparrot/bin/GameProfiles/
-3DS/Citra/nightly/qt.conf
-3DS/Citra/save/config/qt-config.ini
-3DS/Citra/save/config/telemetry_id
-arcade/teknoparrot/bin/tpcache.dat
-arcade/teknoparrot/bin/TeknoParrotUi.exe.config
-arcade/teknoparrot/bin/ParrotPatcher.pdb
-arcade/teknoparrot/bin/ParrotPatcher.exe.config
-arcade/teknoparrot/bin/ParrotData.xml
-arcade/teknoparrot/bin/HookedWindows.txt
-psx2/pcsx2_1.7/updater.log
-psx2/pcsx2_1.7/qt.conf
-psx2/pcsx2_1.7/cache/vulkan_shaders.idx
-psx2/pcsx2_1.7/inis/playtime.dat
-psx2/pcsx2_1.7/resources/game_controller_db.txt
-psx2/pcsx2_1.7/resources/GameIndex.yaml
-psx2/pcsx2_2.0.2/qt.conf
-arcade/teknoparrot/bin/CrediarDolphin
-arcade/teknoparrot/bin/GameSetup
-arcade/teknoparrot/bin/Play
-mame/*/artwork
-mame/*/snap
-nsw/citron/user
-nsw/ryujinx canary/emul/portable/bis/system
-nsw/ryujinx canary/emul/portable/screenshots
-nsw/ryujinx canary/emul/portable/bis/user
-psx1/duckstation/resources
-psx1/duckstation/translations
-psx2/pcsx2_2.2.0/resources
-psx2/pcsx2_*/translations
-psx2/pcsx2_*/docs
-psx3/rpcs3-*/cache
-psx3/rpcs3-*/dev_hdd0
-psx3/rpcs3-*/dev_hdd1
-ZZ_Util/msx/COPYING
-wiiu/cemu_*/sharedFonts
-retroarch/*/logs
-retroarch/*/overlays
-retroarch/*/layouts
-retroarch/*/system
-retroarch/*/thumbnails
-retroarch/*/shaders
-psx3/rpcs3-*/qt6
-retroarch/*/filters
-retroarch/*/downloads
-retroarch/*/iconengines
-retroarch/*/qt.conf
-wiiu/cemu_*/rom/disk
-wiiu/cemu_1.26.2/screenshots
-wiiu/cemu_1.26.2/gameProfiles
-retroarch/1.22/screenshots
-retroarch/1.22/styles
-retroarch/*/screenshots
-psx3/rpcs3-v0.0.38/GuiConfigs/light/checkbox-checked-hover.svg
-psx3/rpcs3-*/GuiConfigs
-retroarch/*/bearer
-psx3/rpcs3-v0.0.38/dev_flash/vsh/resource/silk_webkit/lib/Plugins/silk_npflashplayer9.sprx
-psx3/rpcs3-*/dev_flash
-psx3/rpcs3-*/config/custom_configs
-nsw/ryujinx canary/emul/portable/sdcard
-nsw/ryujinx canary/emul/portable/Logs
-nsw/ryujinx canary/emul/portable/system
-psx3/rpcs3-*/config/input_configs
-psx3/rpcs3-*/games
-retroarch/*/AppleWin.log
-retroarch/*/assets
-retroarch/*/autoconfig
-retroarch/*/cheats
-retroarch/*/config
-retroarch/*/content_history.lpl
-retroarch/*/content_image_history.lpl
-retroarch/*/content_music_history.lpl
-retroarch/*/content_video_history.lpl
-retroarch/*/cores
-retroarch/*/database
-retroarch/*/imageformats
-retroarch/*/info
-retroarch/*/platforms
-retroarch/*/playlists
-retroarch/*/recordings
-psx3/rpcs3-v0.0.38/screenshots
-psx3/rpcs3-*/config
-psx3/rpcs3-*/patches
-psx4/shadPS4Gui_0.12.5/qt.conf
-psx3/rpcs3-*/log
-.vscode/
-ZZ_Util/obsidian/emuloader/.obsidian/
+psx4/shadPS4Gui_*/qt.conf
+
+# Additional runtime outputs
+psx1/duckstation/resources/
+psx1/duckstation/translations/
+psx2/share/
+retroarch/[0-9]*/
+retroarch/share/
+ZZ_core/Xbox Controller button remapper/ReadMe.html
+
+
+
