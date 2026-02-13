@@ -1,1 +1,1 @@
-np2kai "\\NAS2\emul\image\PC98\Suikoden - Tenmei no chikai\hdd.hdi"
+np2kai "\\NAS2\emul\image\PC98\Shizuku (leaf)(T-en 2.2 by Her-Saki)\Shizuku (English v2.2).hdi"
