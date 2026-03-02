@@ -11,6 +11,9 @@ for n, param in A_Args {
 	content .= getName(param) "`n"
 }
 
+if (fileM3u == "")
+	ExitApp 1
+
 write(fileM3u,content)
 
 ExitApp
@@ -31,14 +34,21 @@ getDir( path ) {
 
 getName( filePath, withExt:=true ) {
 	filePath := RegExReplace( filePath, "^(.*?)\\$", "$1" )
-	SplitPath, filePath, fileName, fileDir, fileExtention, fileNameWithoutExtension, DriveName
+	SplitPath filePath, &fileName, &fileDir, &fileExtention, &fileNameWithoutExtension, &DriveName
 	if( withExt == true )
 		return fileName
 	return fileNameWithoutExtension
 }
 
-write( path, content="" ) {
-	this.makeParentDir( path )
-	FileDelete, % path
-	FileAppend, % content, % path
+write( path, content:="" ) {
+	if (path == "")
+		return false
+	parentDir := RegExReplace(path, "\\[^\\]+$", "")
+	if (parentDir != "" && !DirExist(parentDir))
+		DirCreate(parentDir)
+	if FileExist(path)
+		FileDelete(path)
+	; RetroArch reads BOM bytes as visible characters in the first disk path.
+	FileAppend(content, path, "UTF-8-RAW")
+	return true
 }
