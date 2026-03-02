@@ -50,14 +50,21 @@ runEmulator(imageFile, config, appendCommand := "", callback := "", appendImageF
 		command .= " " wrap(appendImageFile)
 
 	debug("command   : " command)
-	emulPid := Run(command, EMUL_ROOT, "Hide")
+	emulPid := 0
+	Run(command, EMUL_ROOT, "Hide", &emulPid)
+	debug("emulPid   : " emulPid)
 
-	waitEmulator()
+	if (!waitEmulator(95, emulPid)) {
+		debug("retroarch startup failed. stop wrapper.")
+		if (ProcessExist(emulPid))
+			ProcessClose(emulPid)
+		ExitApp
+	}
 	if (WinExist("ahk_class RetroArch ahk_exe retroarch.exe")) {
 		if (imageFile != "" && Type(callback) = "Func")
 			callback.Call(emulPid, core, imageFile, option)
 	}
-	waitCloseEmulator()
+	waitCloseEmulator(emulPid)
 }
 
 getOption(imageDir) {
@@ -154,8 +161,19 @@ extractRomPath(dir, filter, extension) {
 	}
 }
 
-waitEmulator(delay := 95) {
-	WinWait("ahk_class RetroArch ahk_exe retroarch.exe", , delay)
+waitEmulator(delay := 95, emulPid := "") {
+	startTick := A_TickCount
+	loop {
+		if (WinExist("ahk_class RetroArch ahk_exe retroarch.exe"))
+			return true
+		if (emulPid > 0 && !ProcessExist(emulPid))
+			return false
+		if (!ProcessExist("retroarch.exe"))
+			return false
+		if ((A_TickCount - startTick) > delay * 1000)
+			return false
+		Sleep(100)
+	}
 }
 
 activateEmulator(delay := "") {
