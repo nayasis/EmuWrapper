@@ -91,41 +91,41 @@ makeMachineConfig(imageDir, config) {
   if(config.machine == "")
     return
 
-  conf := "<?xml version=""1.0""?>`n"
-  conf .= "<mameconfig version=""10"">"
-  conf .= "<system name=" wrap(config.machine) ">`n"
-  conf .= "  <image_directories>`n"
+  conf := '<?xml version="1.0"?>' "`n"
+  conf .= '<mameconfig version="10">' "`n"
+  conf .= '<system name=' wrap(config.machine) '>' "`n"
+  conf .= '  <image_directories>' "`n"
   for i in [1,2,3,4] {
-    conf .= "    <device instance=" wrap("floppydisk" i) " directory=" wrap(imageDir) " />`n"
+    conf .= '    <device instance=' wrap("floppydisk" i) ' directory=' wrap(imageDir) ' />' "`n"
   }
   for i in [1,2] {
-    conf .= "    <device instance=" wrap("harddisk" i) " directory=" wrap(imageDir) " />`n"
+    conf .= '    <device instance=' wrap("harddisk" i) ' directory=' wrap(imageDir) ' />' "`n"
   }
-  conf .= "    <device instance=" wrap("cassette") " directory=" wrap(imageDir) " />`n"
-  conf .= "  </image_directories>`n"
-  conf .= "  <input>`n"
+  conf .= '    <device instance=' wrap("cassette") ' directory=' wrap(imageDir) ' />' "`n"
+  conf .= '  </image_directories>' "`n"
+  conf .= '  <input>' "`n"
 
   ; Monitor
   if(config.composite_monitor_type == "B&W")
-    conf .= "<port tag="":a2_config"" type=""CONFIG"" mask=""7"" defvalue=""0"" value=""1"" />`n"
+    conf .= '<port tag=":a2_config" type="CONFIG" mask="7" defvalue="0" value="1" />' "`n"
   if(config.composite_monitor_type == "Green")
-    conf .= "<port tag="":a2_config"" type=""CONFIG"" mask=""7"" defvalue=""0"" value=""2"" />`n"
+    conf .= '<port tag=":a2_config" type="CONFIG" mask="7" defvalue="0" value="2" />' "`n"
   if(config.composite_monitor_type == "Amber")
-    conf .= "<port tag="":a2_config"" type=""CONFIG"" mask=""7"" defvalue=""0"" value=""3"" />`n"
+    conf .= '<port tag=":a2_config" type="CONFIG" mask="7" defvalue="0" value="3" />' "`n"
   if(config.composite_monitor_type == "Video-7 RGB")
-    conf .= "<port tag="":a2_config"" type=""CONFIG"" mask=""7"" defvalue=""0"" value=""4"" />`n"
+    conf .= '<port tag=":a2_config" type="CONFIG" mask="7" defvalue="0" value="4" />' "`n"
 
   ; CPU
   if(config.cpu_type == "4 MHz Zip Chip")
-    conf .= "<port tag="":a2_config"" type=""CONFIG"" mask=""16"" defvalue=""0"" value=""16"" />`n"
+    conf .= '<port tag=":a2_config" type="CONFIG" mask="16" defvalue="0" value="16" />' "`n"
 
   ; Bootup speed
   if(config.bootup_speed == "4 MHz")
-    conf .= "<port tag="":a2_config"" type=""CONFIG"" mask=""32"" defvalue=""0"" value=""32"" />`n"
+    conf .= '<port tag=":a2_config" type="CONFIG" mask="32" defvalue="0" value="32" />' "`n"
 
-  conf .= "  </input>`n"
-  conf .= "</system>"
-  conf .= "</mameconfig>"
+  conf .= '  </input>' "`n"
+  conf .= '</system>' "`n"
+  conf .= '</mameconfig>'
 
   debug(conf)
 

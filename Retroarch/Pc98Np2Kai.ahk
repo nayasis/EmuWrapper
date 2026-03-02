@@ -47,9 +47,9 @@ applyCustomFont( imageDir, config ) {
 
   cfg := getCfg( config )
   if( ! FileUtil.exist(cfg.path) )
- 	  FileAppend, % "[" cfg.section "]", % cfg.path  
+ 	  FileAppend("[" cfg.section "]", cfg.path)
 
-  IniWrite, % fontPath, % cfg.path, % cfg.section, fontfile
+  IniWrite(fontPath, cfg.path, cfg.section, "fontfile")
 
   debug( "fontPath  : " fontPath )
 
@@ -74,10 +74,10 @@ setNpConfig( config ) {
     dipswitch .= " 7b"
   }
 
-  IniWrite, % dipswitch, % cfg.path, % cfg.section, DIPswtch
+  IniWrite(dipswitch, cfg.path, cfg.section, "DIPswtch")
 
 	; set MEM switch
-  IniRead, MEMswitch, % cfg.path, % cfg.section, MEMswtch
+  MEMswitch := IniRead(cfg.path, cfg.section, "MEMswtch")
   debug( "MEMswtch (before) : " MEMswitch )
 
   ; boot priority
@@ -98,7 +98,7 @@ setNpConfig( config ) {
   }
   debug( "MEMswtch (after)  : " MEMswitch )
     
-  IniWrite, % MEMswitch, %NekoIniFile%, cfg.section, MEMswtch
+  IniWrite(MEMswitch, NekoIniFile, cfg.section, "MEMswtch")
 
 }
 
@@ -110,7 +110,7 @@ getCfg( config ) {
   	cfgPath := EMUL_ROOT "\system\np2\np2.cfg"
   	section := "NekoProjectII"
   }
-  return { "path" : cfgPath, "section" : section }
+  return { path: cfgPath, section: section }
 }
 
 makeCmd( imageDir ) {

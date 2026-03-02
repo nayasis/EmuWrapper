@@ -50,9 +50,9 @@ applyCustomFont( imageDir, config ) {
 
   cfg := getCfg( config )
   if( ! FileUtil.exist(cfg.path) )
- 	  FileAppend, % "[" cfg.section "]", % cfg.path  
+ 	  FileAppend("[" cfg.section "]", cfg.path)
 
-  IniWrite, % fontPath, % cfg.path, % cfg.section, fontfile
+  IniWrite(fontPath, cfg.path, cfg.section, "fontfile")
 
   debug( "fontPath  : " fontPath )
 
@@ -77,10 +77,10 @@ setNpConfig( config ) {
     dipswitch .= " 7b"
   }
 
-  IniWrite, % dipswitch, % cfg.path, % cfg.section, DIPswtch
+  IniWrite(dipswitch, cfg.path, cfg.section, "DIPswtch")
 
 	; set MEM switch
-  IniRead, MEMswitch, % cfg.path, % cfg.section, MEMswtch
+  MEMswitch := IniRead(cfg.path, cfg.section, "MEMswtch")
   debug( "MEMswtch (before) : " MEMswitch )
 
   ; boot priority
@@ -101,15 +101,15 @@ setNpConfig( config ) {
   }
   debug( "MEMswtch (after)  : " MEMswitch )
     
-  IniWrite, % MEMswitch, %NekoIniFile%, NekoProjectIIkai, MEMswtch
+  IniWrite(MEMswitch, NekoIniFile, "NekoProjectIIkai", "MEMswtch")
 
   ; seekSnd := config.np2kai_Seek_Snd == "ON" ? "true" : "false"
 
   debug( ">> seek snd : " (config.np2kai_Seek_Snd == "ON" ? "true" : "false") )
   debug( ">> seek vol : " config.np2kai_Seek_Vol )
 
-  IniWrite, % " " (config.np2kai_Seek_Snd == "ON" ? "true" : "false"), %NekoIniFile%, NekoProjectIIkai, Seek_Snd
-  ; IniWrite, % " " config.np2kai_Seek_Vol, %NekoIniFile%, NekoProjectIIkai, Seek_Vol
+  IniWrite(" " (config.np2kai_Seek_Snd == "ON" ? "true" : "false"), NekoIniFile, "NekoProjectIIkai", "Seek_Snd")
+  ; IniWrite(" " config.np2kai_Seek_Vol, NekoIniFile, "NekoProjectIIkai", "Seek_Vol")
 
   ; ExitApp
 
@@ -123,7 +123,7 @@ getCfg(config) {
   	cfgPath := EMUL_ROOT "\system\np2\np2.cfg"
   	section := "NekoProjectII"
   }
-  return { "path" : cfgPath, "section" : section }
+  return { path: cfgPath, section: section }
 }
 
 makeCmd(imageDir) {
@@ -165,23 +165,23 @@ setCdRom(imageDir, config) {
     return
 
   cfg := getCfg( config )
-  IniWrite, % cdRom, % cfg.path, % cfg.section, CDD3FILE
+  IniWrite(cdRom, cfg.path, cfg.section, "CDD3FILE")
 }
 
 setHdd( imageDir, config ) {
  	cfg := getCfg( config )
 	hdd := FileUtil.getFile( imageDir, "i).*\.(hdi|hdd)$" )
-  IniWrite, % hdd, % cfg.path, % cfg.section, HDD1FILE
+  IniWrite(hdd, cfg.path, cfg.section, "HDD1FILE")
 }
 
 setFdd( imageDir, config ) {
 	cfg := getCfg( config ) 
 	files := FileUtil.getFiles( imageDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
-	Loop, % 2
+	Loop 2
 	{
 		if( A_Index > 2 )
 			break
-		IniWrite, % files[a_index], % cfg.path, % cfg.section, FDD%a_index%FILE
+		IniWrite(files[A_Index], cfg.path, cfg.section, "FDD" A_Index "FILE")
 	}
 }
 

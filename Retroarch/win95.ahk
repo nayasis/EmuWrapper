@@ -40,7 +40,7 @@ makeAutoboot(imageDir, config) {
     if( cdroms.length() > 0 ) {
       images := ""
       for i, f in cdroms {
-        images := images " """ f """"
+        images .= ' "' f '"'
       }
       autoboot := autoboot "imgmount D " images " -t iso -ide 2m`n`n"
     }

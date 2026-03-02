@@ -32,7 +32,7 @@ writeConfig(config, imageFile)
 runEmulator(imageFile, config)
 waitCloseEmulator()
 
-loop, % option.core.wait_subprocess
+Loop option.core.wait_subprocess
 {
 	debug( "wait sub process : " A_Index )
 	waitEmulator(1)

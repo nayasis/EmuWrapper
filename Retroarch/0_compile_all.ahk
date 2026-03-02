@@ -5,11 +5,12 @@
 SetWorkingDir A_ScriptDir
 
 scriptPath := A_ScriptFullPath
-scriptName := StrLower(A_ScriptName)
+selfBaseName := StrLower(RegExReplace(A_ScriptName, "\.[^\.]+$"))
 files := []
 
 Loop Files, A_ScriptDir "\*.ahk", "F" {
-	if (StrLower(A_LoopFileName) = scriptName) {
+	loopBaseName := StrLower(RegExReplace(A_LoopFileName, "\.[^\.]+$"))
+	if (loopBaseName = selfBaseName) {
 		continue
 	}
 	files.Push(A_LoopFileFullPath)
@@ -64,7 +65,7 @@ if (failed.Length > 0) {
 	if (failed.Length > limit) {
 		detail .= Format("... 외 {1}건", failed.Length - limit)
 	}
-	MsgBox summary "`n`n실패 목록:`n" detail, "일괄 컴파일 완료", "Icon!"
+	MsgBox summary "`n`n실패 목록(" failed.Length "):`n" detail, "일괄 컴파일 완료", "Icon!"
 } else {
 	MsgBox summary, "일괄 컴파일 완료", "Iconi"
 }
