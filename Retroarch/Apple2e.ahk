@@ -3,11 +3,8 @@
 
 ; https://wiki.mamedev.org/index.php/Driver:Apple_II
 
-;global EMUL_ROOT     := A_ScriptDir "\1.17.0"
-;global EMUL_ROOT     := A_ScriptDir "\1.19.1"
-
 imageDir := A_Args.Length ? A_Args[1] : ""
-;imageDir := "\\NAS2\emul\image\Apple2\Deathlord"
+;imageDir := "\\NAS2\emul\image\Apple2\Conan"
 
 option  := getOption(imageDir)
 config  := setConfig("mame_libretro",option,true)
@@ -15,7 +12,7 @@ fileCmd := makeCmd(imageDir, config)
 
 linkResource()
 setBezel(config,imageDir)
-writeConfig(config, imageFile)
+writeConfig(config)
 runEmulator(fileCmd, config)
 waitCloseEmulator()
 
