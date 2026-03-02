@@ -4,11 +4,13 @@
 imageDir := A_Args.Length ? A_Args[1] : ""
 ;imageDir := "\\NAS2\emul\image\Apple2\Times of Lore (origin)(en)"
 ;imageDir := "\\NAS2\emul\image\Apple2\Questron II (westwood)(en)"
+imageDir := "\\NAS2\emul\image\Apple2\King's Quest IV (sierra)(en)"
 
 option    := getOption(imageDir)
 config    := setConfig("applewin_libretro", option)
 
-;config.core := "applewin_libretro"
+; ignore warning message 'Failed to set last used disc'
+config.initial_disk_change_enable := "false"
 
 imageFile := getRomPath( imageDir, option, "m3u|bin|do|dsk|nib|po|gz|woz|zip|2mg|2img|iie|apl|hdv|yaml" )
 

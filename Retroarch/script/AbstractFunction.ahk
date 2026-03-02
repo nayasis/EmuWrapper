@@ -2,10 +2,10 @@
 #WinActivateForce
 #Include "..\..\ZZ_Library\Include.ahk"
 
-global EMUL_ROOT := A_ScriptDir "\1.22"
-global diskContainer
-global CFG_RA_APPEND := EMUL_ROOT "\retroarch.append.cfg"
 DetectHiddenWindows(true)
+
+global EMUL_ROOT := A_ScriptDir "\1.22"
+global CFG_RA_APPEND := EMUL_ROOT "\retroarch.append.cfg"
 
 if (!FileUtil.hasSymlinkAuth()) {
 	MsgBox("You must be granted to use [mklink]")
@@ -89,8 +89,8 @@ flattenJson(jsonObj) {
 
 setAppendConfig(imageDir, option) {
 	global EMUL_ROOT, CFG_RA_APPEND
-	dirRoot := imageDir "\_EL_CONFIG\save\ra"
-	dirSave := dirRoot "\save"
+	dirRoot  := imageDir "\_EL_CONFIG\save\ra"
+	dirSave  := dirRoot "\save"
 	dirState := dirRoot "\states"
 	dirCheat := dirRoot "\cheats"
 
@@ -100,12 +100,14 @@ setAppendConfig(imageDir, option) {
 
 	cfg := "savestate_directory = " wrap(dirState) "`n"
 	cfg .= "cheat_database_path = " wrap(dirCheat) "`n"
-	if (option.core != "dolphin_libretro") {
+
+  if (option.core != "dolphin_libretro" && option.core != "puae_libretro") {
+	;if (option.core != "dolphin_libretro") {
 		cfg .= "savefile_directory = " wrap(dirSave) "`n"
 	} else {
-		saveSrc := FileUtil.getFile(dirSave "\User\Wii\title\00010000", ".*", true)
+		saveSrc := FileUtil.getFile(dirSave . "\User\Wii\title\00010000", ".*", true)
 		if (saveSrc != "" && FileUtil.isDir(saveSrc)) {
-			saveTrg := EMUL_ROOT "\saves\User\Wii\title\00010000\" FileUtil.getName(saveSrc)
+			saveTrg := EMUL_ROOT . "\saves\User\Wii\title\00010000\" . FileUtil.getName(saveSrc)
 			FileUtil.makeLink(saveSrc, saveTrg, true)
 		}
 	}
@@ -147,23 +149,8 @@ getRomPath(imageDir, option, filter, excludeBios := false) {
 extractRomPath(dir, filter, extension) {
 	if (InStr(filter, extension)) {
 		romPath := FileUtil.getFile(dir, "i).*\." extension "$")
-		if (romPath != "") {
-			if (extension == "m3u")
-				readM3U(romPath)
+		if (romPath != "")
 			return romPath
-		}
-	}
-}
-
-readM3U(path) {
-	if (!IsObject(diskContainer))
-		diskContainer := DiskContainer("")
-	loop read, path {
-		disc := Trim(A_LoopReadLine)
-		if (disc == "")
-			continue
-		diskContainer.addPath(disc)
-		diskContainer.slot[0] := 1
 	}
 }
 
@@ -200,6 +187,7 @@ setConfig(defaultCore, option, log := false) {
 	config.core := nvl(option.core, defaultCore)
 	setDefaultConfig(config, option)
 
+  ; call implement's function, "setCoreConfig"
 	try {
 		fn := Func("setCoreConfig")
 		if (fn)
@@ -221,57 +209,57 @@ setConfig(defaultCore, option, log := false) {
 
 getCoreName(core) {
 	coreMap := Map()
-	coreMap["4do_libretro"] := "4DO"
-	coreMap["bluemsx_libretro"] := "blueMSX"
-	coreMap["fmsx_libretro"] := "FMSX"
-	coreMap["nekop2_libretro"] := "Neko Project II"
-	coreMap["np2kai_libretro"] := "Neko Project II kai"
-	coreMap["genesis_plus_gx_libretro"] := "Genesis Plus GX"
-	coreMap["picodrive_libretro"] := "PicoDrive"
-	coreMap["fceumm_libretro"] := "FCEUmm"
-	coreMap["mednafen_pce_fast_libretro"] := "Beetle PCE Fast"
-	coreMap["mednafen_supergrafx_libretro"] := "Beetle SuperGrafx"
-	coreMap["mednafen_pcfx_libretro"] := "Beetle PC-FX"
-	coreMap["mednafen_psx_libretro"] := "Beetle PSX"
-	coreMap["mednafen_psx_hw_libretro"] := "Beetle PSX HW"
-	coreMap["pcsx_rearmed_libretro"] := "PCSX-ReARMed"
-	coreMap["pcsx2_libretro"] := "LRPS2"
-	coreMap["yabause_libretro"] := "Yabause"
-	coreMap["yabasanshiro_libretro"] := "Yabasanshiro"
-	coreMap["mesen_libretro"] := "Mesen"
-	coreMap["mednafen_saturn_libretro"] := "Beetle Saturn"
-	coreMap["mupen64plus_next_libretro"] := "Mupen64Plus-Next"
+	coreMap["4do_libretro"]                    := "4DO"
+	coreMap["bluemsx_libretro"]                := "blueMSX"
+	coreMap["fmsx_libretro"]                   := "FMSX"
+	coreMap["nekop2_libretro"]                 := "Neko Project II"
+	coreMap["np2kai_libretro"]                 := "Neko Project II kai"
+	coreMap["genesis_plus_gx_libretro"]        := "Genesis Plus GX"
+	coreMap["picodrive_libretro"]              := "PicoDrive"
+	coreMap["fceumm_libretro"]                 := "FCEUmm"
+	coreMap["mednafen_pce_fast_libretro"]      := "Beetle PCE Fast"
+	coreMap["mednafen_supergrafx_libretro"]    := "Beetle SuperGrafx"
+	coreMap["mednafen_pcfx_libretro"]          := "Beetle PC-FX"
+	coreMap["mednafen_psx_libretro"]           := "Beetle PSX"
+	coreMap["mednafen_psx_hw_libretro"]        := "Beetle PSX HW"
+	coreMap["pcsx_rearmed_libretro"]           := "PCSX-ReARMed"
+	coreMap["pcsx2_libretro"]                  := "LRPS2"
+	coreMap["yabause_libretro"]                := "Yabause"
+	coreMap["yabasanshiro_libretro"]           := "Yabasanshiro"
+	coreMap["mesen_libretro"]                  := "Mesen"
+	coreMap["mednafen_saturn_libretro"]        := "Beetle Saturn"
+	coreMap["mupen64plus_next_libretro"]       := "Mupen64Plus-Next"
 	coreMap["mupen64plus_next_gles3_libretro"] := "Mupen64Plus-Next GLES3"
-	coreMap["parallel_n64_libretro"] := "Parallel N64"
-	coreMap["flycast_libretro"] := "Flycast"
-	coreMap["fbneo_libretro"] := "FinalBurn Neo"
-	coreMap["fbalpha_libretro"] := "FB Alpha"
-	coreMap["fbalpha2012_libretro"] := "FB Alpha 2012"
-	coreMap["fbalpha2012_cps1_libretro"] := "FB Alpha 2012 CPS-1"
-	coreMap["fbalpha2012_cps2_libretro"] := "FB Alpha 2012 CPS-2"
-	coreMap["fbalpha2012_cps3_libretro"] := "FB Alpha 2012 CPS-2"
-	coreMap["fbalpha2012_neogeo_libretro"] := "FB Alpha 2012 Neo Geo"
-	coreMap["mednafen_ngp_libretro"] := "Beetle NeoPop"
-	coreMap["mednafen_wswan_libretro"] := "Beetle WonderSwan"
-	coreMap["dolphin_libretro"] := "dolphin-emu"
-	coreMap["play_libretro"] := "Play!"
-	coreMap["gambatte_libretro"] := "GAMBATTE"
-	coreMap["mame_libretro"] := "MAME"
-	coreMap["mame2000_libretro"] := "MAME 2000"
-	coreMap["mame2003_plus_libretro"] := "MAME 2003-Plus"
-	coreMap["mame2010_libretro"] := "MAME 2010"
-	coreMap["mame2014_libretro"] := "MAME 2014"
-	coreMap["mame2015_libretro"] := "MAME 2015"
-	coreMap["mame2016_libretro"] := "MAME 2016"
-	coreMap["dosbox_pure_libretro"] := "DOSBox-pure"
-	coreMap["dosbox_svn_libretro"] := "DOSBox-SVN"
-	coreMap["dosbox_core_libretro"] := "DOSBox-core"
-	coreMap["vice_x64sc_libretro"] := "VICE x64sc"
-	coreMap["vice_x64_libretro"] := "VICE x64"
-	coreMap["vice_x128_libretro"] := "VICE x128"
-	coreMap["vice_xplus4_libretro"] := "VICE xplus4"
-	coreMap["vice_xscpu64_libretro"] := "VICE xscpu64"
-	coreMap["vice_xvic_libretro"] := "VICE xvic"
+	coreMap["parallel_n64_libretro"]           := "Parallel N64"
+	coreMap["flycast_libretro"]                := "Flycast"
+	coreMap["fbneo_libretro"]                  := "FinalBurn Neo"
+	coreMap["fbalpha_libretro"]                := "FB Alpha"
+	coreMap["fbalpha2012_libretro"]            := "FB Alpha 2012"
+	coreMap["fbalpha2012_cps1_libretro"]       := "FB Alpha 2012 CPS-1"
+	coreMap["fbalpha2012_cps2_libretro"]       := "FB Alpha 2012 CPS-2"
+	coreMap["fbalpha2012_cps3_libretro"]       := "FB Alpha 2012 CPS-2"
+	coreMap["fbalpha2012_neogeo_libretro"]     := "FB Alpha 2012 Neo Geo"
+	coreMap["mednafen_ngp_libretro"]           := "Beetle NeoPop"
+	coreMap["mednafen_wswan_libretro"]         := "Beetle WonderSwan"
+	coreMap["dolphin_libretro"]                := "dolphin-emu"
+	coreMap["play_libretro"]                   := "Play!"
+	coreMap["gambatte_libretro"]               := "GAMBATTE"
+	coreMap["mame_libretro"]                   := "MAME"
+	coreMap["mame2000_libretro"]               := "MAME 2000"
+	coreMap["mame2003_plus_libretro"]          := "MAME 2003-Plus"
+	coreMap["mame2010_libretro"]               := "MAME 2010"
+	coreMap["mame2014_libretro"]               := "MAME 2014"
+	coreMap["mame2015_libretro"]               := "MAME 2015"
+	coreMap["mame2016_libretro"]               := "MAME 2016"
+	coreMap["dosbox_pure_libretro"]            := "DOSBox-pure"
+	coreMap["dosbox_svn_libretro"]             := "DOSBox-SVN"
+	coreMap["dosbox_core_libretro"]            := "DOSBox-core"
+	coreMap["vice_x64sc_libretro"]             := "VICE x64sc"
+	coreMap["vice_x64_libretro"]               := "VICE x64"
+	coreMap["vice_x128_libretro"]              := "VICE x128"
+	coreMap["vice_xplus4_libretro"]            := "VICE xplus4"
+	coreMap["vice_xscpu64_libretro"]           := "VICE xscpu64"
+	coreMap["vice_xvic_libretro"]              := "VICE xvic"
 	coreName := coreMap.Has(core) ? coreMap[core] : ""
 	if (coreName == "") {
 		coreName := RegExReplace(core, "i)_libretro", "")

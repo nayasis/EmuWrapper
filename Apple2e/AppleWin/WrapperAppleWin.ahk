@@ -1,42 +1,20 @@
 #Requires AutoHotkey >=2.0
-#Include "%A_ScriptDir%\..\..\ZZ_Library\IncludeAppleWin.ahk"
-
-try DllCall("AttachConsole", "UInt", -1)
-OnError(_StdErrHandler)
-
-_StdErrHandler(err, mode) {
-  msg := "Error: " err.Message "`n"
-  if (err.What != "")
-    msg .= "`n▶" err.Line ": " err.What "`n"
-  if (err.Stack)
-    msg .= "`nCall stack:`n" err.Stack "`n"
-  msg .= "`n> " (A_IsCompiled ? A_ScriptFullPath : A_LineFile)
-  log := EnvGet("AHK_STDOUT_LOG")
-  if (log != "")
-    FileAppend(msg "`n", log)
-  else
-    FileAppend(msg "`n", "**")
-  return 1
-}
-
+#Include "%A_ScriptDir%\..\..\ZZ_Library\Include.ahk"
 
 global option
 
 imageDir  := A_Args.Length > 0 ? A_Args[1] : ""
-; imageDir  := "\\NAS2\emul\image\Apple2\Threshold (on-line)(en)"
-; imageDir  := "\\NAS\emul\image\Apple2\RPG\Times of Lore (en)"
-; imageDir  := "\\NAS\emul\image\Apple2\Shooting\Wings of Fury (en)"
- ;imageDir  := "\\NAS2\emul\image\Apple2\Questron II (ssi)(en)"
+;imageDir  := "\\NAS2\emul\image\Apple2\Threshold (on-line)(en)"
+;imageDir  := "\\NAS\emul\image\Apple2\RPG\Times of Lore (en)"
+;imageDir  := "\\NAS\emul\image\Apple2\Shooting\Wings of Fury (en)"
+;imageDir  := "\\NAS2\emul\image\Apple2\Neuromancer"
 
 fddContainer := DiskContainer(imageDir, "i).*\.(dsk|woz|nib)$")
 fddContainer.initSlot( 2 )
 
 configStr := setConfig( imageDir, fddContainer )
 
-; cmd := "AppleWin.exe -no-full-screen -fs-width=1600 -fs-height=1200 -no-printscreen-dlg"
-; cmd := "AppleWin.exe -no-full-screen -conf apple.ini -fs-height=best -no-printscreen-dlg"
 cmd := "AppleWin.exe -conf apple.ini -fs-height=best " configStr
-; cmd := "AppleWin.exe -no-full-screen -conf apple.ini -fs-height=best "
 if (!A_IsCompiled)
   debug("cmd : " cmd)
 
