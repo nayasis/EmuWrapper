@@ -8,25 +8,23 @@ imageDir  := A_Args.Length > 0 ? A_Args[1] : ""
 ;imageDir  := "\\NAS\emul\image\Apple2\RPG\Times of Lore (en)"
 ;imageDir  := "\\NAS\emul\image\Apple2\Shooting\Wings of Fury (en)"
 ;imageDir  := "\\NAS2\emul\image\Apple2\Neuromancer"
-imageDir  := "\\NAS2\emul\image\Apple2\Star Rank Boxing II (gamestar)(en)"
+;imageDir  := "\\NAS2\emul\image\Apple2\Star Rank Boxing II (gamestar)(en)"
 
 fddContainer := DiskContainer(imageDir, "i).*\.(dsk|woz|nib)$")
 fddContainer.initSlot( 2 )
 
-configStr := setConfig( imageDir, fddContainer )
+appendConfig := setConfig(imageDir, fddContainer)
 
-cmd := "AppleWin.exe -conf apple.ini -fs-height=best " configStr
-if (!A_IsCompiled)
-  debug("cmd : " cmd)
+;cmd := "AppleWin.exe -conf apple.ini -fs-height=best " configStr
+cmd := "AppleWin.exe -conf apple.ini " appendConfig
+debug("cmd: " cmd)
 
 ; ExitApp
 
 Run(cmd, , , &emulatorPid)
 waitEmulator()
-if WinExist("ahk_class APPLE2FRAME")
-{
-  if (!A_IsCompiled)
-    debug("Found window !!")
+if WinExist("ahk_class APPLE2FRAME") {
+  debug("Found window !!")
   activateEmulator()
   reset()
   waitCloseEmulator()
@@ -168,15 +166,18 @@ setConfig(imageDir, fddContainer) {
   core    := option["core"]
   fileIni := A_ScriptDir "\apple.ini"
 
-  if (!A_IsCompiled)
-    debug(">> option`n" . JSON.stringify(option))
+  debug(">> option`n" . JSON.stringify(option))
 
   config := " -no-printscreen-dlg"
 
   ; Default
-  IniWrite("1", fileIni, "Configuration", "Custom Speed")
-  IniWrite("1", fileIni, "Configuration", "ScrollLock Toggle")
+  IniWrite("0", fileIni, "Configuration", "Custom Speed")
+  IniWrite("0", fileIni, "Configuration", "Confirm Reboot")
   IniWrite(core.Get("clock_multiplier", "1"), fileIni, "Configuration", "Emulation Speed")
+
+  ; Starting Directory
+  IniWrite(imageDir, fileIni, "Preferences", "HDV Starting Directory")
+  IniWrite(imageDir, fileIni, "Preferences", "Starting Directory")
 
   ; fullscreen
   if (core.Get("full_screen", "") != "true") {
@@ -219,7 +220,9 @@ setConfig(imageDir, fddContainer) {
   IniDelete(fileIni, "Configuration\Slot 6", "Last Disk Image 2")
   IniDelete(fileIni, "Configuration\Slot 5", "Last Disk Image 1")
   IniDelete(fileIni, "Configuration\Slot 5", "Last Disk Image 2")
+
   fdCnt := fddContainer.size()
+
   if (core.Get("fdd", "") == "0") {
     config .= " -d1-disconnected"
     config .= " -d2-disconnected"
