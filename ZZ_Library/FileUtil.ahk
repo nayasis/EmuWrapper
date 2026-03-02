@@ -286,7 +286,7 @@ class FileUtil {
   		this.delete(trg)
   	}
 
-		this.makeParentDir(trg, this.isDir(src))
+		this.makeParentDir(trg, true)
 		if ( this.isDir(src) ) {
 			cmd := "/c mklink /d `"" . trg . "`" `"" . src . "`""
 		} else {
