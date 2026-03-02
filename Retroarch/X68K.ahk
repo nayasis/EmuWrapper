@@ -28,7 +28,6 @@ applyCustomFont(imageDir) {
   if( ! FileUtil.exist(fontPath) ) {
   	fontPath := EMUL_ROOT "\system\keropi\cgrom.dat.origin"
   }
-  debug(fontPath "->" trgPath)
   FileUtil.makeLink(fontPath, EMUL_ROOT "\system\keropi\cgrom.dat", true)
 }
 
