@@ -8,6 +8,7 @@ imageDir  := A_Args.Length > 0 ? A_Args[1] : ""
 ;imageDir  := "\\NAS\emul\image\Apple2\RPG\Times of Lore (en)"
 ;imageDir  := "\\NAS\emul\image\Apple2\Shooting\Wings of Fury (en)"
 ;imageDir  := "\\NAS2\emul\image\Apple2\Neuromancer"
+imageDir  := "\\NAS2\emul\image\Apple2\Star Rank Boxing II (gamestar)(en)"
 
 fddContainer := DiskContainer(imageDir, "i).*\.(dsk|woz|nib)$")
 fddContainer.initSlot( 2 )

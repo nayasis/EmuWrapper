@@ -17,7 +17,7 @@ fileCmd := makeCmd(imageDir, config)
 
 linkResource()
 setBezel(config,imageDir)
-writeConfig(config, imageFile)
+writeConfig(config, imageDir)
 runEmulator(fileCmd, config)
 waitCloseEmulator()
 
