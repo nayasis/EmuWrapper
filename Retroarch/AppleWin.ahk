@@ -4,7 +4,7 @@
 imageDir := A_Args.Length ? A_Args[1] : ""
 ;imageDir := "\\NAS2\emul\image\Apple2\Times of Lore (origin)(en)"
 ;imageDir := "\\NAS2\emul\image\Apple2\Questron II (westwood)(en)"
-imageDir := "\\NAS2\emul\image\Apple2\King's Quest IV (sierra)(en)"
+;imageDir := "\\NAS2\emul\image\Apple2\Sid Meier's Pirates! (micro prose)(en)"
 
 option    := getOption(imageDir)
 config    := setConfig("applewin_libretro", option)
