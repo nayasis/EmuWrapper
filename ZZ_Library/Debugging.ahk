@@ -19,10 +19,10 @@ _AhkStdOnError(err, mode) {
 _AhkStdWrite(msg) {
   log := EnvGet("AHK_STDOUT_LOG")
   if (log != "") {
-    FileAppend(msg "`n", log)
+    try FileAppend(msg "`n", log)
     return
   }
-  FileAppend(msg "`n", "**")
+  try FileAppend(msg "`n", "**")
 }
 
 _AhkStdEnsureLog() {
@@ -59,10 +59,10 @@ debug(params*) {
   message .= "`r`n"
   log := EnvGet("AHK_STDOUT_LOG")
   if (log != "") {
-    FileAppend(message, log)
+    try FileAppend(message, log)
   } else {
-    FileAppend(message, "*")
+    try FileAppend(message, "*")
     if (EnvGet("AHK_DEBUG_STDERR") != "")
-      FileAppend(message, "**")
+      try FileAppend(message, "**")
   }
 }

@@ -1,15 +1,17 @@
 #Requires AutoHotkey >=2.0
 
 /**
- * Window Registry
+ * Windows Registry helper.
+ * - Static class; do not instantiate.
+ * - Registry.write(file) applies both 32-bit and 64-bit registry views.
+ * - Placeholder binding supports both #{name} and ${name} in .reg files.
+ * - Registry.clearProps() resets the placeholder map to default path values.
  */
 class Registry {
 
 	static prop := Map()
 	static _init() {
-		Registry.prop[ "cd"     ]  := A_ScriptDir
-		Registry.prop[ "cdWin"  ]  := RegExReplace( A_ScriptDir, "\\", "\\" )
-		Registry.prop[ "cdUnix" ]  := RegExReplace( A_ScriptDir, "\\", "/" )
+		Registry.clearProps()
 	}
 	static void := Registry._init()
 
@@ -17,20 +19,33 @@ class Registry {
 	  throw Error("Registry is a static class, don't instantiate it!", -1)
 	}
 
-	getProp( key ) {
+	static getProp(key) {
 		return Registry.prop[ key ]
 	}
 
-	setProp( key, value ) {
+	static setProp(key, value) {
 		Registry.prop[ key ] := value
 	}
 
+	static clearProps() {
+		Registry.prop := Map()
+		Registry.prop[ "cd" ] := A_ScriptDir
+		Registry.prop[ "cdWin" ] := RegExReplace(A_ScriptDir, "\\", "\\")
+		Registry.prop[ "cdUnix" ] := RegExReplace(A_ScriptDir, "\\", "/")
+	}
+
 	/**
-	* Write Registry from file 
+	* Write registry entries from a .reg file.
 	*
-	* @param file {String} filePath contains data formatted Windows Registry
+	* Example:
+	*   Registry.setProp("gameDir", "D:\Games\MyGame")
+	*   Registry.write("D:\config\sample.reg")
+	*
+	* @param file {String} filePath containing Windows Registry Editor format
 	*/
-	write(file) {
+	static write(file) {
+		if !FileExist(file)
+			return
 		SetRegView(32)
 		Registry._setRegistry(file, Registry.prop)
 		SetRegView(64)
@@ -38,12 +53,13 @@ class Registry {
 	}
 
 	/**
-	* Write Registry from file 
+	* Internal parser/writer for Windows Registry Editor format.
+	* Applies placeholder binding before writing values.
 	*
-	* @param file       {String} filePath contains data formatted Windows Registry
-	* @param properties {Array}  properties to bind
+	* @param file       {String} .reg file path
+	* @param properties {Map}    placeholder values used for #{name} / ${name}
 	*/
-	_setRegistry(file, properties) {
+	static _setRegistry(file, properties) {
 
 		regKey := ""
 		readNextLine := false
@@ -63,6 +79,8 @@ class Registry {
 			} else if (regKey == "") {
 				continue
 			}
+
+			regKey := Registry._bindValue(regKey, properties)
 
 			if ( readNextLine == true ) {
 				regVal := regVal line
@@ -131,28 +149,27 @@ class Registry {
 			
 			regName := Registry._bindValue( regName, properties )
 
-			; debug( "[" regKey "] " regName " - " regType ":" regVal )
-
-			; if it needs to run as admin, restart itself
 			if ( ! RegExMatch(regKey, "^(HKEY_CURRENT_USER|HKEY_USERS)\\.*$") ) {
 				Registry._restartAsAdmin()
 			}
 
-			RegWrite(regType, regKey, regName, regVal)
+			RegWrite(regVal, regType, regKey, regName)
 
 		}
 
 	}
 
-	_bindValue(value, properties) {
+	static _bindValue(value, properties) {
 
-		for key, val in properties
+		for key, val in properties {
 			value := StrReplace(value, "#{" key "}", val)
+			value := StrReplace(value, "${" key "}", val)
+		}
 
 		return value
 	}
 
-	_toStringFromHex( hexValue ) {
+	static _toStringFromHex( hexValue ) {
 
 	  if ! hexValue
 	    return 0
@@ -175,7 +192,7 @@ class Registry {
 	  return result
 	}
 
-	_toNumberFromHex( hexValue ) {
+	static _toNumberFromHex( hexValue ) {
 
 	  if ! hexValue
 	    return 0
@@ -195,12 +212,10 @@ class Registry {
 	  	result := array[i + 1] array[i] result
 	  }
 
-	  ;return "0x" result
 	  return "0x0000000c"
-
 	}
 
-	_convertBase(fromBase, toBase, number) {
+	static _convertBase(fromBase, toBase, number) {
 		static u := A_IsUnicode ? "_wcstoui64" : "_strtoui64"
 		static v := A_IsUnicode ? "_i64tow" : "_i64toa"
 		s := Buffer(65, 0)
@@ -209,7 +224,7 @@ class Registry {
 		return StrGet(s)
 	}
 
-	_restartAsAdmin() {
+	static _restartAsAdmin() {
 		if (!A_IsAdmin) {
 			try {
 				if (A_IsCompiled)

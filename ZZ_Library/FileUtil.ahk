@@ -246,6 +246,45 @@ class FileUtil {
 		FileAppend(content, path)
 	}
 
+	static hashMD5(path) {
+		global Buffer
+
+		if (!this.isFile(path))
+			return ""
+
+		chunkExp := 4
+		chunkSize := 2 ** (18 + chunkExp)
+		chunkBuffer := Buffer(chunkSize, 0)
+		handle := 0
+		context := Buffer(104, 0)
+		INVALID_HANDLE_VALUE := -1
+
+		try {
+			handle := DllCall("CreateFileW", "Str", path, "UInt", 0x80000000, "UInt", 1, "Ptr", 0, "UInt", 3, "UInt", 0, "Ptr", 0, "Ptr")
+			if (handle = INVALID_HANDLE_VALUE || handle = 0)
+				return ""
+
+			DllCall("advapi32\MD5Init", "Ptr", context.Ptr)
+			Loop {
+				if !DllCall("ReadFile", "Ptr", handle, "Ptr", chunkBuffer.Ptr, "UInt", chunkSize, "UInt*", &bytesRead := 0, "Ptr", 0)
+					return ""
+				if (bytesRead <= 0)
+					break
+				DllCall("advapi32\MD5Update", "Ptr", context.Ptr, "Ptr", chunkBuffer.Ptr, "UInt", bytesRead)
+			}
+			DllCall("advapi32\MD5Final", "Ptr", context.Ptr)
+
+			result := ""
+			Loop 16
+				result .= Format("{:02x}", NumGet(context, 87 + A_Index, "UChar"))
+			return result
+		} catch {
+			return ""
+		} finally {
+			if (handle > 1)
+				DllCall("CloseHandle", "Ptr", handle)
+		}
+	}
 	static writeIni(path, section, key, value, charset := "UTF-8") {
 		sectionName := Trim(section)
 		keyName := Trim(key)
@@ -656,3 +695,4 @@ class FileUtil {
   }
 
 }
+

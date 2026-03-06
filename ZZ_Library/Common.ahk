@@ -128,13 +128,18 @@ class MouseCursor {
   }
   static void := MouseCursor._init()
 
+  static _timerCallback() {
+    static cb := ObjBindMethod(MouseCursor, "no_move_check")
+    return cb
+  }
+
   static show() {
-    SetTimer(MouseCursor.no_move_check, 0)
+    SetTimer(MouseCursor._timerCallback(), 0)
     MouseCursor._setSystemCursor("On")
   }
 
   static hide(duration := 500) {
-    SetTimer(MouseCursor.no_move_check, duration)
+    SetTimer(MouseCursor._timerCallback(), duration)
     MouseCursor._setSystemCursor("Off")
   }
   

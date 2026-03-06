@@ -9,10 +9,9 @@ global applicationCloseWait := ""
 global applicationCloseWin  := ""
 global applicationCloseProc := ""
 
-SplitPath(A_ScriptName, , , , &NoextScriptFileName)
-
-fileIni := A_ScriptDir "\" NoextScriptFileName ".ini"
-fileReg := A_ScriptDir "\" NoextScriptFileName ".reg"
+baseName := FileUtil.getName(A_ScriptName, false)
+fileIni := A_ScriptDir "\" baseName ".ini"
+fileReg := A_ScriptDir "\" baseName ".reg"
 
 runAsAdmin( fileIni )
 
@@ -335,10 +334,15 @@ installFont(fontDir, properties) {
 	fonts  := FileUtil.getFiles(fontDir)
 	for i, path in fonts {
 		installed := winDir "\" FileUtil.getName(path)
-		if( ! FileUtil.isFile(installed) ) {
+		sourceHash := FileUtil.hashMD5(path)
+		installedHash := FileUtil.isFile(installed) ? FileUtil.hashMD5(installed) : ""
+		needInstall := (!FileUtil.isFile(installed) || sourceHash == "" || installedHash == "" || sourceHash != installedHash)
+		if( needInstall ) {
 			debug(">> install font : " path " -> " installed)
+			debug("   md5 source : " sourceHash)
+			debug("   md5 target : " installedHash)
 			Environment.restartAsAdmin()
-			FileCopy(path, winDir)
+			FileCopy(path, installed, true)
 			DllCall("AddFontResource", "Str", installed)
 			SendMessage(0x1D, 0, 0,, "ahk_id 0xFFFF")
 		}
@@ -347,27 +351,18 @@ installFont(fontDir, properties) {
 }
 
 readProperties(file) {
-
 	prop := FileUtil.readIni(file, "properties")
 	if (Type(prop) != "Map")
 		prop := Map()
 
-	; set default
 	prop["cd"    ] := A_ScriptDir
 	prop["cdWin" ] := RegExReplace( A_ScriptDir, "\\", "\\" ) ; double file seperator slash
 	prop["cdUnix"] := RegExReplace( A_ScriptDir, "\\", "/" ) ; normal file seperator
-
-	userHome := EnvGet("userprofile")
-	prop["home"  ] := userHome
-
-  windir := EnvGet("SystemRoot")
-  prop["windir"] := windir
-
+	prop["home"  ] := EnvGet("userprofile")
+  prop["windir"] := EnvGet("SystemRoot")
   prop["sid"   ] := readSID()
   prop["drive" ] := readDrive()
-
 	return prop
-
 }
 
 readSID() {
@@ -539,191 +534,18 @@ scriptClick(waitCmd, px, py) {
 * @param file       {String} filePath contains data formatted Windows Registry
 * @param properties {Array}  properties to bind
 */
-setRegistry( file, properties ) {
-
-	SetRegView(32)
-	writeRegistryFrom( file, properties )
-
-	SetRegView(64)
-	writeRegistryFrom( file, properties )
-
-}
-
-/**
-* Write Registry from file
-*
-* @param file       {String} filePath contains data formatted Windows Registry
-* @param properties {Array}  properties to bind
-*/
-writeRegistryFrom( file, properties ) {
+setRegistry(file, properties) {
 	if !FileExist(file)
 		return
-
-	regKey       := ""
-	readNextLine := false
-	isHex        := true
-
-	for loopLine in StrSplit(FileRead(file), "`n", "`r")
-	{
-
-		line := Trim(loopLine)
-
-		if RegExMatch(line, "^Windows Registry Editor" ) {
-			continue
-		} else if ( StrLen(line) == 0 ) {
-			Continue
-		} else if RegExMatch(line, "^\[.*\]" ) {
-			regKey := RegExReplace( line, "^\[(.*)\]", "$1" )
-			continue
-		} else if ( regKey == "" ) {
-			continue
-		}
-
-		regKey := bindValue( regKey, properties )
-
-		if ( readNextLine == true ) {
-			regVal := regVal line
-		} else {
-
-			regName := RegExReplace( line, '^(@|".+?")=.*$', "$1" )
-			regName := RegExReplace( regName, '^"(.+?)"$', "$1" )
-			regName := RegExReplace( regName, '\\"', '"' )
-			regName := bindValue( regName, properties )
-			regVal  := RegExReplace( line, '^(@|".*?")=(.*)$', "$2" )
-			regVal  := RegExReplace( regVal, '\\"', '"' )
-			regType := "REG_SZ"
-
-			; debug( regName ":" regVal )
-
-      if ( regName == "@" ) {
-      	regName := ""
-      }
-
-			if RegExMatch( regVal, '^".*"$' ) {
-				regType := "REG_SZ"
-				regVal  := RegExReplace( regVal, '^"(.*)"$', "$1" )
-				regVal  := bindValue( regVal, properties )
-				isHex   := false
-			} else if RegExMatch( regVal, "^dword:" ) {
-				regType := "REG_DWORD"
-				regVal  := RegExReplace( regVal, "^dword:(.*)$", "$1" )
-				; regVal  := bindValue( regVal, properties )
-				isHex   := false
-			} else if RegExMatch( regVal, "^hex\(b\):" ) {
-				regType := "REG_QWORD"
-				regVal  := RegExReplace( regVal, "^hex\(b\):(.*)$", "$1" )
-				; regVal  := bindValue( regVal, properties )
-				isHex   := true
-			} else if RegExMatch( regVal, "^hex\(7\):" ) {
-				regType := "REG_MULTI_SZ"
-				regVal  := RegExReplace( regVal, "^hex\(7\):(.*)$", "$1" )
-				isHex   := true
-			} else if RegExMatch( regVal, "^hex\(2\):" ) {
-				regType := "REG_EXPAND_SZ"
-				regVal  := RegExReplace( regVal, "^hex\(2\):(.*)$", "$1" )
-				isHex   := true
-			} else if RegExMatch( regVal, "^hex:" ) {
-				regType := "REG_BINARY"
-				regVal  := RegExReplace( regVal, "^hex:(.*)$", "$1" )
-				isHex   := true
-			}
-
-		}
-
-		if ( RegExMatch(line, "^.*\\$") ) {
-			readNextLine := true
-			continue
-		} else {
-			readNextLine := false
-		}
-
-		if ( isHex == true ) {
-			regVal := RegExReplace( regVal, "[\\\t ]", "" )
-		}
-
-		if ( regType == "REG_DWORD" ) {
-			regVal := "0x" regVal
-		} else if ( regType == "REG_QWORD" ) {
-			regVal := "0x" toNumberFromHex( regVal )
-		} else if( regType == "REG_MULTI_SZ" ) {
-			regVal := toStringFromHex( regVal )
-		} else if( regType == "REG_EXPAND_SZ" ) {
-			regVal := toStringFromHex( regVal )
-		} else if( regType == "REG_BINARY" ) {
-			regVal := StrReplace(regVal, ",")
-		}
-
-		regName := bindValue( regName, properties )
-
-		try oldVal := RegRead(regKey, regName)
-		catch
-			oldVal := ""
-    if(regVal == oldVal)
-    	continue
-
-    debug( "[" regKey "] " regName " - " regType ":" regVal )
-
-		; if it needs to run as admin, restart itself
-		if ( ! RegExMatch(regKey, "^(HKEY_CURRENT_USER|HKEY_USERS)\\.*$") ) {
-			Environment.restartAsAdmin()
-		}
-		RegWrite(regVal, regType, regKey, regName)
-
-	}
-
+	for key, value in properties
+		Registry.setProp(key, value)
+	Registry.write(file)
 }
 
 bindValue( value, properties ) {
 	For key, val in properties
 		value := StrReplace( value, "${" key "}", val )
 	return value
-}
-
-toStringFromHex( hexValue ) {
-
-  if ! hexValue
-    return 0
-
-  array := StrSplit( hexValue, "," )
-
-  if ( mod( array.Length, 2 ) != 0 )
-  	array.Push( "00" )
-
-  result := ""
-
-  for i, element in array
-  {
-  	if ( mod(i,2) == 0 )
-  		Continue
-  	result := result chr( "0x" array[i + 1] array[i] )
-  }
-
-  return result
-
-}
-
-toNumberFromHex( hexValue ) {
-
-  if ! hexValue
-    return 0
-
-  array := StrSplit( hexValue, "," )
-
-  if ( mod( array.Length, 2 ) != 0 )
-  	array.Push( "00" )
-
-  result := ""
-
-  for i, element in array
-  {
-  	if ( mod(i,2) == 0 )
-  		Continue
-  	result := array[i + 1] array[i] result
-  }
-
-  ;return "0x" result
-  return "0x0000000c"
-
 }
 
 makeSymlink( symlink ) {
@@ -759,11 +581,6 @@ makeSymlink( symlink ) {
 
 }
 
-convertBase( fromBase, toBase, number ) {
-  ; currently unused in this script. keep a safe passthrough for v2 compatibility.
-  return number
-}
-
 changeResolution( resolutionConfig ) {
 	if ( resolutionConfig != "_" ) {
     width  := Trim( RegExReplace( resolutionConfig, "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$1" ) )
@@ -773,14 +590,14 @@ changeResolution( resolutionConfig ) {
 }
 
 mountDisk(path) {
-	cmd := wrap(path, '"')
+	cmd := wrap(path)
 	cmd := wrap("-ImagePath " cmd)
 	cmd := "powershell -WindowStyle Hidden Mount-DiskImage " cmd
 	appRunWait(cmd)
 }
 
 unmountDisk(path) {
-	cmd := wrap(path, '"')
+	cmd := wrap(path)
 	cmd := wrap("-ImagePath " cmd)
 	cmd := "powershell -WindowStyle Hidden Dismount-DiskImage " cmd
 	appRunWait(cmd)
