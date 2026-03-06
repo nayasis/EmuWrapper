@@ -34,9 +34,11 @@ try FileDelete(regFile)
 FileAppend(testReg, regFile, "UTF-8")
 
 Registry.clearProps()
-Registry.setProp("keyPath", keyProp)
-Registry.setProp("installPath", pathValue)
-Registry.setProp("displayName", nameValue)
+Registry.setProps(Map(
+	"keyPath", keyProp,
+	"installPath", pathValue,
+	"displayName", nameValue
+))
 Registry.write(regFile)
 
 actualPath := ""

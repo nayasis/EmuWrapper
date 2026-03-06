@@ -6,6 +6,7 @@
  * - Registry.write(file) applies both 32-bit and 64-bit registry views.
  * - Placeholder binding supports both #{name} and ${name} in .reg files.
  * - Registry.clearProps() resets the placeholder map to default path values.
+ * - Registry.setProps(Map()) replaces the current placeholder map.
  */
 class Registry {
 
@@ -27,10 +28,18 @@ class Registry {
 		Registry.prop[ key ] := value
 	}
 
+	static setProps(properties) {
+		Registry.clearProps()
+		if (Type(properties) != "Map")
+			return
+		for key, value in properties
+			Registry.prop[key] := value
+	}
+
 	static clearProps() {
 		Registry.prop := Map()
-		Registry.prop[ "cd" ] := A_ScriptDir
-		Registry.prop[ "cdWin" ] := RegExReplace(A_ScriptDir, "\\", "\\")
+		Registry.prop[ "cd"     ] := A_ScriptDir
+		Registry.prop[ "cdWin"  ] := RegExReplace(A_ScriptDir, "\\", "\\")
 		Registry.prop[ "cdUnix" ] := RegExReplace(A_ScriptDir, "\\", "/")
 	}
 
@@ -38,7 +47,7 @@ class Registry {
 	* Write registry entries from a .reg file.
 	*
 	* Example:
-	*   Registry.setProp("gameDir", "D:\Games\MyGame")
+	*   Registry.setProps(Map("gameDir", "D:\Games\MyGame"))
 	*   Registry.write("D:\config\sample.reg")
 	*
 	* @param file {String} filePath containing Windows Registry Editor format

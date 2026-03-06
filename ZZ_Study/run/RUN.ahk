@@ -537,8 +537,7 @@ scriptClick(waitCmd, px, py) {
 setRegistry(file, properties) {
 	if !FileExist(file)
 		return
-	for key, value in properties
-		Registry.setProp(key, value)
+	Registry.setProps(properties)
 	Registry.write(file)
 }
 
