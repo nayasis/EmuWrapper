@@ -1,12 +1,8 @@
 #Requires AutoHotkey >=2.0
-#Include %A_ScriptDir%\..\..\ZZ_Library\Common.ahk
-#Include %A_ScriptDir%\..\..\ZZ_Library\FileUtil.ahk
-#Include %A_ScriptDir%\..\..\ZZ_Library\ResolutionChanger.ahk
-#Include %A_ScriptDir%\..\..\ZZ_Library\Xml.ahk
-#Include %A_ScriptDir%\..\..\ZZ_Library\Taskbar.ahk
+#Include d:\app\emulator\ZZ_Library\Include.ahk
 
 FileEncoding("UTF-8")
-DetectHiddenWindows("On")
+DetectHiddenWindows(true)
 
 global applicationPid       := ""
 global applicationCloseWait := ""
@@ -31,17 +27,18 @@ runSub( "post", fileIni, prop )
 
 closeApp()
 
-ExitApp
+ExitApp()
 
 closeApp() {
 	closeProcess()
 	ResolutionChanger.restore()
 	Taskbar.show(true)
 	MouseCursor.show()	
-	ExitApp
+	ExitApp()
 }
 
 closeProcess() {
+	global applicationPid, applicationCloseWait, applicationCloseWin, applicationCloseProc
 	debug(">> close process")
 	if( applicationPid != "" ) {
 		debug("  - applicationId: " applicationPid)
@@ -49,45 +46,45 @@ closeProcess() {
 	}
 	if( applicationCloseWait != "" ) {
 		debug("  - applicationCloseWait: " applicationCloseWait)
-		Process, Close, % applicationCloseWait
+		ProcessClose(applicationCloseWait)
 	}
 	if( applicationCloseWin != "" ) {
 		debug("  - applicationCloseWin: " applicationCloseWin)
-		Process, Close, % applicationCloseWin
+		ProcessClose(applicationCloseWin)
 	}
 	if( applicationCloseProc != "" ) {
 		debug("  - applicationCloseProc: " applicationCloseProc)
-		Process, Close, % applicationCloseProc
+		ProcessClose(applicationCloseProc)
 	}
 }
 
 runAsAdmin(fileIni) {
-	IniRead, value, % fileIni, init, runAsAdmin, false
+	value := readIni(fileIni, "init", "runAsAdmin", "", "false")
 	if ( value == "true" ) {
 		Environment.restartAsAdmin()
 	}
 }
 
-runMidThread:
-  SetTimer, runMidThread, off
-  runSub( "mid", fileIni, prop )
-  return
+runMidThread() {
+	global fileIni, prop
+	runSub( "mid", fileIni, prop )
+}
 
 runSub( section, fileIni, properties ) {
 
 	debug(">> run " section)
 
-  indices = ,0,1,2,3,4,5,6,7,8,9
+  indices := ",0,1,2,3,4,5,6,7,8,9"
 
-  loop, parse, indices, `,
+  for _, loopField in StrSplit(indices, ",")
   {
-		executor      := readIni(fileIni, section, "executor" a_loopfield,         properties, "_")
-		executorDir   := readIni(fileIni, section, "executor" a_loopfield "Dir",   properties, "_")
-		executorDelay := readIni(fileIni, section, "executor" a_loopfield "Delay", properties, "_")
-		executorWait  := readIni(fileIni, section, "executor" a_loopfield "Wait",  properties, "true")
+		executor      := readIni(fileIni, section, "executor" loopField,         properties, "_")
+		executorDir   := readIni(fileIni, section, "executor" loopField "Dir",   properties, "_")
+		executorDelay := readIni(fileIni, section, "executor" loopField "Delay", properties, "_")
+		executorWait  := readIni(fileIni, section, "executor" loopField "Wait",  properties, "true")
     executorDelay := RegExReplace( executorDelay, "[^0-9]", "" )
-    if ( executorDelay != "_" ) {
-    	Sleep, %executorDelay%
+    if ( executorDelay != "" ) {
+    	Sleep(executorDelay)
     }
 		if ( executor != "_" ) {
 			executorWait  := (executorWait == "true" || executorWait == "_")
@@ -98,30 +95,28 @@ runSub( section, fileIni, properties ) {
   resolution      := readIni(fileIni, section, "resolution",    properties, "_")
   resolutionDelay := readIni(fileIni, section, "resolutionSec", properties, "_")
   if( resolution != "_" ) {
-    if( resolutionDelay != "_" ) {
-    	sleep, % resolutionDelay
+    if( resolutionDelay != "_" && resolutionDelay != "" ) {
+    	Sleep(resolutionDelay)
     }
     changeResolution(resolution)
   }
 
-  loop, parse, indices, `,
+  for _, loopField in StrSplit(indices, ",")
   {
-	  waitWin         := readIni(fileIni, section, "waitWin"   a_loopfield,       properties, "_")
-	  waitWinSec      := readIni(fileIni, section, "waitWin"   a_loopfield "Sec", properties, "10")
-	  waitProc        := readIni(fileIni, section, "waitProc"  a_loopfield,       properties, "_")
-	  waitProcSec     := readIni(fileIni, section, "waitProc"  a_loopfield "Sec", properties, "10")
+	  waitWin         := readIni(fileIni, section, "waitWin"   loopField,       properties, "_")
+	  waitWinSec      := readIni(fileIni, section, "waitWin"   loopField "Sec", properties, "10")
+	  waitProc        := readIni(fileIni, section, "waitProc"  loopField,       properties, "_")
+	  waitProcSec     := readIni(fileIni, section, "waitProc"  loopField "Sec", properties, "10")
 
 		if ( waitWin != "_" ) {
 			applicationwaitWin := RegExReplace(waitWin,"i)^ahk_(exe|class)\s+(\S+).*$","$2")
 			debug("- waitWin : " waitWin )
-			WinWait, % waitWin,, % waitWinSec
-			IfWinExist
-			{
+			WinWait(waitWin,, waitWinSec)
+			if WinExist(waitWin) {
 				debug("wait win close : " waitWin)
-				WinWaitClose, % waitWin,,
+				WinWaitClose(waitWin)
 			}
-			else
-			{
+			else {
 				break
 			}
 		}
@@ -129,10 +124,10 @@ runSub( section, fileIni, properties ) {
 		if ( waitProc != "_" ) {
 			applicationCloseProc := waitProc
 			debug("- waitProc : " waitProc )
-			Process, Wait, % waitProc, % waitProcSec
-			if(ProcessExist(waitProc)) {
+			ProcessWait(waitProc, waitProcSec)
+			if(ProcessExistsByName(waitProc)) {
 				debug("wait proc close: " waitProc)
-				Process, WaitClose, % waitProc,
+				ProcessWaitClose(waitProc)
 			} else {
 				break
 			}
@@ -140,30 +135,32 @@ runSub( section, fileIni, properties ) {
 
   }
 
-  closeWin        := readIni(fileIni, section, "closeWin"  a_loopfield,       properties, "_")
-  closeWinSec     := readIni(fileIni, section, "closeWin"  a_loopfield "Sec", properties, "10")
-  closeProc       := readIni(fileIni, section, "closeProc" a_loopfield,       properties, "_")
-  closeProcSec    := readIni(fileIni, section, "closeProc" a_loopfield "Sec", properties, "10")
+  for _, loopField in StrSplit(indices, ",")
+  {
+    closeWin        := readIni(fileIni, section, "closeWin"  loopField,       properties, "_")
+    closeWinSec     := readIni(fileIni, section, "closeWin"  loopField "Sec", properties, "10")
+    closeProc       := readIni(fileIni, section, "closeProc" loopField,       properties, "_")
+    closeProcSec    := readIni(fileIni, section, "closeProc" loopField "Sec", properties, "10")
 
-	if ( closeWin != "_" ) {
-		applicationCloseWin := RegExReplace(closeWin,"i)^ahk_(exe|class)\s+(\S+).*$","$2")
-		debug("- closeWin : " closeWin )
-		WinWait, % closeWin,, % closeWinSec
-		WinClose, % closeWin,,
-	}
+		if ( closeWin != "_" ) {
+			applicationCloseWin := RegExReplace(closeWin,"i)^ahk_(exe|class)\s+(\S+).*$","$2")
+			debug("- closeWin : " closeWin )
+			WinWait(closeWin,, closeWinSec)
+			WinClose(closeWin)
+		}
 
-	if ( closeProc != "_" ) {
-		applicationCloseProc := RegExReplace(closeProc,"i)^ahk_(exe|class)\s+(\S+).*$","$2")
-		debug("- closeProc : " closeProc )
-		Process, Wait, % closeProc, % closeProcSec 
-		Process, Close, % closeProc
-	}
+		if ( closeProc != "_" ) {
+			applicationCloseProc := RegExReplace(closeProc,"i)^ahk_(exe|class)\s+(\S+).*$","$2")
+			debug("- closeProc : " closeProc )
+			ProcessWait(closeProc, closeProcSec)
+			ProcessClose(closeProc)
+		}
+  }
 
 }
 
-ProcessExist(Name) {
-	Process,Exist,%Name%
-	return Errorlevel
+ProcessExistsByName(name) {
+	return ProcessExist(name) != 0
 }
 
 runSubHelper( executor, executorDir, executorWait, properties ) {
@@ -189,16 +186,17 @@ runSubHelper( executor, executorDir, executorWait, properties ) {
 	executor    := RegExReplace( executor,    "\\", "\\" )
 	executorDir := RegExReplace( executorDir, "\\", "\\" )
 	if ( executorDir == "_" ) {
-		SplitPath, executor, , executorDir
+		SplitPath(executor, , &executorDir)
 	}
 	if ( executorWait == true ) {
-		runWait(executor, executorDir)
+		appRunWait(executor, executorDir)
 	} else {
-		run(executor, executorDir)
+		appRun(executor, executorDir)
 	}
 }
 
 runMain( fileIni, properties ) {
+	global applicationPid
 
   debug(">> run main")
 
@@ -209,7 +207,7 @@ runMain( fileIni, properties ) {
   hideTaskbar       := readIni(fileIni, "init",   "hideTaskbar",  properties, "_")
   hideMouse         := readIni(fileIni, "init",   "hideMouse",    properties, "_")
   symlink           := readIni(fileIni, "init",   "symlink",      properties, "_")
-  blockNetwork      := readIni(fileIni, "init",   "blockNetwork", properties, "_")
+  blockNetworkRule  := readIni(fileIni, "init",   "blockNetwork", properties, "_")
   isRunWait         := readIni(fileIni, "init",   "runwait",      properties, true)
   exitAltF4         := readIni(fileIni, "init",   "exitAltF4",    properties, true)
   fontPath          := readIni(fileIni, "init",   "font",         properties, "_")
@@ -224,7 +222,7 @@ runMain( fileIni, properties ) {
   makeSymlink(symlink)
 
   if ( unblockPath != "_" )
-  	runWait("powershell unblock-file ""-path \""" unblockPath "\""""", "")
+  	appRunWait('powershell unblock-file -path "' unblockPath '"', "")
 
 	if ( resolution != "_" ) {
 		changeResolution( resolution )
@@ -233,7 +231,7 @@ runMain( fileIni, properties ) {
 		}
 	}
 
-	blockNetwork(blockNetwork)
+	blockNetwork(blockNetworkRule)
   installFont(fontPath, properties)
 
 	if ( mountImage != "_" ) {
@@ -241,7 +239,7 @@ runMain( fileIni, properties ) {
 	}
 
   if ( exitAltF4 == "true" )
-  	Hotkey, !F4, closeApp
+  	Hotkey("!F4", closeApp)
 
 	if ( windowStart == "_" )
 	  windowStart := "0,0"
@@ -257,7 +255,7 @@ runMain( fileIni, properties ) {
 
 	if ( executor != "_" ) {
 
-    SetTimer, runMidThread, 500
+    SetTimer(runMidThread, -500)
 
 		if ( executorDir == "_" )
 		  executorDir := getRunDir(executor)
@@ -269,44 +267,43 @@ runMain( fileIni, properties ) {
 
 		if ( windowTarget != "_" ) {
 
-			applicationPid := run(executor,executorDir,false,false)
+			applicationPid := appRun(executor,executorDir,false,false)
 			If(applicationPid == "")
 				return
-			sleep, % windowSearchDelay
-			WinWait, %windowTarget%,, 10
-			IfWinNotExist
-			{
-				MsgBox % "There is no window to wait.`n`n - " windowTarget
+			Sleep(windowSearchDelay)
+			WinWait(windowTarget,, 10)
+			if !WinExist(windowTarget) {
+				MsgBox("There is no window to wait.`n`n - " windowTarget)
 				return
 			} else {
-				WinGet, applicationPid, PID, %windowTarget%
+				applicationPid := WinGetPID(windowTarget)
 			  startX := Trim( RegExReplace( windowStart, "i)^\D*?(\d*?)\D*?,\D*?(\d*?)\D*?$", "$1" ) )
 			  startY := Trim( RegExReplace( windowStart, "i)^\D*?(\d*?)\D*?,\D*?(\d*?)\D*?$", "$2" ) )
 		    width  := Trim( RegExReplace( windowSize,  "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$1" ) )
 		    height := Trim( RegExReplace( windowSize,  "i)^\D*?(\d*?)\D*?x\D*?(\d*?)\D*?$", "$2" ) )
 				debug( "target:" windowTarget ", borderless:" windowBorderless ", need resize:" windowNeedResize ", start:(" startX "," startY "), resolution:" width "x" height )
 
-				WinActivate
+				WinActivate(windowTarget)
 		    if ( windowBorderless == "true" ) {
 		    	debug("- set borderless")
-					WinSet, Style, -0xC40000
+					WinSetStyle("-0xC40000", windowTarget)
 		    }
 		    if( windowNeedResize == true )  {
 		    	debug("- resize")
-					WinMove,,, %startX%, %startY%, %width%, %height%
-					MouseMove, %width% + startY, %height% + startX
+					WinMove(startX, startY, width, height, windowTarget)
+					MouseMove(width + startY, height + startX)
 		    }
 
-				WinWaitClose, % windowTarget
+				WinWaitClose(windowTarget)
 
 			}
 
 		} else if ( isRunWait == true ) {
-			runWait(executor,executorDir,false)
-			; applicationPid := run(executor,executorDir)
+			appRunWait(executor,executorDir,false)
+			; applicationPid := appRun(executor,executorDir)
 			; Process, Wait, % applicationPid
 		} else {
-			run(executor,executorDir,false,false)
+			appRun(executor,executorDir,false,false)
 		}
 
 		if ( mountImage != "_" ) {
@@ -323,7 +320,7 @@ blockNetwork(param) {
 	rules := StrSplit(param, ";")
 	for i, rule in rules {
 		arr := StrSplit(rule, "->")
-		if (arr.MaxIndex() == 2) {
+		if (arr.Length == 2) {
 			name := Trim(arr[1])
 			path := Trim(arr[2])
 			Network.block(name, path)
@@ -341,9 +338,9 @@ installFont(fontDir, properties) {
 		if( ! FileUtil.isFile(installed) ) {
 			debug(">> install font : " path " -> " installed)
 			Environment.restartAsAdmin()
-			FileCopy, % path, % winDir
-			DllCall("AddFontResource", Str, installed)
-			SendMessage,  0x1D,,,, ahk_id 0xFFFF
+			FileCopy(path, winDir)
+			DllCall("AddFontResource", "Str", installed)
+			SendMessage(0x1D, 0, 0,, "ahk_id 0xFFFF")
 		}
 	}
 	
@@ -351,40 +348,19 @@ installFont(fontDir, properties) {
 
 readProperties(file) {
 
-	prop     := []
-	readMode := false
-
-	Loop, Read, %file%
-	{
-		if RegExMatch(A_LoopReadLine, "^#.*" )
-			continue
-		if ( readMode == false ) {
-			if RegExMatch(A_LoopReadLine, "i)^\[properties\]" )
-				readMode = true
-			continue
-		} else {
-			If RegExMatch(A_LoopReadLine, "^\[.*\]" ) {
-				readMode = false
-				continue
-			}
-		}
-
-		line := removeComment(A_LoopReadLine)
-    key := RegExReplace( line, "^(.*?)=.*?$", "$1" )
-    val := RegExReplace( line, "^.*?=(.*?)$", "$1" )
-
-		prop[ Trim(key) ] := Trim(val)
-	}
+	prop := FileUtil.readIni(file, "properties")
+	if (Type(prop) != "Map")
+		prop := Map()
 
 	; set default
 	prop["cd"    ] := A_ScriptDir
 	prop["cdWin" ] := RegExReplace( A_ScriptDir, "\\", "\\" ) ; double file seperator slash
 	prop["cdUnix"] := RegExReplace( A_ScriptDir, "\\", "/" ) ; normal file seperator
 
-	EnvGet, userHome, userprofile
+	userHome := EnvGet("userprofile")
 	prop["home"  ] := userHome
 
-  EnvGet, windir, SystemRoot
+  windir := EnvGet("SystemRoot")
   prop["windir"] := windir
 
   prop["sid"   ] := readSID()
@@ -395,31 +371,30 @@ readProperties(file) {
 }
 
 readSID() {
-	Loop , HKLM , SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList, 1, 1
+	sid := ""
+	Loop Reg, "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList", "R"
   {
-    if A_LoopRegName = ProfileImagePath
+    if (A_LoopRegName = "ProfileImagePath")
     {
-      RegRead , OutputVar
-      if outputvar contains %A_UserName%
-        StringReplace , SID, A_LoopRegSubKey, SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\ ,,
+			try outputVar := RegRead(A_LoopRegKey, A_LoopRegName)
+			catch
+				outputVar := ""
+      if InStr(outputVar, A_UserName)
+        sid := RegExReplace(A_LoopRegKey, "i)^.*ProfileList\\")
     }
   }
-  return SID
+  return sid
 }
 
 readDrive() {
-	EnvGet, root, SystemDrive
-	StringReplace, root, root, :,,
+	root := EnvGet("SystemDrive")
+	root := StrReplace(root, ":")
 	return root
-}
-
-removeComment(text) {
-	return Trim(RegExReplace( text, "#.*$", "" ))
 }
 
 setEnvVariable( fileIni, properties ) {
 
-	IniRead, env, %fileIni%, init, env, _
+	env := readIni(fileIni, "init", "env", properties, "_")
 
 	if( env == "_" )
 	  return
@@ -433,17 +408,17 @@ setEnvVariable( fileIni, properties ) {
 		val := "____"
 
 		path := StrSplit( env, "+=" )
-		if ( path.MaxIndex() == 2 ) {
+		if ( path.Length == 2 ) {
 			key := Trim( path[1] )
 			val := Trim( path[2] )
 			overwrite := false
 		} else {
 			path := StrSplit( env, "=" )
-			if ( path.MaxIndex() == 2 ) {
+			if ( path.Length == 2 ) {
 				key := Trim( path[1] )
 				val := Trim( path[2] )
 				overwrite := true
-			} if ( path.MaxIndex() == 1 ) {
+			} if ( path.Length == 1 ) {
 				key := Trim( path[1] )
 				val := ""
 				overwrite := true
@@ -463,13 +438,13 @@ setEnvVariable( fileIni, properties ) {
 			prevEnv := ""
 
 			if( overwrite == false ) {
-				EnvGet, prevEnv, % key
+				prevEnv := EnvGet(key)
 			}
 
 			if( prevEnv != "" ) {
-				EnvSet, % key, % prevEnv ";" val
+				EnvSet(key, prevEnv ";" val)
 			} else {
-				EnvSet, % key, % val
+				EnvSet(key, val)
 			}
 
 		}
@@ -478,7 +453,7 @@ setEnvVariable( fileIni, properties ) {
 
 }
 
-run(executor, executorDir="", wait=false, hide=true) {
+appRun(executor, executorDir:="", wait:=false, hide:=true) {
 	if(wait == true) {
 		debug(">> run - wait")
 	} else {
@@ -493,59 +468,68 @@ run(executor, executorDir="", wait=false, hide=true) {
 	}
 
 	if(wait == true) {
-		RunWait, % executor, % executorDir, % option, applicationPid
-		processId := applicationPid
+		try {
+			RunWait(executor, executorDir, option)
+			processId := ""
+		} catch Error as err {
+			debug("Error Level : ERROR")
+			MsgBox("There is no application to run.`n`n - " executor)
+			debug(err.Message)
+			processId := ""
+		}
 	} else {
-		Run, % executor, % executorDir, % option, processId
-	}
-	if ErrorLevel {
-		debug("Error Level : " ErrorLevel)
-	}
-	if(ErrorLevel == "ERROR") {
-    MsgBox % "There is no application to run.`n`n - " executor 
+		try {
+			processId := Run(executor, executorDir, option)
+		} catch Error as err {
+			debug("Error Level : ERROR")
+			MsgBox("There is no application to run.`n`n - " executor)
+			debug(err.Message)
+			processId := ""
+		}
 	}
 	return processId
 }
 
-runWait(executor, executorDir="", hide=true) {
-	return run(executor, executorDir, true, hide)
+appRunWait(executor, executorDir:="", hide:=true) {
+	return appRun(executor, executorDir, true, hide)
 }
 
 getRunDir(executor) {
-	SplitPath, executor, , executorDir
+	SplitPath(executor, , &executorDir)
 	return executorDir
 }
 
-readIni(fileIni, section, key, properties, defaultValue := "_") {
-	IniRead, value, % fileIni, % section, % key, % defaultValue
-	; value := removeComment(value)
-	; debug("key:" key ", value:" value)
-	return bindValue(value,properties)
+readIni(fileIni, section, key, properties := "", defaultValue := "_") {
+	value := FileUtil.readIni(fileIni, section, key, defaultValue)
+
+	if (Type(properties) == "Map")
+		return bindValue(value, properties)
+	return value
 }
 
 scriptEnter(waitCmd) {
-	WinWait, % waitCmd
-	IfWinExist
+	WinWait(waitCmd)
+	if WinExist(waitCmd)
 	{
-		WinActivate, % waitCmd
-		Send, {Enter}
+		WinActivate(waitCmd)
+		Send("{Enter}")
 	}
 }
 
 scriptFocus(waitCmd) {
-	WinWait, % waitCmd
-	IfWinExist
+	WinWait(waitCmd)
+	if WinExist(waitCmd)
 	{
-		WinActivate, % waitCmd
+		WinActivate(waitCmd)
 	}
 }
 
 scriptClick(waitCmd, px, py) {
-	WinWait, % waitCmd
-	IfWinExist
+	WinWait(waitCmd)
+	if WinExist(waitCmd)
 	{
-		WinActivate, % waitCmd
-		Click, % px "," py
+		WinActivate(waitCmd)
+		Click(px, py)
 	}
 }
 
@@ -557,10 +541,10 @@ scriptClick(waitCmd, px, py) {
 */
 setRegistry( file, properties ) {
 
-	SetRegView 32
+	SetRegView(32)
 	writeRegistryFrom( file, properties )
 
-	SetRegView 64
+	SetRegView(64)
 	writeRegistryFrom( file, properties )
 
 }
@@ -572,15 +556,17 @@ setRegistry( file, properties ) {
 * @param properties {Array}  properties to bind
 */
 writeRegistryFrom( file, properties ) {
+	if !FileExist(file)
+		return
 
 	regKey       := ""
 	readNextLine := false
 	isHex        := true
 
-	Loop, Read, %file%
+	for loopLine in StrSplit(FileRead(file), "`n", "`r")
 	{
 
-		line := Trim( A_LoopReadLine )
+		line := Trim(loopLine)
 
 		if RegExMatch(line, "^Windows Registry Editor" ) {
 			continue
@@ -599,12 +585,12 @@ writeRegistryFrom( file, properties ) {
 			regVal := regVal line
 		} else {
 
-			regName := RegExReplace( line, "^(@|"".+?"")=.*$", "$1" )
-			regName := RegExReplace( regName, "^""(.+?)""$","$1" )
-			regName := RegExReplace( regName, "\\""", """" )
+			regName := RegExReplace( line, '^(@|".+?")=.*$', "$1" )
+			regName := RegExReplace( regName, '^"(.+?)"$', "$1" )
+			regName := RegExReplace( regName, '\\"', '"' )
 			regName := bindValue( regName, properties )
-			regVal  := RegExReplace( line, "^(@|"".*?"")=(.*)$", "$2" )
-			regVal  := RegExReplace( regVal, "\\""", """" )
+			regVal  := RegExReplace( line, '^(@|".*?")=(.*)$', "$2" )
+			regVal  := RegExReplace( regVal, '\\"', '"' )
 			regType := "REG_SZ"
 
 			; debug( regName ":" regVal )
@@ -613,9 +599,9 @@ writeRegistryFrom( file, properties ) {
       	regName := ""
       }
 
-			if RegExMatch( regVal, "^"".*""$" ) {
+			if RegExMatch( regVal, '^".*"$' ) {
 				regType := "REG_SZ"
-				regVal  := RegExReplace( regVal, "^""(.*)""$", "$1" )
+				regVal  := RegExReplace( regVal, '^"(.*)"$', "$1" )
 				regVal  := bindValue( regVal, properties )
 				isHex   := false
 			} else if RegExMatch( regVal, "^dword:" ) {
@@ -664,12 +650,14 @@ writeRegistryFrom( file, properties ) {
 		} else if( regType == "REG_EXPAND_SZ" ) {
 			regVal := toStringFromHex( regVal )
 		} else if( regType == "REG_BINARY" ) {
-			StringReplace, regVal, regVal, % ",", , All
+			regVal := StrReplace(regVal, ",")
 		}
 
 		regName := bindValue( regName, properties )
 
-    RegRead, oldVal, % regKey, % regName
+		try oldVal := RegRead(regKey, regName)
+		catch
+			oldVal := ""
     if(regVal == oldVal)
     	continue
 
@@ -679,7 +667,7 @@ writeRegistryFrom( file, properties ) {
 		if ( ! RegExMatch(regKey, "^(HKEY_CURRENT_USER|HKEY_USERS)\\.*$") ) {
 			Environment.restartAsAdmin()
 		}
-		RegWrite, % regType, % regKey, % regName, % regVal
+		RegWrite(regVal, regType, regKey, regName)
 
 	}
 
@@ -698,8 +686,8 @@ toStringFromHex( hexValue ) {
 
   array := StrSplit( hexValue, "," )
 
-  if ( mod( array.MaxIndex(), 2 ) != 0 )
-  	array.Insert( "00" )
+  if ( mod( array.Length, 2 ) != 0 )
+  	array.Push( "00" )
 
   result := ""
 
@@ -721,8 +709,8 @@ toNumberFromHex( hexValue ) {
 
   array := StrSplit( hexValue, "," )
 
-  if ( mod( array.MaxIndex(), 2 ) != 0 )
-  	array.Insert( "00" )
+  if ( mod( array.Length, 2 ) != 0 )
+  	array.Push( "00" )
 
   result := ""
 
@@ -754,25 +742,26 @@ makeSymlink( symlink ) {
 	for i, link in links {
 		debug( "link : " link )
 		path := StrSplit( link, "->" )
-		if ( path.MaxIndex() == 2 ) {
+		if ( path.Length == 2 ) {
 			sourceDir := Trim( path[1] )
 			targetDir := Trim( path[2] )
+			if (sourceDir = "" || targetDir = "")
+				continue
 			debug( ">> Make symlink" )
 			debug( "   sourceDir : " sourceDir )
 			debug( "   targetDir : " targetDir )
-			FileUtil.makeLink(sourceDir, targetDir, true)
+			try FileUtil.makeLink(sourceDir, targetDir, true)
+			catch Error as err {
+				debug("   symlink skipped: " err.Message)
+			}
 		}
 	}
 
 }
 
 convertBase( fromBase, toBase, number ) {
-  static u := A_IsUnicode ? "_wcstoui64" : "_strtoui64"
-  static v := A_IsUnicode ? "_i64tow"    : "_i64toa"
-  VarSetCapacity(s, 65, 0)
-  value := DllCall("msvcrt.dll\" u, "Str", number, "UInt", 0, "UInt", fromBase, "CDECL Int64")
-  DllCall("msvcrt.dll\" v, "Int64", value, "Str", s, "UInt", toBase, "CDECL")
-  return s
+  ; currently unused in this script. keep a safe passthrough for v2 compatibility.
+  return number
 }
 
 changeResolution( resolutionConfig ) {
@@ -784,15 +773,15 @@ changeResolution( resolutionConfig ) {
 }
 
 mountDisk(path) {
-	cmd := wrap(path, "\""")
+	cmd := wrap(path, '"')
 	cmd := wrap("-ImagePath " cmd)
 	cmd := "powershell -WindowStyle Hidden Mount-DiskImage " cmd
-	runWait(cmd)
+	appRunWait(cmd)
 }
 
 unmountDisk(path) {
-	cmd := wrap(path, "\""")
+	cmd := wrap(path, '"')
 	cmd := wrap("-ImagePath " cmd)
 	cmd := "powershell -WindowStyle Hidden Dismount-DiskImage " cmd
-	runWait(cmd)
+	appRunWait(cmd)
 }

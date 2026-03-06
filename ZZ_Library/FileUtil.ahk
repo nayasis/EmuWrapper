@@ -6,6 +6,7 @@ class FileUtil {
 	static _init() {
 	}
 	static void := FileUtil._init()
+	static _iniCache := Map()
 
 	__New() {
 		throw Error("FileUtil is a static class, dont instantiate it!", -1)
@@ -144,22 +145,52 @@ class FileUtil {
   	return Xml(path)
   }
 
-  static read(path) {
-  	return FileRead(path)
+  static read(path, charset := "") {
+  	if (charset == "")
+  		return FileRead(path)
+  	return FileRead(path, charset)
   }
 
-	static readProperties(path) {
+  /**
+  * Read INI using the specified charset. Default charset is UTF-8.
+  * readIni(path, "init", "executor") -> single value
+  * readIni(path, "init") -> section Map
+  * readIni(path) -> file Map(section -> Map)
+  * writeIni(path, "init", "executor", "game.exe") -> upsert key
+  * deleteIni(path, "init", "executor") -> delete key
+  * deleteIni(path, "window") -> delete section
+  */
+  static readIni(path, section := "", key := "", defaultValue := "", charset := "UTF-8") {
+  	data := this._loadIni(path, charset)
+  	if (section == "")
+  		return this._materializeIni(data)
+  	sectionKey := StrLower(Trim(section))
+  	if (!data.Has(sectionKey))
+  		return defaultValue
+  	sectionData := data[sectionKey]
+  	if (key == "")
+  		return this._materializeIniSection(sectionData)
+  	keyKey := StrLower(Trim(key))
+  	if (!sectionData["values"].Has(keyKey))
+  		return defaultValue
+  	return sectionData["values"][keyKey]
+  }
+
+	static readProperties(path, charset := "UTF-8") {
 		prop := Map()
-		loop read, path {
-			if RegExMatch(A_LoopReadLine, "^#.*")
+		text := this.read(path, charset)
+		if (SubStr(text, 1, 1) == Chr(0xFEFF))
+			text := SubStr(text, 2)
+		for loopLine in StrSplit(text, "`n", "`r") {
+			if RegExMatch(loopLine, "^#.*")
 				continue
-			splitPosition := InStr(A_LoopReadLine, "=")
+			splitPosition := InStr(loopLine, "=")
 			if (splitPosition = 0) {
-				key := A_LoopReadLine
+				key := loopLine
 				val := ""
 			} else {
-				key := SubStr(A_LoopReadLine, 1, splitPosition - 1)
-				val := SubStr(A_LoopReadLine, splitPosition + 1)
+				key := SubStr(loopLine, 1, splitPosition - 1)
+				val := SubStr(loopLine, splitPosition + 1)
 			}
 			prop[Trim(key)] := Trim(val)
 		}
@@ -213,6 +244,277 @@ class FileUtil {
 		this.makeParentDir(path)
 		try FileDelete(path)
 		FileAppend(content, path)
+	}
+
+	static writeIni(path, section, key, value, charset := "UTF-8") {
+		sectionName := Trim(section)
+		keyName := Trim(key)
+		if (sectionName == "" || keyName == "")
+			return
+
+		text := ""
+		if (this.exist(path))
+			text := this.read(path, charset)
+		if (SubStr(text, 1, 1) == Chr(0xFEFF))
+			text := SubStr(text, 2)
+
+		content := this._upsertIniText(text, sectionName, keyName, "" value)
+		this.makeParentDir(path)
+		try FileDelete(path)
+		FileAppend(content, path, charset)
+
+		cacheKey := path "|" charset
+		if (this._iniCache.Has(cacheKey))
+			this._iniCache.Delete(cacheKey)
+	}
+
+	static deleteIni(path, section, key := "", charset := "UTF-8") {
+		sectionName := Trim(section)
+		keyName := Trim(key)
+		if (sectionName == "" || !this.exist(path))
+			return
+
+		text := this.read(path, charset)
+		if (SubStr(text, 1, 1) == Chr(0xFEFF))
+			text := SubStr(text, 2)
+
+		content := this._deleteIniText(text, sectionName, keyName)
+		if (content == text)
+			return
+
+		this.makeParentDir(path)
+		try FileDelete(path)
+		FileAppend(content, path, charset)
+
+		cacheKey := path "|" charset
+		if (this._iniCache.Has(cacheKey))
+			this._iniCache.Delete(cacheKey)
+	}
+
+	static _upsertIniText(text, sectionName, keyName, value) {
+		if (text == "")
+			return "[" sectionName "]`r`n" keyName " = " value "`r`n"
+
+		newline := InStr(text, "`r`n") ? "`r`n" : "`n"
+		hasTrailingNewline := RegExMatch(text, "(\r\n|\n)$")
+		lines := StrSplit(text, "`n", "`r")
+		targetSection := StrLower(sectionName)
+		targetKeyPattern := "i)^\s*" this._escapeRegEx(keyName) "\s*="
+		inSection := false
+		sectionFound := false
+		insertAt := lines.Length + 1
+
+		for index, line in lines {
+			trimmed := Trim(line)
+			if RegExMatch(trimmed, "^\[(.*)\]$", &match) {
+				if (inSection) {
+					insertAt := index
+					break
+				}
+				currentSection := StrLower(Trim(match[1]))
+				inSection := (currentSection == targetSection)
+				if (inSection) {
+					sectionFound := true
+					insertAt := index + 1
+				}
+				continue
+			}
+
+			if (!inSection)
+				continue
+
+			if RegExMatch(line, targetKeyPattern) {
+				lines[index] := this._replaceIniValueLine(line, value)
+				return this._joinIniLines(lines, newline, hasTrailingNewline)
+			}
+			insertAt := index + 1
+		}
+
+		entryLine := keyName " = " value
+		if (sectionFound) {
+			lines.InsertAt(insertAt, entryLine)
+		} else {
+			if (lines.Length > 0 && Trim(lines[lines.Length]) != "")
+				lines.Push("")
+			lines.Push("[" sectionName "]")
+			lines.Push(entryLine)
+			hasTrailingNewline := true
+		}
+
+		return this._joinIniLines(lines, newline, hasTrailingNewline)
+	}
+
+	static _deleteIniText(text, sectionName, keyName := "") {
+		if (text == "")
+			return text
+
+		newline := InStr(text, "`r`n") ? "`r`n" : "`n"
+		hasTrailingNewline := RegExMatch(text, "(\\r\\n|\\n)$")
+		lines := StrSplit(text, "`n", "`r")
+		targetSection := StrLower(sectionName)
+		targetKeyPattern := (keyName == "") ? "" : "i)^\\s*" this._escapeRegEx(keyName) "\\s*="
+		sectionStart := 0
+		sectionEnd := lines.Length + 1
+		inSection := false
+
+		for index, line in lines {
+			trimmed := Trim(line)
+			if RegExMatch(trimmed, "^\[(.*)\]$", &match) {
+				if (inSection) {
+					sectionEnd := index
+					break
+				}
+				currentSection := StrLower(Trim(match[1]))
+				inSection := (currentSection == targetSection)
+				if (inSection)
+					sectionStart := index
+				continue
+			}
+
+			if (!inSection || keyName == "")
+				continue
+
+			if RegExMatch(line, targetKeyPattern) {
+				lines.RemoveAt(index)
+				return this._joinIniLines(lines, newline, hasTrailingNewline)
+			}
+		}
+
+		if (sectionStart == 0)
+			return text
+		if (keyName != "")
+			return text
+
+		deleteLength := sectionEnd - sectionStart
+		if (deleteLength <= 0)
+			return text
+		lines.RemoveAt(sectionStart, deleteLength)
+		while (lines.Length > 1) {
+			changed := false
+			for index, line in lines {
+				if (index < lines.Length && Trim(line) == "" && Trim(lines[index + 1]) == "") {
+					lines.RemoveAt(index)
+					changed := true
+					break
+				}
+			}
+			if (!changed)
+				break
+		}
+		while (lines.Length > 0 && Trim(lines[1]) == "")
+			lines.RemoveAt(1)
+		while (lines.Length > 0 && Trim(lines[lines.Length]) == "")
+			lines.RemoveAt(lines.Length)
+
+		return this._joinIniLines(lines, newline, hasTrailingNewline)
+	}
+
+	static _replaceIniValueLine(line, value) {
+		if RegExMatch(line, "^(\s*[^=]+?\s*=\s*)(.*?)(\s+[;#].*)?$", &match)
+			return match[1] value match[3]
+		eqPos := InStr(line, "=")
+		if (eqPos <= 0)
+			return line
+		return SubStr(line, 1, eqPos) " " value
+	}
+
+	static _joinIniLines(lines, newline := "`r`n", hasTrailingNewline := false) {
+		content := ""
+		for index, line in lines {
+			if (index > 1)
+				content .= newline
+			content .= line
+		}
+		if (hasTrailingNewline && content != "")
+			content .= newline
+		return content
+	}
+
+	static _escapeRegEx(text) {
+		return "\Q" text "\E"
+	}
+
+	static _loadIni(path, charset := "UTF-8") {
+		cacheKey := path "|" charset
+		if (this._iniCache.Has(cacheKey))
+			return this._iniCache[cacheKey]
+
+		data := Map("__order__", [])
+		if (!this.exist(path)) {
+			this._iniCache[cacheKey] := data
+			return data
+		}
+
+		text := FileRead(path, charset)
+		if (SubStr(text, 1, 1) == Chr(0xFEFF))
+			text := SubStr(text, 2)
+
+		currentSection := ""
+		for loopLine in StrSplit(text, "`n", "`r") {
+			line := Trim(loopLine)
+			if (line == "" || RegExMatch(line, "^[;#]"))
+				continue
+			if RegExMatch(line, "^\[(.*)\]$", &match) {
+				sectionName := Trim(match[1])
+				sectionKey := StrLower(sectionName)
+				currentSection := sectionKey
+				if (!data.Has(sectionKey)) {
+					data["__order__"].Push(sectionKey)
+					data[sectionKey] := Map("name", sectionName, "order", [], "values", Map(), "keyNames", Map())
+				}
+				continue
+			}
+			if (currentSection == "")
+				continue
+			eqPos := InStr(line, "=")
+			if (eqPos <= 0)
+				continue
+			keyName := Trim(SubStr(line, 1, eqPos - 1))
+			keyKey := StrLower(keyName)
+			value := Trim(SubStr(line, eqPos + 1))
+			sectionData := data[currentSection]
+			if (!sectionData["values"].Has(keyKey))
+				sectionData["order"].Push(keyKey)
+			sectionData["values"][keyKey] := value
+			sectionData["keyNames"][keyKey] := keyName
+		}
+
+		this._iniCache[cacheKey] := data
+		return data
+	}
+
+	static _renderIni(data) {
+		content := ""
+		for index, sectionKey in data["__order__"] {
+			sectionData := data[sectionKey]
+			if (index > 1)
+				content .= "`r`n"
+			content .= "[" sectionData["name"] "]`r`n"
+			for _, keyKey in sectionData["order"] {
+				keyName := sectionData["keyNames"][keyKey]
+				storedValue := sectionData["values"][keyKey]
+				content .= keyName " = " storedValue "`r`n"
+			}
+		}
+		return content
+	}
+
+	static _materializeIni(data) {
+		result := Map()
+		for _, sectionKey in data["__order__"] {
+			sectionData := data[sectionKey]
+			result[sectionData["name"]] := this._materializeIniSection(sectionData)
+		}
+		return result
+	}
+
+	static _materializeIniSection(sectionData) {
+		result := Map()
+		for _, keyKey in sectionData["order"] {
+			keyName := sectionData["keyNames"][keyKey]
+			result[keyName] := sectionData["values"][keyKey]
+		}
+		return result
 	}
 
   /**
