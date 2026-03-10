@@ -1,16 +1,14 @@
 #Requires AutoHotkey >=2.0
 #Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-; global EMUL_ROOT := A_ScriptDir "\1.9.7"
+;global EMUL_ROOT := A_ScriptDir "\1.9.7"
 
 imageDir := A_Args.Length ? A_Args[1] : ""
-; imageDir := "\\NAS2\emul\image\Saturn\Grandia (T-ko)"
-; imageDir := "\\NAS2\emul\image\Saturn\Daytona USA (en)"
-; imageDir := "\\NAS2\emul\image\Saturn\FIFA Soccer 97 (ea)(en)"
+;imageDir := "\\NAS2\emul\image\Saturn\Madou Monogatari (compile)(T-ko 0.3.0 by mcpads)"
 
-option := getOption( imageDir )
+option := getOption(imageDir)
 
-if( option.core.common_core == "yabasanshiro_libretro" ) {
+if( option.core == "yabasanshiro_libretro" ) {
 	option.run.videoDriver := "gl"
 	extension := "chd|bin"
 } else {
