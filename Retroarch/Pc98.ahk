@@ -2,7 +2,7 @@
 #Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := A_Args.Length ? A_Args[1] : ""
-;imageDir := "\\NAS2\emul\image\PC98\Dragon Slayer - The Legend of Heroes (T-en 0.9b)"
+; imageDir := "\\NAS2\emul\image\PC98\Uncharted Water (koei)(T-ko 1.0 by k66google)"
 
 option := getOption( imageDir )
 config := setConfig( "np2kai_libretro", option, true )
@@ -101,15 +101,15 @@ setNpConfig( config ) {
   }
   debug( "MEMswtch (after)  : " MEMswitch )
     
-  IniWrite(MEMswitch, NekoIniFile, "NekoProjectIIkai", "MEMswtch")
+  IniWrite(MEMswitch, cfg.path, cfg.section, "MEMswtch")
 
   ; seekSnd := config.np2kai_Seek_Snd == "ON" ? "true" : "false"
 
   debug( ">> seek snd : " (config.np2kai_Seek_Snd == "ON" ? "true" : "false") )
   debug( ">> seek vol : " config.np2kai_Seek_Vol )
 
-  IniWrite(" " (config.np2kai_Seek_Snd == "ON" ? "true" : "false"), NekoIniFile, "NekoProjectIIkai", "Seek_Snd")
-  ; IniWrite(" " config.np2kai_Seek_Vol, NekoIniFile, "NekoProjectIIkai", "Seek_Vol")
+  IniWrite(" " (config.np2kai_Seek_Snd == "ON" ? "true" : "false"), cfg.path, cfg.section, "Seek_Snd")
+  ; IniWrite(" " config.np2kai_Seek_Vol, cfg.path, cfg.section, "Seek_Vol")
 
   ; ExitApp
 

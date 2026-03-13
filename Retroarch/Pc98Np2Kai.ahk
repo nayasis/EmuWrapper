@@ -98,7 +98,7 @@ setNpConfig( config ) {
   }
   debug( "MEMswtch (after)  : " MEMswitch )
     
-  IniWrite(MEMswitch, NekoIniFile, cfg.section, "MEMswtch")
+  IniWrite(MEMswitch, cfg.path, cfg.section, "MEMswtch")
 
 }
 

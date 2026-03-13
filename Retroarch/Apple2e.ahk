@@ -58,8 +58,9 @@ makeCmd(imageDir, config) {
   cmd .= addOption("-rp", wrap( EMUL_ROOT "\system\mame\console\apple"))
   ;cmd .= addOption("-rp", wrap( EMUL_ROOT "\system\mame\bios"))
 
-  disks  := FileUtil.getFiles(imageDir, "i).*\.(dsk|woz|a2r|nib)$")
-  fddCnt := min(config.fdd_cnt, disks.Length)
+  disks   := FileUtil.getFiles(imageDir, "i).*\.(dsk|woz|a2r|nib)$")
+  diskCnt := disks.Length
+  fddCnt  := config.fdd_cnt == "" ? diskCnt : min(config.fdd_cnt * 1, diskCnt)
   fddIdx := [1,2,3,4]
   if(fddCnt >= 3) {
     fddIdx := [3,4,1,2]

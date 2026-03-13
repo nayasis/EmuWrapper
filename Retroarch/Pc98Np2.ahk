@@ -102,15 +102,15 @@ setNpConfig( config ) {
   }
   debug( "MEMswtch (after)  : " MEMswitch )
     
-  IniWrite(MEMswitch, NekoIniFile, cfg.section, "MEMswtch")
+  IniWrite(MEMswitch, cfg.path, cfg.section, "MEMswtch")
 
   ; seekSnd := config.np2_Seek_Snd == "ON" ? "true" : "false"
 
   debug( ">> seek snd : " (config.np2_Seek_Snd == "ON" ? "true" : "false") )
   debug( ">> seek vol : " config.np2_Seek_Vol )
 
-  IniWrite(" " (config.np2_Seek_Snd == "ON" ? "true" : "false"), NekoIniFile, cfg.section, "Seek_Snd")
-  ; IniWrite(" " config.np2_Seek_Vol, NekoIniFile, cfg.section, "Seek_Vol")
+  IniWrite(" " (config.np2_Seek_Snd == "ON" ? "true" : "false"), cfg.path, cfg.section, "Seek_Snd")
+  ; IniWrite(" " config.np2_Seek_Vol, cfg.path, cfg.section, "Seek_Vol")
 
   ; ExitApp
 
