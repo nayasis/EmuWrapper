@@ -185,7 +185,7 @@ runSubHelper( executor, executorDir, executorWait, properties ) {
 	executor    := RegExReplace( executor,    "\\", "\\" )
 	executorDir := RegExReplace( executorDir, "\\", "\\" )
 	if ( executorDir == "_" ) {
-		SplitPath(executor, , &executorDir)
+		executorDir := getRunDir(executor)
 	}
 	if ( executorWait == true ) {
 		appRunWait(executor, executorDir)
@@ -490,8 +490,26 @@ appRunWait(executor, executorDir:="", hide:=true) {
 }
 
 getRunDir(executor) {
-	SplitPath(executor, , &executorDir)
+	target := getRunTarget(executor)
+	SplitPath(target, , &executorDir)
 	return executorDir
+}
+
+getRunTarget(executor) {
+	executor := Trim(executor)
+	if ( executor == "" ) {
+		return ""
+	}
+
+	if RegExMatch(executor, '^\s*"([^"]+)"', &match) {
+		return match[1]
+	}
+
+	if RegExMatch(executor, 'i)^\s*(.+?\.(?:exe|bat|cmd|com|ahk|lnk|msi|ps1|vbs))(?=\s|$)', &match) {
+		return match[1]
+	}
+
+	return StrSplit(executor, A_Space, , 2)[1]
 }
 
 readIni(fileIni, section, key, properties := "", defaultValue := "_") {
