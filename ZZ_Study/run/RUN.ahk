@@ -229,8 +229,9 @@ runMain( fileIni, properties ) {
 
   makeSymlink(symlink)
 
-  if ( unblockPath != "_" )
-  	appRunWait('powershell unblock-file -path "' unblockPath '"', "")
+  if ( unblockPath != "_" ) {
+  	unblockFile(unblockPath)
+  }
 
 	if ( resolution != "_" ) {
 		changeResolution( resolution )
@@ -471,6 +472,8 @@ appRun(executor, executorDir:="", wait:=false, hide:=true) {
 		option .= " Hide"
 	}
 
+	debug("- option: " option)
+
 	if(wait == true) {
 		try {
 			RunWait(executor, executorDir, option)
@@ -626,6 +629,16 @@ bindValue( value, properties ) {
 	For key, val in properties
 		value := StrReplace( value, "${" key "}", val )
 	return value
+}
+
+unblockFile(path) {
+	zoneIdentifier := path ":Zone.Identifier"
+	if !DllCall("DeleteFile", "Str", zoneIdentifier, "Int") {
+		lastError := A_LastError
+		if (lastError != 2) {
+			debug(">> unblock skipped: " zoneIdentifier " (error: " lastError ")")
+		}
+	}
 }
 
 makeSymlink( symlink ) {
