@@ -73,9 +73,18 @@ runSub( section, fileIni, properties ) {
 
 	debug(">> run " section)
 
-  indices := ",0,1,2,3,4,5,6,7,8,9"
+  indices := ["", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
-  for _, loopField in StrSplit(indices, ",")
+  for _, loopField in indices
+  {
+		writeRule    := readIni(fileIni, section, "write" loopField,        properties, "_")
+		writeCharset := readIni(fileIni, section, "write" loopField "Charset", properties, "CP0")
+		if ( writeRule != "_" ) {
+			writeTemplateFile(writeRule, properties, writeCharset)
+		}
+  }
+
+  for _, loopField in indices
   {
 		executor      := readIni(fileIni, section, "executor" loopField,         properties, "_")
 		executorDir   := readIni(fileIni, section, "executor" loopField "Dir",   properties, "_")
@@ -100,7 +109,7 @@ runSub( section, fileIni, properties ) {
     changeResolution(resolution)
   }
 
-  for _, loopField in StrSplit(indices, ",")
+  for _, loopField in indices
   {
 	  waitWin         := readIni(fileIni, section, "waitWin"   loopField,       properties, "_")
 	  waitWinSec      := readIni(fileIni, section, "waitWin"   loopField "Sec", properties, "10")
@@ -134,7 +143,7 @@ runSub( section, fileIni, properties ) {
 
   }
 
-  for _, loopField in StrSplit(indices, ",")
+  for _, loopField in indices
   {
     closeWin        := readIni(fileIni, section, "closeWin"  loopField,       properties, "_")
     closeWinSec     := readIni(fileIni, section, "closeWin"  loopField "Sec", properties, "10")
@@ -557,6 +566,60 @@ setRegistry(file, properties) {
 		return
 	Registry.setProps(properties)
 	Registry.write(file)
+}
+
+writeTemplateFile(writeRule, properties, charset := "CP0") {
+	path := StrSplit(writeRule, "->")
+	if ( path.Length != 2 ) {
+		debug(">> write skipped: invalid rule - " writeRule)
+		return
+	}
+
+	sourceFile := Trim(path[1])
+	targetFile := Trim(path[2])
+	if (sourceFile = "" || targetFile = "") {
+		debug(">> write skipped: empty source/target - " writeRule)
+		return
+	}
+	if !FileExist(sourceFile) {
+		debug(">> write skipped: source missing - " sourceFile)
+		return
+	}
+
+	debug(">> write file")
+	debug("   source : " sourceFile)
+	debug("   target : " targetFile)
+	debug("   charset: " charset)
+
+	content := FileRead(sourceFile)
+	content := bindValue(content, properties)
+
+	SplitPath(targetFile, , &targetDir)
+	if (targetDir != "" && !DirExist(targetDir)) {
+		DirCreate(targetDir)
+	}
+
+	file := FileOpen(targetFile, "w", normalizeWriteCharset(charset))
+	file.Write(content)
+	file.Close()
+}
+
+normalizeWriteCharset(charset) {
+	charset := Trim(charset)
+	if (charset = "" || charset = "_")
+		return "CP0"
+
+	upperCharset := StrUpper(charset)
+	if (upperCharset = "UTF8")
+		return "UTF-8"
+	if (upperCharset = "UTF8-RAW" || upperCharset = "UTF-8-RAW")
+		return "UTF-8-RAW"
+	if (upperCharset = "UTF16")
+		return "UTF-16"
+	if (upperCharset = "UTF16-RAW" || upperCharset = "UTF-16-RAW")
+		return "UTF-16-RAW"
+
+	return charset
 }
 
 bindValue( value, properties ) {
