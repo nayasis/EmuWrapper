@@ -10,6 +10,28 @@ class JSON {
 	static null := ComValue(1, 0), true := ComValue(0xB, 1), false := ComValue(0xB, 0)
 
 	/**
+	 * Converts common boolean-like values to JSON.true / JSON.false.
+	 * @param value Supports JSON booleans, AHK booleans, 1/0, and strings like true/false, yes/no, on/off.
+	 * @param keepbooltype Returns JSON.true / JSON.false when true, otherwise AHK true / false.
+	 */
+	static toBoolean(value, keepbooltype := true) {
+		if (value == this.true || value == true)
+			return keepbooltype ? this.true : true
+		if (value == this.false || value == false)
+			return keepbooltype ? this.false : false
+
+		if (Type(value) = "String") {
+			normalized := StrLower(Trim(value))
+			if normalized ~= "^(true|1|yes|on)$"
+				return keepbooltype ? this.true : true
+			if normalized ~= "^(false|0|no|off)$"
+				return keepbooltype ? this.false : false
+		}
+
+		return value ? (keepbooltype ? this.true : true) : (keepbooltype ? this.false : false)
+	}
+
+	/**
 	 * Converts a AutoHotkey Object Notation JSON string into an object.
 	 * @param text A valid JSON string.
 	 * @param keepbooltype convert true/false/null to JSON.true / JSON.false / JSON.null where it's true, otherwise 1 / 0 / ''
@@ -153,15 +175,15 @@ static stringify(obj, expandlevel := unset, space := "  ") {
 			if (OT := Type(O)) = "Array" {
 				D := !R ? S1 : ""
 				for key, value in O {
-					F := (VT := Type(value)) = "Array" ? "S" : InStr("Map,Object", VT) ? "M" : E
-					Z := VT = "Array" && value.Length = 0 ? "[]" : ((VT = "Map" && value.count = 0) || (VT = "Object" && ObjOwnPropCount(value) = 0)) ? "{}" : ""
+					F := (VT := Type(value)) = "Array" ? "S" : InStr("|Map|Object|JSON.Obj|", "|" VT "|") ? "M" : E
+					Z := VT = "Array" && value.Length = 0 ? "[]" : ((VT = "Map" && value.count = 0) || (InStr("|Object|JSON.Obj|", "|" VT "|") && ObjOwnPropCount(value) = 0)) ? "{}" : ""
 					D .= (J > R ? "`n" CL(R + 2) : "") (F ? (%F%1 (Z ? "" : CO(value, J, R + 1, F)) %F%2) : ES(value)) (OT = "Array" && O.Length = A_Index ? E : C)
 				}
 			} else {
 				D := !R ? M1 : ""
 				for key, value in (OT := Type(O)) = "Map" ? (Y := 1, O) : (Y := 0, O.OwnProps()) {
-					F := (VT := Type(value)) = "Array" ? "S" : InStr("Map,Object", VT) ? "M" : E
-					Z := VT = "Array" && value.Length = 0 ? "[]" : ((VT = "Map" && value.count = 0) || (VT = "Object" && ObjOwnPropCount(value) = 0)) ? "{}" : ""
+					F := (VT := Type(value)) = "Array" ? "S" : InStr("|Map|Object|JSON.Obj|", "|" VT "|") ? "M" : E
+					Z := VT = "Array" && value.Length = 0 ? "[]" : ((VT = "Map" && value.count = 0) || (InStr("|Object|JSON.Obj|", "|" VT "|") && ObjOwnPropCount(value) = 0)) ? "{}" : ""
 					D .= (J > R ? "`n" CL(R + 2) : "") (Q = "S" && A_Index = 1 ? M1 : E) ES(key) K (F ? (%F%1 (Z ? "" : CO(value, J, R + 1, F)) %F%2) : ES(value)) (Q = "S" && A_Index = (Y ? O.count : ObjOwnPropCount(O)) ? M2 : E) (J != 0 || R ? (A_Index = (Y ? O.count : ObjOwnPropCount(O)) ? E : C) : E)
 					if J = 0 && !R
 						D .= (A_Index < (Y ? O.count : ObjOwnPropCount(O)) ? C : E)

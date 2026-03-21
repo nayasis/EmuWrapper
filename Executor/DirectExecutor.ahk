@@ -1,54 +1,42 @@
-#NoEnv
-#include %A_ScriptDir%\..\ZZ_Library\Include.ahk
+#Requires AutoHotkey >=2.0
+#Include "%A_ScriptDir%\..\ZZ_Library\Include.ahk"
+#Include "%A_ScriptDir%\..\ZZ_Library\EmulCommon.ahk"
 
-imageDir := %0%
-; imageDir := "G:\emuloader\PC\PC001044"
+imageDir := A_Args.Length > 0 ? A_Args[1] : ""
+;imageDir := "g:\emuloader\PC\PC004756"
 
-option := getOption(imageDir)
-; debug( ">> option`n" . JSON.stringify(option) )
+option    := getOption(imageDir)
+execution := option.has("execution") ? option.execution : JSON.Obj()
 
-file     := option.execution.executable
-runAdmin := option.execution.runAdmin
-notHide  := option.execution.notHideLoader
+exeFile  := execution.executable
+runAdmin := execution.runAdmin
+notHide  := execution.notHideLoader
 
-debug("file:" file)
+debug("file:" exeFile)
 debug("runAdmin:" runAdmin)
-if( file == "" )
-	ExitApp
-if( ! FileUtil.isFile(imageDir "\" file) )
-	ExitApp
+if (exeFile == "")
+	ExitApp()
+if (!FileUtil.isFile(imageDir "\" exeFile))
+	ExitApp()
 
-cmd := wrap(imageDir "\" file)
+cmd := wrap(imageDir "\" exeFile)
 
-if(notHide == "true") {
-  if( runAdmin == "true" ) {
-		Run *RunAs %cmd%
+if (notHide == "true") {
+	if (runAdmin == "true") {
+		Run("*RunAs " cmd)
 	} else {
-		Run %cmd%
+		Run(cmd)
 	}
 } else {
-	if( runAdmin == "true" ) {
-		RunWait *RunAs %cmd%
+	if (runAdmin == "true") {
+		RunWait("*RunAs " cmd)
 	} else {
-		RunWait %cmd%
+		RunWait(cmd)
 	}
 }
 
-ExitApp	
-
-
-getOption(imageDir) {
-	dirConf := imageDir "\_EL_CONFIG"
-	IfExist %dirConf%\option\option.json
-	{
-		FileRead, jsonText, %dirConf%\option\option.json
-		return JSON.parse(jsonText)
-	}
-	return {}
-}
-
-
+ExitApp()
 getExecutableFile(imageDir) {
-  option := getOption(imageDir)
-  return option.execution.executable
+	option := getOption(imageDir)
+	return option.has("execution") ? option.execution.executable : ""
 }

@@ -1,21 +1,27 @@
-#NoEnv
-#include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
+#Requires AutoHotkey >=2.0
+#include d:\app\emulator\ZZ_Library\Include.ahk
+#include d:\app\emulator\ZZ_Library\EmulCommon.ahk
 
-global emulatorPid := ""
+imageDir := A_Args.Length > 0 ? A_Args[1] : ""
+;imageDir := "\\NAS2\emul\image\NSW\Ni no Kuni II Revenant Kingdom All In One Edition (T-ko)"
 
-imageDir := %0%
-;imageDir := "\\NAS2\emul\image\NSW\Korean Drone Flying Tour - Jeju Island-1 (14 dimension)(ko)"
+if(imageDir == "")
+	return
+
+option := getOption(imageDir)
+debug(">> option.system`n" . JSON.stringify(option))
 
 makeLink(imageDir)
+setConfig(option)
 
-container := new DiskContainer( imageDir, "i).*\.(nsp|nsz|xci)$" )
-container.initSlot( 1 )
-
-config := getConfig( imageDir, container )
-
-command := A_ScriptDir "\emul\Ryujinx.exe" config
+imageRom := FileUtil.getFile(imageDir, "i).*\.(nsp|nsz|xci)$")
+command  := wrap(A_ScriptDir . "\emul\Ryujinx.exe")
+if(imageRom != "") {
+	command .= " " . wrap(imageRom)
+}
 debug(command)
-RunWait, % command,,,emulatorPid
+
+RunWait(command)
 
 ExitApp
 
@@ -28,9 +34,9 @@ makeLink(imageDir) {
 }
 
 makeSnapshotLink() {
-	src := "c:\app\emulator\ZZ_snapshot"
+	src := "d:\app\emulator\ZZ_snapshot"
 	trg := A_ScriptDir "\emul\portable\screenshots"
-	FileUtil.makeLink( src, trg, true )
+	FileUtil.makeLink(src, trg, true)
 }
 
 makeContentLink(src,trg) {
@@ -38,87 +44,22 @@ makeContentLink(src,trg) {
 	FileUtil.makeLink(src, trg, true)
 }
 
+setConfig(option) {
+	file   := A_ScriptDir "\emul\portable\Config.json"
+	config := FileUtil.readJson(file)
+	config.system_language  := option.system.language
+	config.system_region    := option.system.region
+	config.start_fullscreen := JSON.toBoolean(option.system.fullscreen)
+	debug(">> Config.json`n" . JSON.stringify(config))
+	FileUtil.write(file, JSON.stringify(config))
+}
+
 waitEmulator() {
-	WinWait, ahk_exe xemu.exe,, 10
-	IfWinExist
-	  activateEmulator()
+	WinWait("ahk_exe Ryujinx.exe",, 10)
+	if WinExist("ahk_exe Ryujinx.exe")
+		activateEmulator()
 }
 
 activateEmulator() {
-	WinActivate, ahk_exe xemu.exe,, 10
-}
-
-!F4:: ; ALT + F4
-	Process, Close, %emulatorPid%
-  return
-	
-^+PGUP:: ; Change CD rom
-	if( container.size() > 1 )
-		container.insertDisk( "1", "changeCdRom" )
-	return
-
-
-^+End:: ; Cancel Disk Change
-	if( container.size() > 1 )
-		container.cancel()
-	return
-
-^+Del:: ; Reset
-	activateEmulator()
-	; SendInput {Control down}{R}{Control up}
-	; Send ^r
-	; SendEvent ^r
-	; ControlSend, ahk_exe xemu.exe, ^r
-	return
-
-^+F4:: ;Exit
-	Process, Close, %emulatorPid%
-	return
-
-^+Insert:: ; Toggle Speed
-	activateEmulator()
-	; sendKey("F4")
-	return
-
-changeCdRom( slotNo, file ) {
-	activateEmulator()
-	SendRaw ^{o}
-	WinWait, ahk_exe xemu.exe ahk_class #32770,, 10
-	IfWinExist
-	{
-		Clipboard := file
-		Send ^v
-		Send {Enter}
-	}
-	waitEmulator()
-	return
-}
-
-getConfig(imageDir, diskContainer) {
-
-	; dirBase := FileUtil.getDir(imageDir) "\_EL_CONFIG"
-	; option  := getOption(imageDir)
-
-	config := ""
-	; config .= " --fullscreen"
-	; config .= " -r " wrap("d:\Games\Trinagle Strategy\data")
-
-	if( diskContainer.hasDisk() ) {
-		config .= " " wrap(diskContainer.getFile(1))
-	}
-
-	return config
-	
-}
-
-getOption(imageDir) {
-	dirConf := imageDir "\_EL_CONFIG"
-	IfExist %dirConf%\option\option.json
-	{
-		FileRead, jsonText, %dirConf%\option\option.json
-		option := JSON.parse( jsonText )
-	} else {
-		option := {}
-	}
-	return option
+	WinActivate("ahk_exe Ryujinx.exe")
 }

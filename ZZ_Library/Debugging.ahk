@@ -13,6 +13,7 @@ _AhkStdOnError(err, mode) {
     msg .= "`nCall stack:`n" err.Stack "`n"
   msg .= "`n> " (A_IsCompiled ? A_ScriptFullPath : A_LineFile)
   _AhkStdWrite(msg)
+  try ExitApp(1)
   return 1
 }
 

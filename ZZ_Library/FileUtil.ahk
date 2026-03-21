@@ -133,11 +133,11 @@ class FileUtil {
 		return !InStr(attr, "D")
 	}
 
-  static readJson(path) {
-  	if (!this.exist(path))
-  		return JSON.Obj()
- 	return JSON.parse(this.read(path))
-  }
+	static readJson(path) {
+		if (!this.exist(path))
+			return JSON.Obj()
+		return JSON.parse(this.read(path), true)
+	}
 
   static readXml(path) {
   	if (!this.exist(path))
@@ -214,7 +214,7 @@ class FileUtil {
 		return FileExist( path ) != ""
 	}
 
-	static delete(path, recursive := 1) {
+	static delete(path, recursive := true) {
 		if (this.isFile(path)) {
 			FileDelete(path)
 		} else if (this.isDir(path)) {
@@ -222,28 +222,32 @@ class FileUtil {
 		}
 	}
 
-	static move(src, trg, overwrite := 1) {
+	static move(src, trg, overwrite := true) {
 		if (!this.exist(src))
 			return
 		this.makeParentDir(trg, this.isDir(src))
-		FileMove(src, trg, overwrite ? 1 : 0)
+		FileMove(src, trg, overwrite)
 	}
 
-	static copy(src, trg, overwrite := 1) {
+	static copy(src, trg, overwrite := true) {
 		if (!this.exist(src))
 			return
 		this.makeParentDir(trg, this.isDir(src))
 		if (this.isDir(src)) {
 			DirCopy(src, trg, overwrite)
 		} else {
-			FileCopy(src, trg, overwrite ? 1 : 0)
+			FileCopy(src, trg, overwrite)
 		}
 	}
 
-	static write(path, content := "") {
+	static write(path, content := "", charset := "") {
 		this.makeParentDir(path)
-		try FileDelete(path)
-		FileAppend(content, path)
+		this.delete(path)
+		if(charset == "") {
+			FileAppend(content, path)
+		} else {
+			FileAppend(content, path, charset)
+		}
 	}
 
 	static hashMD5(path) {

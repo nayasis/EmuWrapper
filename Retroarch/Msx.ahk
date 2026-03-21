@@ -2,6 +2,7 @@
 #Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := A_Args.Length ? A_Args[1] : ""
+;imageDir := "\\NAS2\emul\image\MSX\Ancient Ys Vanished II - The Final Chapter (hdd) (falcom)(T-ko by kitiya)"
 
 option := getOption(imageDir)
 config := setConfig("bluemsx_libretro", option)

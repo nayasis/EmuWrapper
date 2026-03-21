@@ -28,7 +28,7 @@ closeApp()
 
 ExitApp()
 
-closeApp() {
+closeApp(*) {
 	closeProcess()
 	ResolutionChanger.restore()
 	Taskbar.show(true)
@@ -365,13 +365,14 @@ readProperties(file) {
 	if (Type(prop) != "Map")
 		prop := Map()
 
-	prop["cd"    ] := A_ScriptDir
-	prop["cdWin" ] := RegExReplace( A_ScriptDir, "\\", "\\" ) ; double file seperator slash
-	prop["cdUnix"] := RegExReplace( A_ScriptDir, "\\", "/" ) ; normal file seperator
-	prop["home"  ] := EnvGet("userprofile")
-  prop["windir"] := EnvGet("SystemRoot")
-  prop["sid"   ] := readSID()
-  prop["drive" ] := readDrive()
+	prop["cd"      ] := A_ScriptDir
+	prop["cdWin"   ] := RegExReplace( A_ScriptDir, "\\", "\\" ) ; double file seperator slash
+	prop["cdUnix"  ] := RegExReplace( A_ScriptDir, "\\", "/" ) ; normal file seperator
+	prop["home"    ] := EnvGet("userprofile")
+  prop["windir"  ] := EnvGet("SystemRoot")
+  prop["appdata" ] := EnvGet("APPDATA")
+  prop["sid"     ] := readSID()
+  prop["drive"   ] := readDrive()
 	return prop
 }
 

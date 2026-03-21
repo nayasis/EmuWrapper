@@ -5,8 +5,8 @@ emulatorPid := ""
 
 imageDir := %0%
 ;imageDir := "\\NAS2\emul\image\WiiU\Star Fox Zero (nintendo)(en)"
-imageDir := "\\NAS2\emul\image\WiiU\Monster Hunter 3G HD (capcom)(T-ko)"
-imageDir := "g:\work\_tmp\Monster Hunter 3G HD (capcom)(T-ko)"
+;imageDir := "\\NAS2\emul\image\WiiU\Monster Hunter 3G HD (capcom)(T-ko)"
+;imageDir := "g:\work\_tmp\Monster Hunter 3G HD (capcom)(T-ko)"
 
 config := getConfig( imageDir )
 
