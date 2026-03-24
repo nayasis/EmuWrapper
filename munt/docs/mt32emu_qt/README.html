@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>README.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+</head>
+<body>
+<h1 id="munt-mt32emu-qt">Munt mt32emu-qt</h1>
+<p>The main synthesiser application that is a part of the Munt project. It makes
+use of <a href="https://github.com/munt/munt/tree/master/mt32emu">the mt32emu library</a>
+and <a href="https://www.qt.io/">the Qt framework</a>. It facilitates both realtime synthesis
+and conversion of pre-recorded Standard MIDI files to WAVE files. Key features:</p>
+<ol>
+<li>Support for multiple simultaneous synths with separate state &amp; configuration.</li>
+<li>GUI to configure synths, manage ROMs, connections to external MIDI ports and
+MIDI programs and interfaces to the host audio systems.</li>
+<li>Emulates the funny MT-32 LCD. Also displays the internal synth state in
+realtime.</li>
+<li>Being a cross-platform application, provides support for different operating
+systems and multimedia systems such as Windows multimedia, PulseAudio, JACK
+audio connection kit, ALSA, OSS and CoreMIDI.</li>
+<li>Contains built-in MIDI player of Standard MIDI files optimised for mt32emu.</li>
+<li>Makes it easy to record either the MIDI input or the produced audio output.</li>
+<li>Simplifies batch conversion of collections of SMF files to .wav / .raw audio
+files.</li>
+</ol>
+<h1 id="midi-support">MIDI Support</h1>
+<p><em>mt32emu-qt</em> can communicate with other MIDI applications using virtual MIDI ports which depends on the operating system.
+Currently, supported MIDI systems are: Windows Multimedia, CoreMIDI, ALSA MIDI sequencer, ALSA &amp; OSS4 raw MIDI ports and JACK MIDI.
+In order to use this feature, the client MIDI applications need to be set up correctly, as well as some more steps may be
+necessary on particular systems.</p>
+<p>Because CoreMIDI and ALSA MIDI sequencer support virtual MIDI ports natively, these systems seem simplest to use.
+As <em>mt32emu-qt</em> starts, it creates a virtual MIDI port and listens for incoming connections. Contrary to that, Windows Multimedia
+<em>requires the dedicated MIDI driver</em> to be setup in the system and <em>mt32emu-qt</em> instead communicates with the driver as a proxy.
+With JACK MIDI, MIDI ports can also be created on the fly, albeit the user does this explicitly via the corresponding commands
+in &quot;Tools&quot; menu. Moreover, a whole synth instance can be wrapped into a single JACK client with one MIDI input port and
+a couple of output audio ports, so that MIDI and audio processing is performed without explicitly added latency.</p>
+<p>Some brief notes follow below related to each MIDI system.</p>
+<ol>
+<li>
+<p><em>Windows Multimedia</em></p>
+<p>If a system happens to have a hardware MIDI-in port or an existing virtual loopback MIDI port driver, mt32emu-qt readily
+supports this configuration and should be able to open any MIDI-in port in the system by using '+' button of &quot;MIDI Input&quot; panel
+or &quot;New MIDI port...&quot; item in &quot;Tools&quot; menu.
+When there is no MIDI-in port available, the dedicated MIDI driver can be used to forward MIDI messages to <em>mt32emu-qt</em>
+for playback. This is done automatically by the driver when it detects a running instance of <em>mt32emu-qt</em>.</p>
+</li>
+<li>
+<p><em>CoreMIDI</em></p>
+<p>Upon startup, <em>mt32emu-qt</em> creates destination &quot;Mt32EmuPort&quot; and listens for connections. The user can create
+more destinations by using '+' button of &quot;MIDI Input&quot; panel or &quot;New MIDI port...&quot; item in &quot;Tools&quot; menu.</p>
+</li>
+<li>
+<p><em>ALSA MIDI sequencer</em></p>
+<p>Upon startup, <em>mt32emu-qt</em> allocates a virtual MIDI port with the first available address. This address is displayed
+in the title of the main window for convenience. Using this address, any MIDI client application can attach.
+This MIDI system supports multiple client connections out of the box, so many applications can easily be handled.</p>
+</li>
+<li>
+<p><em>ALSA &amp; OSS4 raw MIDI ports</em></p>
+<p>This MIDI system has very basic support in <em>mt32emu-qt</em>. The default MIDI port is automatically tried to open at the startup.
+The user can open and close other MIDI ports by using '+' and '-' buttons of the &quot;MIDI Input&quot; panel. There is also
+limited support for OSS3 MIDI sequencer primarily intended to communicate with vanilla <a href="https://www.dosbox.com/">DOSBox</a>.
+Special provisions are needed to create a &quot;virtual MIDI port&quot; in order to provide a way for communication with other
+MIDI applications. The simplest approach looks to be making a FIFO and a corresponding link in the &quot;/dev&quot; directory.
+For example:</p>
+<pre><code>mkfifo /var/tmp/sequencer
+sudo ln -s /var/tmp/sequencer /dev/sequencer
+</code></pre>
+<p>Linux kernel also supplies a special kernel module that creates several virtual raw MIDI ports in the system. Command:</p>
+<pre><code>sudo modprobe snd_virmidi
+</code></pre>
+<p>creates by default 4 virtual raw MIDI ports bound with 4 ALSA MIDI sequencer ports, so both subsystems can interact easily.</p>
+</li>
+<li>
+<p><em>JACK MIDI ports and realtime synchronous MIDI-to-audio processing</em></p>
+<p>Being cross-platform, JACK MIDI stands out of other platform-specific MIDI systems, yet it may be available along with another.
+Hence, <em>mt32emu-qt</em> does not create JACK MIDI ports (clients) automatically, the user has to create as many clients as necessary.
+In addition, menu option &quot;New exclusive JACK MIDI port&quot; can be used to create a single JACK client that is able to work as
+a complete synth with a MIDI input and a couple of audio outputs. However, this synth working in the exclusive mode <em>cannot be
+&quot;pinned&quot;</em>, thus no additional MIDI sessions can be routed in.</p>
+</li>
+</ol>
+<h1 id="building">Building</h1>
+<p>Cmake is required for building. The minimum set of dependencies is:</p>
+<ol>
+<li>
+<p>Cmake - cross platform make utility
+@ <a href="http://www.cmake.org/">http://www.cmake.org/</a></p>
+</li>
+<li>
+<p>Qt framework
+@ <a href="http://www.qt.io/">http://www.qt.io/</a></p>
+</li>
+<li>
+<p>mt32emu library</p>
+</li>
+</ol>
+<p>Additional dependencies maybe needed (depending on the platform):</p>
+<ol>
+<li>
+<p>PortAudio - cross-platform audio I/O library
+@ <a href="http://www.portaudio.com/">http://www.portaudio.com/</a></p>
+</li>
+<li>
+<p>DirectX SDK - for building PortAudio with DirectSound and WDMKS support
+@ <a href="https://www.microsoft.com/en-us/download/details.aspx?id=6812">https://www.microsoft.com/en-us/download/details.aspx?id=6812</a></p>
+</li>
+<li>
+<p>PulseAudio - sound system for POSIX OSes - provides for accurate audio rendering
+@ <a href="https://www.freedesktop.org/wiki/Software/PulseAudio/">https://www.freedesktop.org/wiki/Software/PulseAudio/</a></p>
+</li>
+<li>
+<p>JACK Audio Connection Kit - a low-latency synchronous callback-based media server
+@ <a href="https://jackaudio.org/">https://jackaudio.org/</a></p>
+</li>
+</ol>
+<p>The easiest way to build <em>mt32emu-qt</em> is along with the <code>mt32emu</code> within the <code>munt</code> project. For a simple in-tree build
+in a POSIX environment, you can probably just run the following commands from the top-level directory containing the <code>munt</code> sources:</p>
+<pre><code>cmake -DCMAKE_BUILD_TYPE:STRING=Release .
+make
+sudo make install
+</code></pre>
+<p>In this case, the resulting binary is statically linked with the <code>mt32emu</code> library which also simplifies further deployment.</p>
+<p><em>mt32emu-qt</em> can also be built stand-alone that may be useful in case the <code>mt32emu</code> library is already installed in the system.
+For that, the build has to be performed from within the <em>mt32emu-qt</em> source directory, and the development files of the <code>mt32emu</code>
+library must also be installed somewhere in the system.</p>
+<p>The build script recognises the following configuration options to control the build:</p>
+<ul>
+<li><code>mt32emu-qt_WITH_QT_VERSION</code> - specifies the exact Qt framework major version (supported range is 4..6) to be linked with;
+useful when multiple versions are available in the system</li>
+<li><code>mt32emu-qt_USE_PULSEAUDIO_DYNAMIC_LOADING</code> - whether to load PulseAudio library dynamically (if available)</li>
+<li><code>mt32emu-qt_WITH_DEBUG_WINCONSOLE</code> - enables a console for showing debug output on Windows systems</li>
+<li><code>mt32emu-qt_WITH_ALSA_MIDI_SEQUENCER</code> - specifies whether to use the ALSA MIDI sequencer or raw ALSA MIDI ports
+(when targeting Linux platform only)</li>
+<li><code>mt32emu-qt_PRECOMPILED_HEADER</code> - an optional C++ header file to use as a precompiled header, included before each source file
+which may significantly improve build performance</li>
+</ul>
+<p>The options can be set in various ways:</p>
+<ul>
+<li>specified directly as the command line arguments within the <code>cmake</code> command</li>
+<li>by editing <code>CMakeCache.txt</code> file that CMake creates in the target directory</li>
+<li>using the CMake GUI</li>
+</ul>
+<p>Note, the compiler optimisations are typically disabled by default. In order to get
+a well-performing binary, be sure to set the value of the <code>CMAKE_BUILD_TYPE</code> variable
+to Release or customise the compiler options otherwise.</p>
+<p>To simplify the build configuration process in a non-POSIX environment, the CMake GUI tool
+may come in handy. More info on configuration of CMake projects and the dependency management
+can be found at <a href="http://www.cmake.org/">the CMake homepage</a>.</p>
+<h1 id="license">License</h1>
+<p>Copyright (C) 2011-2022 Jerome Fisher, Sergey V. Mikayev</p>
+<p>This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.</p>
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.</p>
+<p>You should have received a copy of the GNU General Public License
+along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+<h1 id="trademark-disclaimer">Trademark disclaimer</h1>
+<p>Roland is a trademark of Roland Corp. All other brand and product names are
+trademarks or registered trademarks of their respective holder. Use of
+trademarks is for informational purposes only and does not imply endorsement by
+or affiliation with the holder.</p>
+</body>
+</html>
