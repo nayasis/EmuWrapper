@@ -2,7 +2,7 @@
 #Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := A_Args.Length ? A_Args[1] : ""
- ;imageDir := "\\NAS2\emul\image\Neogeo\King of Fighters '94 (snk)(en)"
+; imageDir := "\\NAS2\emul\image\FBA\Zip & Zap"
 
 ; EMUL_ROOT := A_ScriptDir "\1.9.0"
 

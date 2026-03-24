@@ -86,12 +86,28 @@ getOption(imageDir) {
 
 flattenJson(jsonObj) {
 	res := JSON.Obj()
-	for i, obj in jsonObj {
-		for key, val in obj {
+	flattenJsonInto(res, jsonObj)
+	return res
+}
+
+flattenJsonInto(res, value) {
+	if (!IsObject(value))
+		return
+
+	valueType := Type(value)
+	if (valueType = "Array") {
+		for _, item in value
+			flattenJsonInto(res, item)
+		return
+	}
+
+	for key, val in value {
+		if (IsObject(val)) {
+			flattenJsonInto(res, val)
+		} else {
 			res[key] := val
 		}
 	}
-	return res
 }
 
 setAppendConfig(imageDir, option) {
