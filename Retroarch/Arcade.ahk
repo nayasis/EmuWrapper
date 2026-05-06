@@ -27,6 +27,7 @@ imageFile := getRomPath(imageDir,option,"zip|7z",true)
 ;	linkResource(config, imageFile)
 ;}
 
+prepareFbneoPatchedRom(config, imageFile)
 setBezel(config,imageDir)
 writeConfig(config, imageFile)
 runEmulator(imageFile, config)
@@ -53,6 +54,23 @@ setBezel(config, imageDir) {
 			config.input_overlay := bezel
 		}		
 	}
+}
+
+prepareFbneoPatchedRom(config, imageFile) {
+	if(config.core != "fbneo_libretro")
+		return
+
+	dirPatched := A_ScriptDir "\share\system\fbneo\patched"
+	
+	initFbneoPatchedDir(dirPatched)
+	FileUtil.makeLink(imageFile, dirPatched "\" FileUtil.getName(imageFile), true)
+}
+
+initFbneoPatchedDir(dirPatched) {
+	FileUtil.makeDir(dirPatched)
+	for _, file in FileUtil.getFiles(dirPatched, ".*", true) {
+		FileUtil.delete(file, false)
+	}	
 }
 
 ;linkResource(config, imageFile) {

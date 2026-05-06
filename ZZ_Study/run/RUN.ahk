@@ -340,24 +340,60 @@ blockNetwork(param) {
 installFont(fontDir, properties) {
 	if ( fontDir == "_" )
 		return
-	winDir := properties["windir"] "\Fonts"
-	fonts  := FileUtil.getFiles(fontDir)
+	winDir  := properties["windir"] "\Fonts"
+	userDir := EnvGet("LOCALAPPDATA") "\Microsoft\Windows\Fonts"
+	fonts  := FileUtil.getFiles(fontDir, "i)\.(ttf|ttc|otf|fon)$")
 	for i, path in fonts {
 		installed := winDir "\" FileUtil.getName(path)
-		sourceHash := FileUtil.hashMD5(path)
-		installedHash := FileUtil.isFile(installed) ? FileUtil.hashMD5(installed) : ""
-		needInstall := (!FileUtil.isFile(installed) || sourceHash == "" || installedHash == "" || sourceHash != installedHash)
+		needInstall := !isFontInstalled(path, winDir, userDir)
 		if( needInstall ) {
 			debug(">> install font : " path " -> " installed)
-			debug("   md5 source : " sourceHash)
-			debug("   md5 target : " installedHash)
 			Environment.restartAsAdmin()
 			FileCopy(path, installed, true)
-			DllCall("AddFontResource", "Str", installed)
-			SendMessage(0x1D, 0, 0,, "ahk_id 0xFFFF")
+			DllCall("AddFontResourceW", "Str", installed, "Int")
+			DllCall("SendMessageTimeoutW", "Ptr", 0xFFFF, "UInt", 0x1D, "Ptr", 0, "Ptr", 0, "UInt", 0x2, "UInt", 5000, "Ptr", 0)
+		} else {
+			debug(">> font already installed : " path)
 		}
 	}
 	
+}
+
+isFontInstalled(sourcePath, winDir, userDir) {
+	fileName := FileUtil.getName(sourcePath)
+	for _, dir in [winDir, userDir] {
+		if (isSameFileHash(sourcePath, dir "\" fileName))
+			return true
+	}
+	return isFontRegistered(sourcePath, winDir, userDir)
+}
+
+isSameFileHash(sourcePath, targetPath) {
+	if !FileUtil.isFile(targetPath)
+		return false
+	sourceHash := FileUtil.hashMD5(sourcePath)
+	targetHash := FileUtil.hashMD5(targetPath)
+	return (sourceHash != "" && targetHash != "" && sourceHash == targetHash)
+}
+
+isFontRegistered(sourcePath, winDir, userDir) {
+	fileName := FileUtil.getName(sourcePath)
+	for _, regKey in ["HKCU\Software\Microsoft\Windows NT\CurrentVersion\Fonts", "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"] {
+		Loop Reg, regKey, "V" {
+			try fontPath := RegRead(A_LoopRegKey, A_LoopRegName)
+			catch
+				continue
+			if (FileUtil.getName(fontPath) != fileName)
+				continue
+			if (isSameFileHash(sourcePath, fontPath))
+				return true
+			if (isSameFileHash(sourcePath, winDir "\" fontPath))
+				return true
+			if (isSameFileHash(sourcePath, userDir "\" fontPath))
+				return true
+		}
+	}
+	return false
 }
 
 readProperties(file) {
