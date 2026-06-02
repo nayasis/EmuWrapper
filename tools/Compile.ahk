@@ -69,9 +69,14 @@ ExitApp
 
 compileOne(src, ahk2exe, base) {
 	trg := getDir(src) "\" getName(src, false) ".exe"
+	icon := getDir(src) "\" getName(src, false) ".ico"
 	outFile := A_Temp "\ahk2exe_out_" A_TickCount ".log"
 	errFile := A_Temp "\ahk2exe_err_" A_TickCount ".log"
 	cmd := '"' ahk2exe '" /in "' src '" /out "' trg '" /base "' base '" /compress 0 /cp 65001 /silent verbose'
+	if FileExist(icon) {
+		cmd .= ' /icon "' icon '"'
+		writeOut("아이콘 적용: " icon)
+	}
 	cmdLine := A_ComSpec ' /d /s /c "' cmd ' 1> "' outFile '" 2> "' errFile '""'
 	exitCode := RunWait(cmdLine, , "Hide")
 	if FileExist(outFile) {

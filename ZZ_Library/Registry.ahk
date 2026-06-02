@@ -158,6 +158,9 @@ class Registry {
 			
 			regName := Registry._bindValue( regName, properties )
 
+			if !Registry._valueChanged(regKey, regName, regType, regVal)
+				continue
+
 			if ( ! RegExMatch(regKey, "^(HKEY_CURRENT_USER|HKEY_USERS)\\.*$") ) {
 				Registry._restartAsAdmin()
 			}
@@ -176,6 +179,17 @@ class Registry {
 		}
 
 		return value
+	}
+
+	static _valueChanged(regKey, regName, regType, regVal) {
+		try current := RegRead(regKey, regName)
+		catch
+			return true
+
+		if (regType == "REG_DWORD")
+			return Integer(current) != Integer(regVal)
+
+		return current != regVal
 	}
 
 	static _toStringFromHex( hexValue ) {
@@ -225,8 +239,8 @@ class Registry {
 	}
 
 	static _convertBase(fromBase, toBase, number) {
-		static u := A_IsUnicode ? "_wcstoui64" : "_strtoui64"
-		static v := A_IsUnicode ? "_i64tow" : "_i64toa"
+		static u := "_wcstoui64"
+		static v := "_i64tow"
 		s := Buffer(65, 0)
 		value := DllCall("msvcrt.dll\" u, "Str", number, "UInt", 0, "UInt", fromBase, "CDECL Int64")
 		DllCall("msvcrt.dll\" v, "Int64", value, "Ptr", s, "UInt", toBase, "CDECL")
