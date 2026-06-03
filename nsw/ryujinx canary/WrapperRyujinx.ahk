@@ -33,8 +33,9 @@ makeLink(imageDir) {
 	makeSnapshotLink()
 	if(imageDir == "0")
 		return
-	makeContentLink(imageDir "\emul\games",A_ScriptDir "\emul\portable\games")
-	makeContentLink(imageDir "\emul\mods", A_ScriptDir "\emul\portable\mods\contents")
+	makeContentLink(imageDir "\emul\games", A_ScriptDir "\emul\portable\games")
+	makeContentLink(imageDir "\emul\dlc",   A_ScriptDir "\emul\portable\patchesAndDlc")
+	makeContentLink(imageDir "\emul\mods",  A_ScriptDir "\emul\portable\mods\contents")
 }
 
 makeSnapshotLink() {
