@@ -13,7 +13,7 @@ if(imageDir == "")
 option := getOption(imageDir)
 debug(">> option`n" . JSON.stringify(option))
 
-;makeLink(imageDir)
+makePortable()
 setConfig(option)
 
 imageRom := FileUtil.getFile(imageDir, "i).*\.(nsp|nsz|xci)$")
@@ -29,24 +29,23 @@ waitCloseEmulator(emulatorPid)
 
 ExitApp
 
-makeLink(imageDir) {
-	makeSnapshotLink()
-	if(imageDir == "0")
+makePortable() {
+	userDir := A_ScriptDir "\user"
+	if FileUtil.exist(userDir)
 		return
-	makeContentLink(imageDir "\emul\games", A_ScriptDir "\emul\portable\games")
-	makeContentLink(imageDir "\emul\dlc",   A_ScriptDir "\emul\portable\patchesAndDlc")
-	makeContentLink(imageDir "\emul\mods",  A_ScriptDir "\emul\portable\mods\contents")
+	srcDir := EnvGet("APPDATA") "\eden"
+	FileUtil.makeDir(userDir)
+	copyPortableDir(srcDir, userDir, "config")
+	copyPortableDir(srcDir, userDir, "keys")
+	copyPortableDir(srcDir, userDir, "nand")
+	copyPortableDir(srcDir, userDir, "sdmc")
+	copyPortableDir(srcDir, userDir, "load")
 }
 
-makeSnapshotLink() {
-	src := "d:\app\emulator\ZZ_snapshot"
-	trg := A_ScriptDir "\emul\portable\screenshots"
-	FileUtil.makeLink(src, trg, true)
-}
-
-makeContentLink(src,trg) {
-	FileUtil.makeDir(src)
-	FileUtil.makeLink(src, trg, true)
+copyPortableDir(srcDir, userDir, name) {
+	src := srcDir "\" name
+	if FileUtil.exist(src)
+		FileUtil.copy(src, userDir "\" name)
 }
 
 setConfig(option) {
