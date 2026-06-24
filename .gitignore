@@ -237,25 +237,25 @@ nsw/ryujinx/emul
 nsw/util/
 
 # PSX3 / RPCS3
-psx3/rpcs3-*/cache/
-psx3/rpcs3-*/config/
-psx3/rpcs3-*/dev_flash/
-psx3/rpcs3-*/dev_hdd0/
-psx3/rpcs3-*/dev_hdd1/
-psx3/rpcs3-*/games/
-psx3/rpcs3-*/GuiConfigs/
-psx3/rpcs3-*/log/
-psx3/rpcs3-*/patches/
-psx3/rpcs3-*/qt6/
-psx3/rpcs3-*/screenshots/
-psx3/rpcs3-*/screenshots
-psx3/rpcs3-*/test/
-psx3/rpcs3-*/TTY.log
-psx3/rpcs3-*/RPCS3.log
-psx3/rpcs3-*/RPCS3.buf
-psx3/rpcs3-*/cacert.pem
-psx3/rpcs3-*/git/
-psx3/rpcs3-*/update_history.log
+psx3/rpcs3/cache/
+psx3/rpcs3/config/
+psx3/rpcs3/dev_flash/
+psx3/rpcs3/dev_hdd0/
+psx3/rpcs3/dev_hdd1/
+psx3/rpcs3/games/
+psx3/rpcs3/GuiConfigs/
+psx3/rpcs3/log/
+psx3/rpcs3/patches/
+psx3/rpcs3/qt6/
+psx3/rpcs3/screenshots/
+psx3/rpcs3/screenshots
+psx3/rpcs3/test/
+psx3/rpcs3/TTY.log
+psx3/rpcs3/RPCS3.log
+psx3/rpcs3/RPCS3.buf
+psx3/rpcs3/cacert.pem
+psx3/rpcs3/git/
+psx3/rpcs3/update_history.log
 psx3/share/firmware/
 
 # Xbox / Xemu
@@ -321,3 +321,8 @@ ZZ_core/Xbox Controller button remapper/ReadMe.html
 
 
 retroarch/Pc98.cmd
+nsw/eden/user/nand
+nsw/eden/user/log
+nsw/eden/user
+psx3/rpcs3/cache
+psx3/rpcs3/dev_flash
