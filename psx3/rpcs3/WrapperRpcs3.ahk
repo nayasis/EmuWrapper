@@ -1,11 +1,13 @@
-#NoEnv
-#include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
+#Include "%A_ScriptDir%\..\..\ZZ_Library\Include.ahk"
 
 global emulatorPid := ""
 global hackPid := ""
 
-imageDir := %0%
-;imageDir := "\\NAS2\emul\image\psx3\Persona 4 - The Ultimate in Mayonaka Arena (arc system works)(en)"
+imageDir := A_Args.Length > 0 ? A_Args[1] : ""
+;imageDir := "\\NAS2\emul\image\psx3\Super Robot Taisen OG - Dark Prison (bb studio)(T-ko 20240826 by Doukyusen)"
+;imageDir := "\\NAS2\emul\image\psx3\Shin Gundam Musou (omega force)(ja)"
+
+mountDir(imageDir)
 
 option    := getOption(imageDir)
 imagePath := getImagePath(imageDir)
@@ -18,7 +20,7 @@ if(imagePath != "") {
 	command .= wrap(imagePath)
 	debug(command)
 
-	Run, % command,,,emulatorPid
+	Run(command, , , &emulatorPid)
 
 	activateEmulator()
 	waitCloseEmulator()
@@ -26,56 +28,61 @@ if(imagePath != "") {
 } else {
 	command := "rpcs3.exe"
 	debug(command)
-	Run, % command,,,
+	Run(command)
 }
 
-ExitApp	
+ExitApp()
+
+mountDir(imageDir) {
+	Loop Files, imageDir "\hdd\*", "D" {
+		srcDir := A_LoopFileFullPath
+		trgDir := A_ScriptDir "\dev_hdd0\game\" FileUtil.getName(srcDir)
+		FileUtil.makeLink(srcDir, trgDir, true)
+	}
+}
 
 getImagePath(imageDir) {
-	imagePath := FileUtil.getFile(imageDir "\PS3_GAME\USRDIR", "i)eboot\.bin")
+	imagePath := FileUtil.getFile(imageDir "\disc\PS3_GAME\USRDIR", "i)eboot\.bin")
 	if(imagePath == "") {
-	  imagePath := FileUtil.getFile(imageDir "\PS3_GAME\USRDIR", "i).*\.(bin)$")
-	  if(imagePath == "") {
-	  	mountDir  := FileUtil.getFile(imageDir, "\\([a-zA-Z0-9]{9})$", true)
-	  	imagePath := FileUtil.getFile(mountDir "\USRDIR", "i).*\.(bin)$")
-	  	if(imagePath != "") {
-				trgDir := A_ScriptDir "\dev_hdd0\game\" FileUtil.getName(mountDir)
-	  		FileUtil.makeLink(mountDir, trgDir, true)
-	  	}
-	  }
+	  imagePath := FileUtil.getFile(imageDir "\disc\PS3_GAME\USRDIR", "i).*\.(bin)$")
+	}
+	if(imagePath == "") {
+		imagePath := FileUtil.getFile(imageDir "\hdd\.*\USRDIR", "i).*\.(bin)$")
 	}
   return imagePath
 }
 
 waitEmulator() {
-	WinWait, ahk_exe rpcs3.exe,, 10
+	WinWait("ahk_exe rpcs3.exe",, 10)
 }
 
 activateEmulator() {
 	waitEmulator()
 	debug("activate emulator")
-	WinActivate, ahk_exe rpcs3.exe,, 10
+	WinActivate("ahk_exe rpcs3.exe")
 }
 
 waitCloseEmulator() {
 	waitEmulator()
-	IfWinExist
-	  WinWaitClose, ahk_exe rpcs3.exe,,
+	if WinExist("ahk_exe rpcs3.exe")
+	  WinWaitClose("ahk_exe rpcs3.exe")
 }
 
-!F4:: ; ALT + F4
-	Process, Close, % emulatorPid
-  return
+!F4:: { ; ALT + F4
+	global emulatorPid
+	ProcessClose(emulatorPid)
+}
 	
-^+F4:: ;Exit
-	Process, Close, %emulatorPid%
-	return
+^+F4:: { ;Exit
+	global emulatorPid
+	ProcessClose(emulatorPid)
+}
 
 getOption( imageDir ) {
 	dirConf := imageDir "\_EL_CONFIG"
-	IfExist %dirConf%\option\option.json
-	{
-		FileRead, jsonText, %dirConf%\option\option.json
+	optionFile := dirConf "\option\option.json"
+	if FileExist(optionFile) {
+		jsonText := FileRead(optionFile)
 		option := JSON.parse( jsonText )
 	} else {
 		option := {}
