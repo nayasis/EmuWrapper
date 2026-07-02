@@ -68,6 +68,15 @@ class FileUtil {
 	
 	static getFiles(path, pattern := ".*", includeDir := false, depth := 0) {
 		files := []
+		if (!this.exist(path) && this._hasPathExpression(path)) {
+			baseDir := this._getExistingBaseDir(path)
+			if (baseDir != "") {
+				pathPattern := this._pathExpressionToRegex(path)
+				this._getFilesByPathExpression(baseDir, pathPattern, pattern, includeDir, files)
+				this._sortArray(files)
+			}
+			return files
+		}
 		if (this.isFile(path) && includeDir == false) {
 			if RegExMatch(path, pattern)
 				files.Push(path)
@@ -104,8 +113,74 @@ class FileUtil {
 		}
 	}
 
+	static _hasPathExpression(path) {
+		return InStr(path, "*") || InStr(path, "?")
+	}
+
+	static _getExistingBaseDir(path) {
+		baseDir := path
+		while (baseDir != "") {
+			if (this.exist(baseDir) && this.isDir(baseDir))
+				return baseDir
+			parentDir := this.getParentDir(baseDir)
+			if (parentDir == baseDir)
+				break
+			baseDir := parentDir
+		}
+		return ""
+	}
+
+	static _getFilesByPathExpression(dir, pathPattern, filePattern, includeDir, files) {
+		dirs := []
+		Loop Files, dir "\*", "FD" {
+			if (InStr(A_LoopFileAttrib, "D")) {
+				dirs.Push(A_LoopFileFullPath)
+				if (includeDir && RegExMatch(A_LoopFileFullPath, pathPattern))
+					files.Push(A_LoopFileFullPath)
+			} else if (!includeDir) {
+				parentDir := this.getParentDir(A_LoopFileFullPath)
+				if (RegExMatch(parentDir, pathPattern) && RegExMatch(A_LoopFileFullPath, filePattern))
+					files.Push(A_LoopFileFullPath)
+			}
+		}
+		for index, subDir in dirs {
+			this._getFilesByPathExpression(subDir, pathPattern, filePattern, includeDir, files)
+		}
+	}
+
+	static _pathExpressionToRegex(path) {
+		pattern := "i)^"
+		index := 1
+		while (index <= StrLen(path)) {
+			char := SubStr(path, index, 1)
+			nextTwo := SubStr(path, index, 2)
+			if (nextTwo == ".*") {
+				pattern .= ".*"
+				index += 2
+				if (SubStr(path, index, 1) == "?") {
+					pattern .= "?"
+					index += 1
+				}
+				continue
+			}
+			if (char == "*") {
+				pattern .= "[^\\]*"
+			} else if (char == "?") {
+				pattern .= "[^\\]"
+			} else if (char == "\") {
+				pattern .= "\\"
+			} else if InStr(".^$+{}[]()|", char) {
+				pattern .= "\" char
+			} else {
+				pattern .= char
+			}
+			index += 1
+		}
+		return pattern "$"
+	}
+
 	static getFile(pathDirOrFile, pattern := ".*", includeDir := false, depth := 0) {
-		if (!this.exist(pathDirOrFile) && includeDir == false) {
+		if (!this.exist(pathDirOrFile) && includeDir == false && !this._hasPathExpression(pathDirOrFile)) {
 			return ""
 		}
 		if (this.isFile(pathDirOrFile)) {
