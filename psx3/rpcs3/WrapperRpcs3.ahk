@@ -6,6 +6,7 @@ global hackPid := ""
 imageDir := A_Args.Length > 0 ? A_Args[1] : ""
 ;imageDir := "\\NAS2\emul\image\psx3\Super Robot Taisen OG - Dark Prison (bb studio)(T-ko 20240826 by Doukyusen)"
 ;imageDir := "\\NAS2\emul\image\psx3\Shin Gundam Musou (omega force)(ja)"
+;imageDir := "\\NAS2\emul\image\psx3\Super Robot Taisen OG Saga - Masou Kishin F - Coffin of the End (winky soft)(T-ko)"
 
 mountDir(imageDir)
 
@@ -17,6 +18,7 @@ debug("imagePath:" imagePath)
 if(imagePath != "") {
 	command := "rpcs3.exe "
 	command .= "--no-gui "
+	command .= "--fullscreen "
 	command .= wrap(imagePath)
 	debug(command)
 
@@ -39,12 +41,20 @@ mountDir(imageDir) {
 		trgDir := A_ScriptDir "\dev_hdd0\game\" FileUtil.getName(srcDir)
 		FileUtil.makeLink(srcDir, trgDir, true)
 	}
+	Loop Files, imageDir "\home\00000001\exdata\*", "F" {
+		srcDir := A_LoopFileFullPath
+		trgDir := A_ScriptDir "\dev_hdd0\home\00000001\exdata\" FileUtil.getName(srcDir)
+		FileUtil.makeLink(srcDir, trgDir, true)
+	}
 }
 
 getImagePath(imageDir) {
 	imagePath := FileUtil.getFile(imageDir "\disc\PS3_GAME\USRDIR", "i)eboot\.bin")
 	if(imagePath == "") {
 	  imagePath := FileUtil.getFile(imageDir "\disc\PS3_GAME\USRDIR", "i).*\.(bin)$")
+	}
+	if(imagePath == "") {
+		imagePath := FileUtil.getFile(imageDir "\hdd\.*\USRDIR", "i)eboot\.(bin)$")
 	}
 	if(imagePath == "") {
 		imagePath := FileUtil.getFile(imageDir "\hdd\.*\USRDIR", "i).*\.(bin)$")

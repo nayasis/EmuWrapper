@@ -342,16 +342,24 @@ installFont(fontDir, properties) {
 		return
 	winDir  := properties["windir"] "\Fonts"
 	userDir := EnvGet("LOCALAPPDATA") "\Microsoft\Windows\Fonts"
-	fonts  := FileUtil.getFiles(fontDir, "i)\.(ttf|ttc|otf|fon)$")
+	regKey  := "HKCU\Software\Microsoft\Windows NT\CurrentVersion\Fonts"
+	fonts   := FileUtil.getFiles(fontDir, "i)\.(ttf|ttc|otf|fon)$")
 	for i, path in fonts {
-		installed := winDir "\" FileUtil.getName(path)
-		needInstall := !isFontInstalled(path, winDir, userDir)
+		installed := getFontInstallPath(path, userDir)
+		needInstall := !isFontRegistered(path, winDir, userDir)
 		if( needInstall ) {
 			debug(">> install font : " path " -> " installed)
-			Environment.restartAsAdmin()
-			FileCopy(path, installed, true)
-			DllCall("AddFontResourceW", "Str", installed, "Int")
+			SplitPath(installed, , &installedDir)
+			if !DirExist(installedDir)
+				DirCreate(installedDir)
+			if !isSameFontFile(path, installed)
+				FileCopy(path, installed, true)
+			registryName := getFontRegistryName(path, regKey, &previousInstalled)
+			RegWrite(installed, "REG_SZ", regKey, registryName)
+			loaded := DllCall("AddFontResourceExW", "Str", installed, "UInt", 0, "Ptr", 0, "Int")
 			DllCall("SendMessageTimeoutW", "Ptr", 0xFFFF, "UInt", 0x1D, "Ptr", 0, "Ptr", 0, "UInt", 0x2, "UInt", 5000, "Ptr", 0)
+			if (loaded > 0)
+				deleteStaleFont(previousInstalled, installed, userDir)
 		} else {
 			debug(">> font already installed : " path)
 		}
@@ -359,21 +367,66 @@ installFont(fontDir, properties) {
 	
 }
 
-isFontInstalled(sourcePath, winDir, userDir) {
-	fileName := FileUtil.getName(sourcePath)
-	for _, dir in [winDir, userDir] {
-		if (isSameFileHash(sourcePath, dir "\" fileName))
-			return true
-	}
-	return isFontRegistered(sourcePath, winDir, userDir)
-}
-
-isSameFileHash(sourcePath, targetPath) {
+isSameFontFile(sourcePath, targetPath) {
 	if !FileUtil.isFile(targetPath)
+		return false
+	if (FileUtil.getName(sourcePath) != FileUtil.getName(targetPath))
+		return false
+	if (FileGetSize(sourcePath) != FileGetSize(targetPath))
 		return false
 	sourceHash := FileUtil.hashMD5(sourcePath)
 	targetHash := FileUtil.hashMD5(targetPath)
 	return (sourceHash != "" && targetHash != "" && sourceHash == targetHash)
+}
+
+getFontInstallPath(sourcePath, userDir) {
+	installed := userDir "\" FileUtil.getName(sourcePath)
+	if !FileUtil.isFile(installed) || isSameFontFile(sourcePath, installed)
+		return installed
+	sourceHash := FileUtil.hashMD5(sourcePath)
+	if (sourceHash == "")
+		throw Error("Failed to calculate font MD5: " sourcePath)
+	return userDir "\" sourceHash "\" FileUtil.getName(sourcePath)
+}
+
+getFontRegistryName(path, regKey, &registeredPath) {
+	registeredPath := ""
+	fileName := FileUtil.getName(path)
+	Loop Reg, regKey, "V" {
+		try fontPath := RegRead(A_LoopRegKey, A_LoopRegName)
+		catch
+			continue
+		if (FileUtil.getName(fontPath) == fileName) {
+			registeredPath := fontPath
+			return A_LoopRegName
+		}
+	}
+	SplitPath(path, , , &extension, &nameNoExt)
+	extension := StrLower(extension)
+	if (extension == "ttf" || extension == "ttc")
+		return nameNoExt " (TrueType)"
+	if (extension == "otf")
+		return nameNoExt " (OpenType)"
+	return nameNoExt
+}
+
+deleteStaleFont(stalePath, installedPath, userDir) {
+	if (stalePath == "")
+		return
+	if !RegExMatch(stalePath, "i)^(?:[a-z]:\\|\\\\)")
+		stalePath := userDir "\" stalePath
+	if (StrLower(stalePath) == StrLower(installedPath))
+		return
+	if (InStr(StrLower(stalePath), StrLower(userDir "\")) != 1)
+		return
+	if !FileUtil.isFile(stalePath)
+		return
+	try {
+		FileDelete(stalePath)
+		debug(">> delete stale font : " stalePath)
+	} catch Error as err {
+		debug(">> stale font delete skipped : " stalePath " (" err.Message ")")
+	}
 }
 
 isFontRegistered(sourcePath, winDir, userDir) {
@@ -385,11 +438,11 @@ isFontRegistered(sourcePath, winDir, userDir) {
 				continue
 			if (FileUtil.getName(fontPath) != fileName)
 				continue
-			if (isSameFileHash(sourcePath, fontPath))
+			if (isSameFontFile(sourcePath, fontPath))
 				return true
-			if (isSameFileHash(sourcePath, winDir "\" fontPath))
+			if (isSameFontFile(sourcePath, winDir "\" fontPath))
 				return true
-			if (isSameFileHash(sourcePath, userDir "\" fontPath))
+			if (isSameFontFile(sourcePath, userDir "\" fontPath))
 				return true
 		}
 	}

@@ -13,7 +13,7 @@ if(imageDir == "")
 option := getOption(imageDir)
 debug(">> option`n" . JSON.stringify(option))
 
-makePortable()
+makeLink(imageDir)
 setConfig(option)
 
 imageRom := FileUtil.getFile(imageDir, "i).*\.(nsp|nsz|xci)$")
@@ -29,23 +29,24 @@ waitCloseEmulator(emulatorPid)
 
 ExitApp
 
-makePortable() {
-	userDir := A_ScriptDir "\user"
-	if FileUtil.exist(userDir)
+makeLink(imageDir) {
+	makeSnapshotLink()
+	if(imageDir == "0")
 		return
-	srcDir := EnvGet("APPDATA") "\eden"
-	FileUtil.makeDir(userDir)
-	copyPortableDir(srcDir, userDir, "config")
-	copyPortableDir(srcDir, userDir, "keys")
-	copyPortableDir(srcDir, userDir, "nand")
-	copyPortableDir(srcDir, userDir, "sdmc")
-	copyPortableDir(srcDir, userDir, "load")
+	makeContentLink(imageDir "\emul\games", A_ScriptDir "\user\shader")
+	makeContentLink(imageDir "\emul\mods",  A_ScriptDir "\user\load")
+	makeContentLink(imageDir "\emul\dlc",   A_ScriptDir "\user\sdmc\atmosphere\contents")
 }
 
-copyPortableDir(srcDir, userDir, name) {
-	src := srcDir "\" name
-	if FileUtil.exist(src)
-		FileUtil.copy(src, userDir "\" name)
+makeSnapshotLink() {
+	src := "d:\app\emulator\ZZ_snapshot"
+	trg := A_ScriptDir "\user\screenshots"
+	FileUtil.makeLink(src, trg, true)
+}
+
+makeContentLink(src,trg) {
+	FileUtil.makeDir(src)
+	FileUtil.makeLink(src, trg, true)
 }
 
 setConfig(option) {
@@ -136,17 +137,17 @@ toEnumIndex(value, aliases) {
 }
 
 waitEmulator() {
-	WinWait("ahk_exe Ryujinx.exe",, 10)
-	if WinExist("ahk_exe Ryujinx.exe")
+	WinWait("ahk_exe eden.exe",, 10)
+	if WinExist("ahk_exe eden.exe")
 		activateEmulator()
 }
 
 activateEmulator() {
-	WinActivate("ahk_exe Ryujinx.exe")
+	WinActivate("ahk_exe eden.exe")
 }
 
 waitCloseEmulator(emulatorPid := "") {
-	WinWaitClose("ahk_exe Ryujinx.exe")
+	WinWaitClose("ahk_exe eden.exe")
 	if (emulatorPid != "")
 		ProcessWaitClose(emulatorPid)
 }
