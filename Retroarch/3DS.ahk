@@ -6,7 +6,7 @@ imageDir := A_Args.Length ? A_Args[1] : ""
 
 option    := getOption(imageDir)
 config    := setConfig("citra_libretro", option)
-imageFile := getRomPath( imageDir, option, "3ds|3dsx|elf|axf|cci|cxi|cia|app" )
+imageFile := getRomPath( imageDir, option, "3ds|3dsx|elf|axf|cci|zcci|cxi|cia|app" )
 
 ;config.core := "citra2018_libretro"
 config.video_driver := "glcore"

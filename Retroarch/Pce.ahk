@@ -8,24 +8,23 @@ option    := getOption( imageDir )
 config    := setConfig( "mednafen_supergrafx_libretro", option )
 imageFile := getRomPath( imageDir, option, "zip|7z|pce" )
 
-applyCustomFont(imageDir)
+applyCustomFont(imageDir, "gexpress.pce")
+applyCustomFont(imageDir, "syscard3.pce")
 
 writeConfig( config, imageFile )
 runEmulator( imageFile, config )
 
 ExitApp
 
-applyCustomFont(imageDir) {
-  customPath := FileUtil.getFile( imageDir "\_EL_CONFIG\font\gexpress.pce" )
-  originPath := EMUL_ROOT "\system\gexpress.pce.src"
-  trgPath := EMUL_ROOT "\system\gexpress.pce"
-
+applyCustomFont(imageDir, cardName) {
+  customPath := FileUtil.getFile(imageDir "\_EL_CONFIG\font\" cardName)
+  originPath := EMUL_ROOT "\system\" cardName ".src"
+  trgPath    := EMUL_ROOT "\system\" cardName
   if( customPath != "" ) {
-  	FileUtil.makeLink(customPath, trgPath)
+    FileUtil.makeLink(customPath, trgPath, true)
   } else {
-  	FileUtil.makeLink(originPath, trgPath)
+    FileUtil.makeLink(originPath, trgPath, true)
   }
 }
-
 
 #Include %A_ScriptDir%\script\AbstractHotkey.ahk

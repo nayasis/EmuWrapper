@@ -36,7 +36,7 @@ audio-backend: SDL
 audio-volume: 100
 ngs-enable: true
 sys-button: 0
-sys-lang: 1
+sys-lang: 9
 sys-date-format: 2
 sys-time-format: 0
 cpu-pool-size: 10
@@ -138,11 +138,11 @@ http-timeout-sleep-ms: 100
 http-read-end-attempts: 10
 http-read-end-sleep-ms: 250
 adhoc-addr: 0
-front-camera-type: 2
+front-camera-type: 0
 front-camera-id: 화수의 S22 Ultra (Windows 가상 카메라)
 front-camera-image: ""
 front-camera-color: 0
-back-camera-type: 2
+back-camera-type: 0
 back-camera-id: 화수의 S22 Ultra (Windows 가상 카메라)
 back-camera-image: ""
 back-camera-color: 0

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<apps-cache cache_version="1" sys_lang="1">
+<apps-cache cache_version="1" sys_lang="9">
 	<sources>
-		<source title_id="PCSE00240" param_sfo_write_time="1779379101" icon_write_time="1779378914" />
+		<source title_id="PCSG00786" param_sfo_write_time="1785219054" icon_write_time="1785219054" />
 	</sources>
 	<apps>
-		<app app_ver="1.06" category="gp" content_id="UP1024-PCSE00240_00-OBOROMURAMASA000" addcont="PCSE00240" savedata="PCSE00240" parental_level="5" stitle="Muramasa Rebirth" title="Muramasa Rebirth" title_id="PCSE00240" path="PCSE00240" />
+		<app app_ver="1.00" category="gd" content_id="JP0745-PCSG00786_00-GOCHIUSAXMASPTY1" addcont="PCSG00786" savedata="PCSG00786" parental_level="3" stitle="ご注文はうさぎですか？？" title="ご注文はうさぎですか？？ Wonderful party！" title_id="PCSG00786" path="PCSG00786" />
 	</apps>
 </apps-cache>

@@ -2,29 +2,29 @@
 #Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := A_Args.Length ? A_Args[1] : ""
-;imageDir := "\\NAS2\emul\image\PcEngineCd\Might and Magic (nec)(T-en 2023-07-18 by TiCo.KH)"
+;imageDir := "\\NAS2\emul\image\PcEngineCd\Ys IV - The Dawn of Ys (hudson)(T-ko 0.9.4 by jiseo79)"
 
 option    := getOption( imageDir )
 config    := setConfig( "mednafen_supergrafx_libretro", option )
 imageFile := getRomPath( imageDir, option, "chd|cue" )
 
-applyCustomFont(imageDir)
+applyCustomFont(imageDir, "gexpress.pce")
+applyCustomFont(imageDir, "syscard3.pce")
 
-writeConfig( config, imageFile )
-runEmulator( imageFile, config )
+writeConfig(config, imageFile)
+runEmulator(imageFile, config)
 ; runEmulator( imageFile, config, "", "pressStart" )
 
 ExitApp
 
-applyCustomFont(imageDir) {
-  customPath := FileUtil.getFile( imageDir "\_EL_CONFIG\font\gexpress.pce" )
-  originPath := EMUL_ROOT "\system\gexpress.pce.src"
-  trgPath := EMUL_ROOT "\system\gexpress.pce"
-
+applyCustomFont(imageDir, cardName) {
+  customPath := FileUtil.getFile(imageDir "\_EL_CONFIG\font\" cardName)
+  originPath := EMUL_ROOT "\system\" cardName ".src"
+  trgPath    := EMUL_ROOT "\system\" cardName
   if( customPath != "" ) {
-  	FileUtil.makeLink(customPath, trgPath)
+    FileUtil.makeLink(customPath, trgPath, true)
   } else {
-  	FileUtil.makeLink(originPath, trgPath)
+    FileUtil.makeLink(originPath, trgPath, true)
   }
 }
 
