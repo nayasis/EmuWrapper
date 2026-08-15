@@ -20,7 +20,7 @@ ExitApp
 
 applyCustomFont( imageDir, config ) {
 
-  fontSrc := nvl( FileUtil.getFile(imageDir "\_EL_CONFIG\font\"), EMUL_ROOT "\system\quasi88\n88knj1.rom.src" )
+  fontSrc := nvl( FileUtil.findFile(imageDir "\_EL_CONFIG\font\"), EMUL_ROOT "\system\quasi88\n88knj1.rom.src" )
   fontTrg := EMUL_ROOT "\system\quasi88\n88knj1.rom"
 
   ; FileUtil.makeLink( fontSrc, fontTrg )

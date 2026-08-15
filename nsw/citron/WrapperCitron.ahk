@@ -24,7 +24,7 @@ ExitApp
 findRom(imageDir) {
 	if(imageDir == "0" || ! FileUtil.exist(imageDir))
 		return
-	return FileUtil.getFile(imageDir, "i).*\.(nsp|nsz|xci)$")
+	return FileUtil.findFile(imageDir, "i).*\.(nsp|nsz|xci)$")
 }
 
 makeLink(imageDir) {

@@ -35,7 +35,7 @@ getTitleId(imageDir) {
 		}
 		return
 	}
-	titleDir := FileUtil.getFile(imageDir "\pref\ux0\app", ".*", true)
+	titleDir := FileUtil.findFile(imageDir "\pref\ux0\app", ".*", true)
 	titleId  := FileUtil.getName(titleDir)
 	debug("- titleId  :" titleId)
 

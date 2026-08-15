@@ -26,7 +26,7 @@ ExitApp
 setBezel(config, imageDir) {
 	if(config.input_overlay == "")
 		return
-	bezel := FileUtil.getFile( imageDir "\_EL_CONFIG\bezel", "i).*\.(cfg)$" )
+	bezel := FileUtil.findFile( imageDir "\_EL_CONFIG\bezel", "i).*\.(cfg)$" )
 	debug("target : " imageDir "\_EL_CONFIG\bezel" )
 	debug("bezel  : " bezel)
 	if(bezel != "") {
@@ -61,7 +61,7 @@ makeCmd(imageDir, config) {
 
   cmd .= addOption("-rp", wrap( EMUL_ROOT "\system\mame\console\apple"))
 
-  fdd_3_5 := FileUtil.getFiles(imageDir, "i).*\.(2mg|woz)$")
+  fdd_3_5 := FileUtil.findFiles(imageDir, "i).*\.(2mg|woz)$")
   fddIdx  := [3,4]
   for i, disk in fdd_3_5 {
     cmd .= addOption("-flop" fddIdx[i], wrap(disk))
@@ -69,7 +69,7 @@ makeCmd(imageDir, config) {
       break
   }
 
-  fdd_5_25 := FileUtil.getFiles(imageDir, "i).*\.(dsk)$")
+  fdd_5_25 := FileUtil.findFiles(imageDir, "i).*\.(dsk)$")
   fddIdx  := [1,2]
   for i, disk in fdd_5_25 {
     cmd .= addOption("-flop" fddIdx[i], wrap(disk))
@@ -77,7 +77,7 @@ makeCmd(imageDir, config) {
       break
   }  
 
-  hdd := FileUtil.getFiles(imageDir, "i).*\.(po)$")
+  hdd := FileUtil.findFiles(imageDir, "i).*\.(po)$")
   for i, disk in hdd {
   	cmd .= addOption("-hard" i, wrap(disk))
     if(i >= 2)

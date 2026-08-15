@@ -14,7 +14,7 @@ replaceFile  := false
 
 debug( "start" )
 
-files := FileUtil.getFiles( pathRoot, "i).*\.(bin|cue|mdx|mdf)", false, true )
+files := FileUtil.findFiles( pathRoot, "i).*\.(bin|cue|mdx|mdf)", false, true )
 
 allFiles := {}
 cueFiles := {}
@@ -86,7 +86,7 @@ for gameDir, files in cueFiles {
 	}
 
 	; copy worked files
-	copyFiles := FileUtil.getFiles( workDir, ".*", false, false )
+	copyFiles := FileUtil.findFiles( workDir, ".*", false, false )
 	loop, % copyFiles.MaxIndex() {
 		file := copyFiles[ A_Index ]
 		debug( "    - move file : " file " -> " srcDir[gameDir] )

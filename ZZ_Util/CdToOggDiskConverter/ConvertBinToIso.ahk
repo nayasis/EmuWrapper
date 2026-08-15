@@ -4,7 +4,7 @@
 imageDir := %0%
 ; imageDir := "e:\iso\ps2"
 
-files := FileUtil.getFiles( imageDir, "i).*\.(cue)", false, false )
+files := FileUtil.findFiles( imageDir, "i).*\.(cue)", false, false )
 
 for i, cuefile in files {
 	toIso(cuefile)

@@ -4,11 +4,11 @@
 pathRoot := "\\NAS\emul\image\MegaCd"
 
 ; dir := "\\NAS\emul\image\MegaCd\Final Fight CD (En)"
-; files := FileUtil.getFiles( dir,  "i).*\.(iso|ogg)", false, true )
+; files := FileUtil.findFiles( dir,  "i).*\.(iso|ogg)", false, true )
 ; makeCueFile( dir, files )
 ; ExitApp
 
-files    := FileUtil.getFiles( pathRoot, "i).*\.(iso)", false, true )
+files    := FileUtil.findFiles( pathRoot, "i).*\.(iso)", false, true )
 gameDirs := {}
 
 debug("Start")
@@ -20,7 +20,7 @@ Loop, % files.MaxIndex()
 }
 
 for dir in gameDirs {
-	gameDirs[dir] := FileUtil.getFiles( dir,  "i).*\.(iso|ogg)", false, true )
+	gameDirs[dir] := FileUtil.findFiles( dir,  "i).*\.(iso|ogg)", false, true )
 }
 
 for dir, files in gameDirs {

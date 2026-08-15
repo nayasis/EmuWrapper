@@ -1,4 +1,4 @@
-﻿#Requires AutoHotkey >=2.0
+#Requires AutoHotkey >=2.0
 #include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
 
 emulatorPid    := ""
@@ -143,14 +143,14 @@ setConfig( imageFilePath ) {
 	option := ""
 
 	; Add Casette
-	files := FileUtil.getFiles( currDir, "i).*\.cas(\.zip)?$" )
+	files := FileUtil.findFiles( currDir, "i).*\.cas(\.zip)?$" )
 	if ( files.MaxIndex() > 0 ) {
 		option := % option " -cassetteplayer """ files[ 1 ] """"
 		return option
 	}
 
 	; Add Rom
-	files := FileUtil.getFiles( currDir, "i).*\.rom(\.zip)?$" )
+	files := FileUtil.findFiles( currDir, "i).*\.rom(\.zip)?$" )
 	if ( files.MaxIndex() > 0 ) {
 		Loop, % files.MaxIndex()
 		{
@@ -167,7 +167,7 @@ setConfig( imageFilePath ) {
 	}
 
 	; Add Disk
-	files := FileUtil.getFiles( currDir, "i).*\.dsk(\.zip)?$" )
+	files := FileUtil.findFiles( currDir, "i).*\.dsk(\.zip)?$" )
 	if ( files.MaxIndex() > 0 ) {
 		Loop, % files.MaxIndex()
 		{

@@ -26,7 +26,7 @@ convert(cuefile, bchunkOption="", modeSize="2048") {
   extractWav(cuefile, binfile, workdir, bchunkOption)
 
   debug( ">> convert wav to ogg" )
-	wavfiles := FileUtil.getFiles( workDir, ".*\.wav" )
+	wavfiles := FileUtil.findFiles( workDir, ".*\.wav" )
 	for i, file in wavfiles {
 		toOgg(file)
 	}
@@ -55,7 +55,7 @@ toOgg( wavfile ) {
 createCuefile( originCuefile, resourceDir, modeSize="2048" ) {
 
 	cueName    := FileUtil.getName( originCuefile, false )
-	trackFiles := FileUtil.getFiles( resourceDir, ".*\.(ogg|iso)$" )
+	trackFiles := FileUtil.findFiles( resourceDir, ".*\.(ogg|iso)$" )
 	newCuefile := resourceDir "\" cueName ".cue"
 	trackIndex := 0
 	cursheet   := ""

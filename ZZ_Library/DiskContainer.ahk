@@ -54,7 +54,7 @@ class DiskContainer {
    
     __New(path := "", pattern := ".*") {
         if (path != "") {
-            this.container := FileUtil.getFiles(path, pattern)
+            this.container := FileUtil.findFiles(path, pattern)
         }
     }
 

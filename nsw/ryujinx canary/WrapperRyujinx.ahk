@@ -16,7 +16,7 @@ debug(">> option.system`n" . JSON.stringify(option))
 makeLink(imageDir)
 setConfig(option)
 
-imageRom := FileUtil.getFile(imageDir, "i).*\.(nsp|nsz|xci)$")
+imageRom := FileUtil.findFile(imageDir, "i).*\.(nsp|nsz|xci)$")
 command  := wrap(A_ScriptDir . "\emul\Ryujinx.exe")
 if(imageRom != "") {
 	command .= " " . wrap(imageRom)

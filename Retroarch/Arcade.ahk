@@ -49,7 +49,7 @@ setBezel(config, imageDir) {
 	if(config.input_overlay == "" || config.input_overlay == "none")
 		return
 	if(config.input_overlay == "default") {
-		bezel := FileUtil.getFile( imageDir "\_EL_CONFIG\bezel", "i).*\.(cfg)$" )
+		bezel := FileUtil.findFile( imageDir "\_EL_CONFIG\bezel", "i).*\.(cfg)$" )
 		if(bezel != "") {
 			config.input_overlay := bezel
 		}		
@@ -68,7 +68,7 @@ prepareFbneoPatchedRom(config, imageFile) {
 
 initFbneoPatchedDir(dirPatched) {
 	FileUtil.makeDir(dirPatched)
-	for _, file in FileUtil.getFiles(dirPatched, ".*", true) {
+	for _, file in FileUtil.findFiles(dirPatched, ".*", true) {
 		FileUtil.delete(file, false)
 	}	
 }

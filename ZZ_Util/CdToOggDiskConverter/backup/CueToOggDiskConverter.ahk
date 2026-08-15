@@ -6,7 +6,7 @@ pathRoot     := "\\NAS\emul\image\PcFx\Aa! Megami Sama"
 pathWorkRoot := "f:\download\pce"
 debug( "start" )
 
-files := FileUtil.getFiles( pathRoot, "i).*\.(bin|cue)", false, true )
+files := FileUtil.findFiles( pathRoot, "i).*\.(bin|cue)", false, true )
 
 allFiles := {}
 cueFiles := {}
@@ -74,7 +74,7 @@ for gameDir, files in cueFiles {
 	; 	VirtualDisk.close()
 
 	; 	debug( "  - move compressed image to original folder" )
-	; 	subFiles := FileUtil.getFiles( workDir, ".*", false, false )
+	; 	subFiles := FileUtil.findFiles( workDir, ".*", false, false )
 	; 	Loop, % subFiles.MaxIndex()
 	; 	{
 	; 		subFile := subFiles[A_Index]
@@ -122,7 +122,7 @@ toCdImage( workDir, fileName ) {
 	FileDelete, % binFile
 
 	debug( "  - convert wav to ogg" )
-	wavFiles := FileUtil.getFiles( workDir, ".*\.wav" )
+	wavFiles := FileUtil.findFiles( workDir, ".*\.wav" )
 	Loop, % wavFiles.MaxIndex()
 	{
 		; debug( wavFiles[A_Index] )
@@ -148,7 +148,7 @@ toOggCue( cueFile, targetDir ) {
 
 	cueName    := FileUtil.getFileName( cueFile, false )
 	workDir    := FileUtil.getDir( cueFile )
-	trackFiles := FileUtil.getFiles( workDir, ".*-.*\.(ogg|iso)$" )
+	trackFiles := FileUtil.findFiles( workDir, ".*-.*\.(ogg|iso)$" )
 	targetFile := targetDir "\" cueName ".cue"
 	trackIndex := 0
 	newCuesheet := ""

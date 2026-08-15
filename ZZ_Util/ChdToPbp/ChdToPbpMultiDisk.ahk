@@ -32,7 +32,7 @@ debug( message ) {
 }
 
 toIso( dirChd, dirIso ) {
-	chdFiles := FileUtil.getFiles( dirChd, "(?i).*\.chd$", false, true )
+	chdFiles := FileUtil.findFiles( dirChd, "(?i).*\.chd$", false, true )
 	for i, file in chdFiles {
 		isoName := FileUtil.getName( file, false )
 		FileUtil.makeDir( dirIso "\disk" i )
@@ -43,7 +43,7 @@ toIso( dirChd, dirIso ) {
 
 toPbp( dirIso, dirPbp ) {
 
-	cueFiles := FileUtil.getFiles( dirIso, "(?i).*\.bin$", true, true )
+	cueFiles := FileUtil.findFiles( dirIso, "(?i).*\.bin$", true, true )
 
 	dirRoot := FileUtil.getParentDir( dirPbp )
 
@@ -57,7 +57,7 @@ toPbp( dirIso, dirPbp ) {
 		toSinglePbp( srcFile, dirPbp )
 
 		name   := FileUtil.getName( srcFile, false )
-		srcPbp := FileUtil.getFile( dirPbp, "(?i).*\.pbp$", false, true )
+		srcPbp := FileUtil.findFile( dirPbp, "(?i).*\.pbp$", false, true )
 		trgPbp := dirRoot "\" name ".pbp"
 		FileUtil.move( srcPbp, trgPbp )
 
@@ -112,7 +112,7 @@ toSinglePbp( srcFile, trgDir ) {
 
 makeM3U( dirRoot ) {
 
-	pbpFiles := FileUtil.getFiles( dirRoot, "(?i).*\.pbp$", false, true )
+	pbpFiles := FileUtil.findFiles( dirRoot, "(?i).*\.pbp$", false, true )
 
 	if ( pbpFiles.MaxIndex() <= 1 )
 		return

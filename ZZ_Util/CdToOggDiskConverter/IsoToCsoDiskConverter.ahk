@@ -8,7 +8,7 @@ pathRoot     := "\\NAS\emul\image\PSP\F1 Grand Prix (en)"
 
 debug( "start" )
 
-files := FileUtil.getFiles( pathRoot, "i).*\.(iso)", false, true )
+files := FileUtil.findFiles( pathRoot, "i).*\.(iso)", false, true )
 
 allFiles := {}
 cueFiles := {}
@@ -63,7 +63,7 @@ for gameDir, files in cueFiles {
 	}
 
 	; copy worked files
-	copyFiles := FileUtil.getFiles( workDir, ".*", false, false )
+	copyFiles := FileUtil.findFiles( workDir, ".*", false, false )
 	loop, % copyFiles.MaxIndex() {
 		file := copyFiles[ A_Index ]
 		debug( "    - move file : " file " -> " srcDir[gameDir] )

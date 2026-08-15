@@ -191,7 +191,7 @@ setConfig(imageDir) {
 
   x := new XML(activegsxml)
 
-  files := FileUtil.getFiles(imageDir, "i)^(?!.*?(hdd|notInsert)).*\.(zip|2mg|po)$" )
+  files := FileUtil.findFiles(imageDir, "i)^(?!.*?(hdd|notInsert)).*\.(zip|2mg|po)$" )
   Loop, % files.MaxIndex()
   {
     if( a_index > 2 )
@@ -199,7 +199,7 @@ setConfig(imageDir) {
     x.setText( diskIndex[A_Index], files[A_Index] )
   }
 
-  files := FileUtil.getFiles( imageDir, "i)^.*\.hdd\.(zip|2mg|po)$" )
+  files := FileUtil.findFiles( imageDir, "i)^.*\.hdd\.(zip|2mg|po)$" )
   Loop, % files.MaxIndex()
   {
     if( a_index > 4 )

@@ -19,7 +19,7 @@ runEmulator( imageFile, config )
 ExitApp
 
 setCustomFont(imageDir, option) {
-	customfont := FileUtil.getFile(imageDir, "i)scph.*\.bin")
+	customfont := FileUtil.findFile(imageDir, "i)scph.*\.bin")
 	debug("customfont: " customfont)
 	if ( customfont != "" ) {
 		option.systemfiles_in_content_dir := "true"

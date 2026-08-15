@@ -77,7 +77,7 @@ debug("end !!")
 ExitApp
 
 deleteTempFile() {
-  tempFiles := FileUtil.getFiles( A_ScriptDir, ".*" )
+  tempFiles := FileUtil.findFiles( A_ScriptDir, ".*" )
   for i, file in tempFiles {
     size := FileUtil.getSize(file)
     if( size != 40 )
@@ -238,7 +238,7 @@ setConfig( imageDir ) {
 	IniWrite, % "", %iniFile%, % sectionMain, FD1NAME0
 	IniWrite, % "", %iniFile%, % sectionMain, FD2NAME0
 
-	files := FileUtil.getFiles( currDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
+	files := FileUtil.findFiles( currDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
 	Loop, % files.MaxIndex()
 	{
 		if( A_Index > 2 )

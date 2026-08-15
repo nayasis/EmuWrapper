@@ -1,9 +1,9 @@
 [HKEY_LOCAL_MACHINE\SOFTWARE\CD PROJEKT RED\The Witcher 3]
-"Install Dir"="${cdWin}"
-"GameEXE"="${cdWin}\\bin\\x64\\witcher3.exe"
-"LauncherEXE"="${cdWin}\\bin\\x64\\witcher3.exe"
-"Install_Path"="${cdWin}"
-"execPath"="${cdWin}\\bin\\x64\\witcher3.exe"
+"Install Dir"="${cd}"
+"GameEXE"="${cd}\bin\x64\witcher3.exe"
+"LauncherEXE"="${cd}\bin\x64\witcher3.exe"
+"Install_Path"="${cd}"
+"execPath"="${cd}\bin\x64\witcher3.exe"
 "SpeechLanguage"="EN"
 "TextLanguage"="EN"
 "DisplayName"="The Witcher?3: Wild Hunt"
@@ -18,9 +18,9 @@
 
 
 [HKEY_USERS\${sid}\SOFTWARE\Overflow\CrossDays\Install]
-"InstPath"="${cdWin}\\"
+"InstPath"="${cd}\"
 "Version"="1.00bBX"
 
 [HKEY_USERS\${sid}\Software\DESSERTSOFT\WANNABE]
-"Install folder"="${cd}\\bin"
+"Install folder"="${cd}\bin"
 "Type"=dword:00000000

@@ -205,7 +205,7 @@ getConfig(imageDir, fddContainer) {
 	}
 
 	; hdd
-	hdds := FileUtil.getFiles(imageDir, "i).*\.(po)$")
+	hdds := FileUtil.findFiles(imageDir, "i).*\.(po)$")
 	if (hdds.Length >= 1)
 		config .= " -sl7 cffa2"
 	for i, disk in hdds {

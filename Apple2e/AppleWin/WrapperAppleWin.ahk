@@ -252,7 +252,7 @@ setConfig(imageDir, fddContainer) {
   }
 
   ; hdd
-  hdd := FileUtil.getFiles(imageDir, "i).*\.(po|2mg)$")
+  hdd := FileUtil.findFiles(imageDir, "i).*\.(po|2mg)$")
   loop hdd.Length {
     if (A_Index > 2)
       break

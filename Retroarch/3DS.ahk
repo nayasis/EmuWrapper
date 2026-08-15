@@ -2,7 +2,9 @@
 #Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := A_Args.Length ? A_Args[1] : ""
-;imageDir := "\\NAS2\emul\image\3DS\Dragon Quest VIII - Journey of the Cursed King (square enix)(T-ko 1.2)"
+;imageDir := "\\NAS2\emul\image\3DS\Meitantei Conan - Phantom Rhapsody (spike chunsoft)(T-ko 0.0.4 by mark83)"
+;imageDir := "\\NAS2\emul\image\3DS\Dragon Quest XI (square enix)(T-ko 1.5 by view5199)"
+imageDir := "\\NAS2\emul\image\3DS\Dragon Quest VII - Fragments of the Forgotten Past (square enix)(T-ko 260815 by honguh)"
 
 option    := getOption(imageDir)
 config    := setConfig("citra_libretro", option)
@@ -15,26 +17,36 @@ config.input_auto_mouse_grab := "true"
 ; config.video_shader := "none"
 
 writeConfig(config, imageFile)
-prepareFont(imageFile)
+
+prepareFont(imageDir)
+applyLumaPatch(imageDir)
+applyNandPatch(imageDir)
 
 runEmulator(imageFile, config)
 
 ExitApp
 
-prepareFont(imageFile) {
-	if (imageFile == "")
-		return
-	gameDir := FileUtil.getDir(imageFile)
-  src     := EMUL_ROOT "\saves\citra\sysdata\shared_font.bin"
-	trg     := gameDir "\_EL_CONFIG\save\ra\save\Citra\Citra\sysdata\shared_font.bin"
+prepareFont(imageDir) {
+  srcFont := imageDir "\_EL_CONFIG\font\shared_font.bin"
+	if(! FileUtil.exist(srcFont))
+		srcFont := DIR_SAVE "\sysdata\shared_font.bin.src"
+	trgFont := DIR_SAVE "\sysdata\shared_font.bin"
+  FileUtil.makeLink(srcFont, trgFont, true)
+}
 
-  ; copy shared font
-  if(! FileUtil.exist(trg)) {
-    destDir := FileUtil.getParentDir(trg)
-    FileUtil.makeDir(destDir)
-    FileCopy(src, trg, true)
+applyLumaPatch(imageDir) {
+  src := FileUtil.findDir(imageDir "\_EL_CONFIG\luma\titles", ".*")
+  if(FileUtil.exist(src)) {
+    trg := DIR_SAVE "\load\mods\" . FileUtil.getName(src)
+    FileUtil.makeLink(src, trg, true)
   }
+}
 
+applyNandPatch(imageDir) {
+  for _, src in FileUtil.findDirs(imageDir "\_EL_CONFIG\nand\title", ".*", 1) {
+    trg := DIR_SAVE "\nand\00000000000000000000000000000000\title\" . FileUtil.getName(src)
+    FileUtil.makeLink(src, trg, true)
+  }
 }
 
 #Include %A_ScriptDir%\script\AbstractHotkey.ahk

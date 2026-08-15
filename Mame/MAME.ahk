@@ -8,7 +8,7 @@ romName := A_Args.Length > 0 ? A_Args[1] : ""
 ;romName := "ctower"
 
 if (FileUtil.isDir(romName)) {
-	romName := FileUtil.getFile(romName, "i).*\.(zip|7z)$")
+	romName := FileUtil.findFile(romName, "i).*\.(zip|7z)$")
 	romName .= FileUtil.getName(romName)
 }
 

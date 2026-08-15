@@ -6,7 +6,7 @@ imageDir    := A_Args.Length > 0 ? A_Args[1] : ""
 ; imageDir := "\\NAS2\emul\image\3DS\Super Robot Taisen UX (T-ko)"
  ;imageDir := "\\NAS2\emul\image\3DS\Dragon Quest VIII - Journey of the Cursed King (square enix)(T-ko 1.2)"
 
-imageFile := FileUtil.getFile(imageDir, "i).*\.(zip|3ds|3dsx|elf|axf|cci|cxi|cia|app)$")
+imageFile := FileUtil.findFile(imageDir, "i).*\.(zip|3ds|3dsx|elf|axf|cci|cxi|cia|app)$")
 
 linkSaveFolder(imageFile)
 

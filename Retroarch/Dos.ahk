@@ -63,9 +63,9 @@ makeAutoboot(imageDir, config) {
 
 getCdroms(imageDir) {
   dirCdrom := imageDir "\_EL_CONFIG\cdrom"
-  files := FileUtil.getFiles(dirCdrom,"i).*\.(cue)$")
+  files := FileUtil.findFiles(dirCdrom,"i).*\.(cue)$")
   if (files.Length == 0) {
-    files := FileUtil.getFiles(dirCdrom,"i).*\.(iso|bin)$")
+    files := FileUtil.findFiles(dirCdrom,"i).*\.(iso|bin)$")
   }
   return files
 }

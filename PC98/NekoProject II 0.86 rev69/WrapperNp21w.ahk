@@ -122,11 +122,11 @@ removeDisk( slotNo ) {
 
 getCdRom( imageDir ) {
 	dirCdrom := imageDir "\_EL_CONFIG\cdrom"
-	cdRom := FileUtil.getFile( dirCdrom, "i).*\.(cue)$" )
+	cdRom := FileUtil.findFile( dirCdrom, "i).*\.(cue)$" )
 	if( cdRom == "" )
-		cdRom := FileUtil.getFile( dirCdrom, "i).*\.(ccd)$" )
+		cdRom := FileUtil.findFile( dirCdrom, "i).*\.(ccd)$" )
 	if( cdRom == "" )
-		cdRom := FileUtil.getFile( dirCdrom, "i).*\.(iso|bin|img)$" )
+		cdRom := FileUtil.findFile( dirCdrom, "i).*\.(iso|bin|img)$" )
 	return cdRom
 }
 
@@ -178,12 +178,12 @@ setConfig( imageDir ) {
 	IniWrite, % "2", %NekoIniFile%, NekoProject21, IDE3TYPE
 
 	; Set Hdd, Fdd, CdRom
-	hdds := FileUtil.getFiles( currDir, "i).*\.(hdi|hdd)$" )
+	hdds := FileUtil.findFiles( currDir, "i).*\.(hdi|hdd)$" )
 	Loop, 2 {
 		IniWrite, % hdds[a_index], %NekoIniFile%, NekoProject21, HDD%a_index%FILE
 	}
 
-	fdds := FileUtil.getFiles( currDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
+	fdds := FileUtil.findFiles( currDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
 	Loop, 4 {
 		IniWrite, % fdds[a_index], %NekoIniFile%, NekoProject21, FDD%a_index%FILE
 	}

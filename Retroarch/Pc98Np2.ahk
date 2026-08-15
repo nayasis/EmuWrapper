@@ -29,7 +29,7 @@ deleteTempFile()
 ExitApp
 
 deleteTempFile() {
-  tempFiles := FileUtil.getFiles( A_ScriptDir, ".*" )
+  tempFiles := FileUtil.findFiles( A_ScriptDir, ".*" )
   for i, file in tempFiles {
     size := FileUtil.getSize(file)
     if( size != 6 )
@@ -40,7 +40,7 @@ deleteTempFile() {
 
 applyCustomFont( imageDir, config ) {
 
-  fontPath := FileUtil.getFile( imageDir "\_EL_CONFIG\font\" )
+  fontPath := FileUtil.findFile( imageDir "\_EL_CONFIG\font\" )
   if( config.core == "np2kai_libretro" ) {
   	fontPath := nvl( fontPath, EMUL_ROOT "\system\np2kai\font.rom" )
   } else if( config.core == "nekop2_libretro" ) {
@@ -129,11 +129,11 @@ getCfg( config ) {
 
 setCdrom( imageDir, config ) {
   dir := imageDir "\_EL_CONFIG\cdrom"
-  cdrom := FileUtil.getFile( dir, "i).*\.(cue)$" )
+  cdrom := FileUtil.findFile( dir, "i).*\.(cue)$" )
   if( cdrom == "" )
-    cdrom := FileUtil.getFile( dir, "i).*\.(ccd)$" )
+    cdrom := FileUtil.findFile( dir, "i).*\.(ccd)$" )
   if( cdrom == "" )
-    cdrom := FileUtil.getFile( dir, "i).*\.(iso|bin|img)$" )
+    cdrom := FileUtil.findFile( dir, "i).*\.(iso|bin|img)$" )
   if( cdrom == "" )
     return
   cfg := getCfg( config )
@@ -142,13 +142,13 @@ setCdrom( imageDir, config ) {
 
 setHdd(imageDir, config) {
  	cfg := getCfg( config )
-	hdd := FileUtil.getFile( imageDir, "i).*\.(hdi|hdd)$" )
+	hdd := FileUtil.findFile( imageDir, "i).*\.(hdi|hdd)$" )
   IniWrite(hdd, cfg.path, cfg.section, "HDD1FILE")
 }
 
 setFdd(imageDir, config) {
 	cfg := getCfg( config ) 
-	files := FileUtil.getFiles( imageDir, "i).*\.(d88|d98|fdi|fdd|hdm|nfd|xdf|tfd)$" )
+	files := FileUtil.findFiles( imageDir, "i).*\.(d88|d98|fdi|fdd|hdm|nfd|xdf|tfd)$" )
 	Loop 2
 	{
 		if( A_Index > 2 )

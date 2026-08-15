@@ -24,7 +24,7 @@ setStartDir(imageDir) {
 }
 
 applyCustomFont(imageDir) {
-  fontPath := FileUtil.getFile(imageDir "\_EL_CONFIG\font\")
+  fontPath := FileUtil.findFile(imageDir "\_EL_CONFIG\font\")
   if( ! FileUtil.exist(fontPath) ) {
   	fontPath := EMUL_ROOT "\system\keropi\cgrom.dat.origin"
   }

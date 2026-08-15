@@ -9,7 +9,7 @@ global emulatorExe := "duckstation-qt-x64-ReleaseLTCG.exe"
 imageDir := %0%
 ;imageDir := "\\NAS2\emul\image\psx1\Shin Megami Tensei if... (atlus)(T-ko 1.0 by K)"
 
-imageFile := FileUtil.getFile( imageDir, "m3u|chd|cue|pbp|bin" )
+imageFile := FileUtil.findFile( imageDir, "m3u|chd|cue|pbp|bin" )
 
 option := getOption(imageDir)
 
@@ -27,7 +27,7 @@ if ( imageFile != "" ) {
 ExitApp	
 
 runHack(imageDir) {
-	hackFile := FileUtil.getFile(imageDir "\_EL_CONFIG\hack", ".*\.exe")
+	hackFile := FileUtil.findFile(imageDir "\_EL_CONFIG\hack", ".*\.exe")
 	debug("hack file : " hackFile)
 	if(hackFile != "") {
 		fileName := FileUtil.getName(hackFile)

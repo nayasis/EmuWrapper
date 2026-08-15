@@ -63,7 +63,7 @@ waitTurboRipClosed() {
 renameTempfiles(cuefile) {
 	filename := FileUtil.getName(cuefile,false)
 	tmpDir   := toTmpDir(cuefile)
-	tracks := FileUtil.getFiles(tmpDir, "i).*\.(iso|wav|cue)$", false, true)
+	tracks := FileUtil.findFiles(tmpDir, "i).*\.(iso|wav|cue)$", false, true)
 	Loop, % tracks.MaxIndex()
 	{
 		src := tracks[A_Index]
@@ -85,7 +85,7 @@ toTmpDir(cuefile) {
 
 toOggs(cuefile, modeSize="2352") {
 	tmpDir := toTmpDir(cuefile)
-	wavFiles := FileUtil.getFiles( tmpDir, ".*\.wav" )
+	wavFiles := FileUtil.findFiles( tmpDir, ".*\.wav" )
 	Loop, % wavFiles.MaxIndex()
 	{
 		toOgg( wavFiles[A_Index] )
@@ -105,7 +105,7 @@ createOggCue( cuefile, modeSize="2048" ) {
 
 	cueName    := FileUtil.getName(cuefile, false)
 	workDir    := toTmpDir(cuefile)
-	trackFiles := FileUtil.getFiles( workDir, ".*-.*\.(ogg|iso)$" )
+	trackFiles := FileUtil.findFiles( workDir, ".*-.*\.(ogg|iso)$" )
 	targetFile := workDir "\" cueName ".cue"
 	trackIndex := 0
 	newCuesheet := ""

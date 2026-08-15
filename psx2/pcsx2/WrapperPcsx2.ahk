@@ -42,7 +42,7 @@ if ( container.hasDisk() ) {
 ExitApp	
 
 runHack(imageDir) {
-	hackFile := FileUtil.getFile(imageDir "\_EL_CONFIG\hack", ".*\.exe")
+	hackFile := FileUtil.findFile(imageDir "\_EL_CONFIG\hack", ".*\.exe")
 	debug("hack file : " hackFile)
 	if(hackFile != "") {
 		fileName := FileUtil.getName(hackFile)

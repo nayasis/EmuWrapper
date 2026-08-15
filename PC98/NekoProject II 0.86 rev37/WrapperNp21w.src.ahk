@@ -154,7 +154,7 @@ setConfig( imageFilePath ) {
 	IniDelete, %NekoIniFile%, NekoProject21, HDD2FILE
 
 	; Set Hdd & Fdd
-	files := FileUtil.getFiles( currDir, "i).*\.(hdi|hdd)" )
+	files := FileUtil.findFiles( currDir, "i).*\.(hdi|hdd)" )
 	Loop, % files.MaxIndex()
 	{
 		if( A_Index > 2 )
@@ -162,7 +162,7 @@ setConfig( imageFilePath ) {
 		IniWrite, % files[a_index], %NekoIniFile%, NekoProject21, HDD%a_index%FILE
 	}
 
-	files := FileUtil.getFiles( currDir, "i).*\.(d88|fdi|fdd)" )
+	files := FileUtil.findFiles( currDir, "i).*\.(d88|fdi|fdd)" )
 	Loop, % files.MaxIndex()
 	{
 		IniWrite, % files[a_index], %NekoIniFile%, NP2 tool, FD2NAME%a_index%

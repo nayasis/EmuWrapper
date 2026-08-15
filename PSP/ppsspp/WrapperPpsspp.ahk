@@ -110,7 +110,7 @@ setConfig( imageFilePath ) {
   dirCustomSave := dirConf "\save"
   dirEmulSave   := A_ScriptDir "\memstick\PSP\SAVEDATA"
   if ( FileUtil.exist(dirCustomSave) ) {
-  	zipFiles := FileUtil.getFiles(dirCustomSave,"i).*\.(zip|7z)$")
+	zipFiles := FileUtil.findFiles(dirCustomSave,"i).*\.(zip|7z)$")
   	Loop, % zipFiles.MaxIndex()
   	{
   		zipFile := zipFiles[ A_Index ]

@@ -18,7 +18,7 @@ runEmulator(imageFile, config)
 ExitApp
 
 applyCustomFont(imageDir, cardName) {
-  customPath := FileUtil.getFile(imageDir "\_EL_CONFIG\font\" cardName)
+  customPath := FileUtil.findFile(imageDir "\_EL_CONFIG\font\" cardName)
   originPath := EMUL_ROOT "\system\" cardName ".src"
   trgPath    := EMUL_ROOT "\system\" cardName
   if( customPath != "" ) {

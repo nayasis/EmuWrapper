@@ -49,15 +49,15 @@ mountDir(imageDir) {
 }
 
 getImagePath(imageDir) {
-	imagePath := FileUtil.getFile(imageDir "\disc\PS3_GAME\USRDIR", "i)eboot\.bin")
+	imagePath := FileUtil.findFile(imageDir "\disc\PS3_GAME\USRDIR", "i)eboot\.bin")
 	if(imagePath == "") {
-	  imagePath := FileUtil.getFile(imageDir "\disc\PS3_GAME\USRDIR", "i).*\.(bin)$")
+	  imagePath := FileUtil.findFile(imageDir "\disc\PS3_GAME\USRDIR", "i).*\.(bin)$")
 	}
 	if(imagePath == "") {
-		imagePath := FileUtil.getFile(imageDir "\hdd\.*\USRDIR", "i)eboot\.(bin)$")
+		imagePath := FileUtil.findFile(imageDir "\hdd\.*\USRDIR", "i)eboot\.(bin)$")
 	}
 	if(imagePath == "") {
-		imagePath := FileUtil.getFile(imageDir "\hdd\.*\USRDIR", "i).*\.(bin)$")
+		imagePath := FileUtil.findFile(imageDir "\hdd\.*\USRDIR", "i).*\.(bin)$")
 	}
   return imagePath
 }

@@ -4,8 +4,10 @@
 
 DetectHiddenWindows(true)
 
-global EMUL_ROOT := A_ScriptDir "\1.22"
-global CFG_RA_APPEND := EMUL_ROOT "\retroarch.append.cfg"
+global EMUL_ROOT       := A_ScriptDir "\1.22"
+global EMUL_APPEND_CFG := EMUL_ROOT "\retroarch.append.cfg"
+global EMUL_SAVE       := EMUL_ROOT "\saves"
+global DIR_SAVE        := ""
 
 if (!FileUtil.hasSymlinkAuth()) {
 	MsgBox("You must be granted to use [mklink]")
@@ -27,7 +29,7 @@ makeLink() {
 }
 
 runEmulator(imageFile, config, appendCommand := "", callback := "", appendImageFile := "") {
-	global EMUL_ROOT, CFG_RA_APPEND
+	global EMUL_ROOT, EMUL_APPEND_CFG
 	debug("imageFile : " imageFile)
 	debug("core      : " config.core)
 	debug("shader    : " config.video_shader)
@@ -40,7 +42,7 @@ runEmulator(imageFile, config, appendCommand := "", callback := "", appendImageF
 	}
 
 	command := emulator " -L " wrap(core)
-	command .= " --appendconfig " wrap(CFG_RA_APPEND)
+	command .= " --appendconfig " wrap(EMUL_APPEND_CFG)
 	command .= " --set-shader " wrap(config.video_shader)
 	if (appendCommand != "")
 		command .= " " appendCommand
@@ -78,7 +80,7 @@ getOption(imageDir) {
 	if (Type(option) != "JSON.Obj")
 		option := JSON.fromMap(option)
 	option.rgui_browser_directory := imageDir
-	option.custom_core := FileUtil.getFile(dirConf "\core", "i).*_libretro\.dll$")
+	option.custom_core := FileUtil.findFile(dirConf "\core", "i).*_libretro\.dll$")
 
 	setAppendConfig(imageDir, option)
 	return option
@@ -111,31 +113,45 @@ flattenJsonInto(res, value) {
 }
 
 setAppendConfig(imageDir, option) {
-	global EMUL_ROOT, CFG_RA_APPEND
+	global EMUL_ROOT, EMUL_APPEND_CFG, EMUL_SAVE, DIR_SAVE
+
 	dirRoot  := imageDir "\_EL_CONFIG\save\ra"
-	dirSave  := dirRoot "\save"
 	dirState := dirRoot "\states"
 	dirCheat := dirRoot "\cheats"
 
-	FileUtil.makeDir(dirSave)
 	FileUtil.makeDir(dirState)
 	FileUtil.makeDir(dirCheat)
+
+	if(option.core == "citra_libretro") {
+		DIR_SAVE := EMUL_SAVE "\citra\Citra"
+	} else if(option.core == "puae_libretro") {
+		DIR_SAVE := EMUL_SAVE "\puae"
+	} else if(option.core == "dolphin_libretro") {
+		DIR_SAVE := EMUL_SAVE "\User"
+	} else {
+		DIR_SAVE := dirRoot "\save"
+	}
+
+	FileUtil.makeDir(DIR_SAVE)
 
 	cfg := "savestate_directory = " wrap(dirState) "`n"
 	cfg .= "cheat_database_path = " wrap(dirCheat) "`n"
 
-  if (option.core != "dolphin_libretro" && option.core != "puae_libretro") {
-	;if (option.core != "dolphin_libretro") {
-		cfg .= "savefile_directory = " wrap(dirSave) "`n"
-	} else {
-		saveSrc := FileUtil.getFile(dirSave . "\User\Wii\title\00010000", ".*", true)
-		if (saveSrc != "" && FileUtil.isDir(saveSrc)) {
-			saveTrg := EMUL_ROOT . "\saves\User\Wii\title\00010000\" . FileUtil.getName(saveSrc)
-			FileUtil.makeLink(saveSrc, saveTrg, true)
-		}
+	if(! InStr(DIR_SAVE, EMUL_SAVE)) {
+		cfg .= "savefile_directory = " wrap(DIR_SAVE) "`n"
 	}
 
-	FileUtil.write(CFG_RA_APPEND, cfg)
+  ;if (option.core != "dolphin_libretro" && option.core != "puae_libretro") {
+	;	cfg .= "savefile_directory = " wrap(dirSave) "`n"
+	;} else {
+	;	saveSrc := FileUtil.findFile(dirSave . "\User\Wii\title\00010000", ".*", true)
+	;	if (saveSrc != "" && FileUtil.isDir(saveSrc)) {
+	;		saveTrg := EMUL_ROOT . "\saves\User\Wii\title\00010000\" . FileUtil.getName(saveSrc)
+	;		FileUtil.makeLink(saveSrc, saveTrg, true)
+	;	}
+	;}
+
+	FileUtil.write(EMUL_APPEND_CFG, cfg)
 }
 
 getGameMeta(imageDirPath) {
@@ -149,7 +165,7 @@ getGameMeta(imageDirPath) {
 
 getRomPath(imageDir, option, filter, excludeBios := false) {
 	if (option.rom != "") {
-		romPath := FileUtil.getFile(imageDir, "i)" option.rom "\.(" filter ")$")
+		romPath := FileUtil.findFile(imageDir, "i)" option.rom "\.(" filter ")$")
 		if (romPath != "")
 			return romPath
 	}
@@ -171,7 +187,7 @@ getRomPath(imageDir, option, filter, excludeBios := false) {
 
 extractRomPath(dir, filter, extension) {
 	if (InStr(filter, extension)) {
-		romPath := FileUtil.getFile(dir, "i).*\." extension "$")
+		romPath := FileUtil.findFile(dir, "i).*\." extension "$")
 		if (romPath != "")
 			return romPath
 	}
@@ -297,7 +313,7 @@ getCoreName(core) {
 	coreName := coreMap.Has(core) ? coreMap[core] : ""
 	if (coreName == "") {
 		coreName := RegExReplace(core, "i)_libretro", "")
-		coreName := StrUpper(coreName)
+		coreName := StrLower(coreName)
 	}
 	return coreName
 }

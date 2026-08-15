@@ -11,7 +11,7 @@ ExitApp
 
 toCdOgg( workDir, cueFile, modeSize="" ) {
 	debug( "  - convert wav to ogg" )
-	wavFiles := FileUtil.getFiles( workDir, ".*\.wav" )
+	wavFiles := FileUtil.findFiles( workDir, ".*\.wav" )
 	Loop, % wavFiles.MaxIndex()
 	{
 		; debug( wavFiles[A_Index] )
@@ -31,7 +31,7 @@ toOgg( wavFile, targetDir ) {
 toOggCue( cueFile, targetDir, dataTrack="MODE1/2048" ) {
 
 	targetFile  := targetDir "\" cueFile
-	trackFiles  := FileUtil.getFiles( targetDir, ".*\.(ogg|mp3|iso)$" )
+	trackFiles  := FileUtil.findFiles( targetDir, ".*\.(ogg|mp3|iso)$" )
 	newCuesheet := ""
 
 	debug( targetFile )

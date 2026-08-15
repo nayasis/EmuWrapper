@@ -27,7 +27,7 @@ ExitApp
 
 makeAutoboot(imageDir, config) {
 
-  ; if( FileUtil.getFiles(imageDir,"(?i).*\.((?!zip).*)$").MaxIndex() == "" ) {
+  ; if( FileUtil.findFiles(imageDir,"(?i).*\.((?!zip).*)$").MaxIndex() == "" ) {
   ;   debug("ZIP is used by DosboxPure.")
   ;   return
   ; }
@@ -64,9 +64,9 @@ makeAutoboot(imageDir, config) {
 
 getCdroms(imageDir) {
   dirCdrom := imageDir "\_EL_CONFIG\cdrom"
-  files := FileUtil.getFiles(dirCdrom,"i).*\.(cue)$")
+  files := FileUtil.findFiles(dirCdrom,"i).*\.(cue)$")
   if( files.length() == 0 ) {
-    files := FileUtil.getFiles(dirCdrom,"i).*\.(iso|bin)$")
+    files := FileUtil.findFiles(dirCdrom,"i).*\.(iso|bin)$")
   }
   return files
 }

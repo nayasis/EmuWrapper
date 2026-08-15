@@ -59,7 +59,7 @@ getConfig(imageDir) {
 	}
 
  
-  disk := FileUtil.getFile(imageDir "\disk\code", "rpx")
+  disk := FileUtil.findFile(imageDir "\disk\code", "rpx")
   debug(">> disk: " disk)
 
   if( disk != "" ) {

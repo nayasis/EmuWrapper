@@ -19,11 +19,11 @@ debug( "start" )
 
 FileUtil.makeDir( pathWorkRoot )
 
-; files := FileUtil.getFiles( pathRoot, "i).*\.(bin|cue|mdx|ccd)", false, true )
-files := FileUtil.getFiles( pathRoot, "i).*\.(cue|ccd)", false, true )
-; files := FileUtil.getFiles( pathRoot, "i).*\.(ccd)", false, true )
-; files := FileUtil.getFiles( pathRoot, "i).*\\_EL_CONFIG\\.*\.(bin|cue|iso|mdx|ccd)", false, true )
-; files := FileUtil.getFiles( pathRoot, "i).*\\_EL_CONFIG\\.*\.(bin|cue|iso|mdx|ccd)", false, true )
+; files := FileUtil.findFiles( pathRoot, "i).*\.(bin|cue|mdx|ccd)", false, true )
+files := FileUtil.findFiles( pathRoot, "i).*\.(cue|ccd)", false, true )
+; files := FileUtil.findFiles( pathRoot, "i).*\.(ccd)", false, true )
+; files := FileUtil.findFiles( pathRoot, "i).*\\_EL_CONFIG\\.*\.(bin|cue|iso|mdx|ccd)", false, true )
+; files := FileUtil.findFiles( pathRoot, "i).*\\_EL_CONFIG\\.*\.(bin|cue|iso|mdx|ccd)", false, true )
 
 Loop, % files.MaxIndex()
 {
@@ -124,7 +124,7 @@ for gameDir, files in cueFiles {
 	}
 
 	; copy worked files
-	copyFiles := FileUtil.getFiles( workDir, ".*", false, false )
+	copyFiles := FileUtil.findFiles( workDir, ".*", false, false )
 	loop, % copyFiles.MaxIndex() {
 		file := copyFiles[ A_Index ]
 		debug( "    - move file : " file " -> " srcDir[gameDir] )
@@ -148,7 +148,7 @@ for gameDir, files in cueFiles {
 ; for gameDir, srcDir in srcDirs {
 ; 	workDir := pathWorkRoot "\" gameDir
 ; 	debug( workDir )
-; 	files   := FileUtil.getFiles( workDir, ".*", false, false )
+; 	files   := FileUtil.findFiles( workDir, ".*", false, false )
 ; 	loop, % files.MaxIndex() {
 ; 		file := files[ A_Index ]
 ; 		debug( "copy file : " file " -> " srcDir )
@@ -219,7 +219,7 @@ toCdImageWithTurboRip( workDir, fileName, modeSize="", ogg=true ) {
 
   ; waitToCloseTurboRip( tmpDir, pid, false )
 
-	tracks := FileUtil.getFiles( tmpDir, "i).*\.(iso|wav|cue)$", false, true )
+	tracks := FileUtil.findFiles( tmpDir, "i).*\.(iso|wav|cue)$", false, true )
 	Loop, % tracks.MaxIndex()
 	{
 		srcFilePath := tracks[ A_Index ]
@@ -260,7 +260,7 @@ waitToCloseTurboRip( workDir, pid, closeAdv=false ) {
   while True
   {
       Sleep, 1000
-      currFileCount := FileUtil.getFiles( workDir, ".*", false, true ).MaxIndex()
+      currFileCount := FileUtil.findFiles( workDir, ".*", false, true ).MaxIndex()
       if ( currFileCount != prevFileCount )
       {
           prevFileCount := currFileCount
@@ -292,7 +292,7 @@ waitToCloseTurboRip( workDir, pid, closeAdv=false ) {
 
 toCdOgg( workDir, cueFile, modeSize="" ) {
 	debug( "  - convert wav to ogg" )
-	wavFiles := FileUtil.getFiles( workDir, ".*\.wav" )
+	wavFiles := FileUtil.findFiles( workDir, ".*\.wav" )
 	Loop, % wavFiles.MaxIndex()
 	{
 		; debug( wavFiles[A_Index] )
@@ -319,7 +319,7 @@ toOggCue( cueFile, targetDir, modeSize="" ) {
 
 	cueName    := FileUtil.getName( cueFile, false )
 	workDir    := FileUtil.getDir( cueFile )
-	trackFiles := FileUtil.getFiles( workDir, ".*-.*\.(ogg|iso)$" )
+	trackFiles := FileUtil.findFiles( workDir, ".*-.*\.(ogg|iso)$" )
 	targetFile := targetDir "\" cueName ".cue"
 	trackIndex := 0
 	newCuesheet := ""

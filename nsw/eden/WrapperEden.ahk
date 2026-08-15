@@ -16,7 +16,7 @@ debug(">> option`n" . JSON.stringify(option))
 makeLink(imageDir)
 setConfig(option)
 
-imageRom := FileUtil.getFile(imageDir, "i).*\.(nsp|nsz|xci)$")
+imageRom := FileUtil.findFile(imageDir, "i).*\.(nsp|nsz|xci)$")
 command  := wrap(A_ScriptDir . "\eden.exe")
 if(imageRom != "") {
 	command .= " " . wrap(imageRom)

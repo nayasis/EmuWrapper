@@ -36,7 +36,7 @@ lastModified( path ) {
 
   max := ""
 
-	files := FileUtil.getFiles( path )
+	files := FileUtil.findFiles( path )
 
 	for i,file in files
 	{

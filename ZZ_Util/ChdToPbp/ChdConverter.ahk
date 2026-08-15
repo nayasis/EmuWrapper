@@ -28,7 +28,7 @@ debug(message) {
 }
 
 toIso(dirChd, dirIso) {
-  chdFiles := FileUtil.getFiles(dirChd, "(?i).*\.chd$", false, -1)
+  chdFiles := FileUtil.findFiles(dirChd, "(?i).*\.chd$", false, -1)
   for i, file in chdFiles {
     isoName := FileUtil.getName(file, false)
     target := dirIso "\" isoName
@@ -63,7 +63,7 @@ toPbp(dirIso, dirPbp) {
 }
 
 renamePbp(dirPbp, targetDir, dirChd) {
-  pbpFile := FileUtil.getFile(dirPbp, "(?i).*\.pbp$", false, -1)
+  pbpFile := FileUtil.findFile(dirPbp, "(?i).*\.pbp$", false, -1)
   fileName := FileUtil.getName(dirChd)
   fileExt := FileUtil.getExt(pbpFile)
   renamedFile := targetDir "\" fileName "." fileExt

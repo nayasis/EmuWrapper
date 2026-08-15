@@ -7,7 +7,7 @@ pathRoot     := "\\NAS\emul\image\PcEngineCd"
 pathWorkRoot := "f:\download\pce"
 debug( "start" )
 
-files := FileUtil.getFiles( pathRoot, "i).*\.mdx", false, true )
+files := FileUtil.findFiles( pathRoot, "i).*\.mdx", false, true )
 
 Loop, % files.MaxIndex()
 {
@@ -27,7 +27,7 @@ Loop, % files.MaxIndex()
 		VirtualDisk.close()
 
 		debug( "  - move compressed image to original folder" )
-		subFiles := FileUtil.getFiles( workDir, ".*", false, false )
+		subFiles := FileUtil.findFiles( workDir, ".*", false, false )
 		Loop, % subFiles.MaxIndex()
 		{
 			subFile := subFiles[A_Index]
@@ -74,7 +74,7 @@ toCdImage( workDir, fileName ) {
 	FileDelete, % binFile
 
 	debug( "  - convert wav to ogg" )
-	wavFiles := FileUtil.getFiles( workDir, ".*\.wav" )
+	wavFiles := FileUtil.findFiles( workDir, ".*\.wav" )
 	Loop, % wavFiles.MaxIndex()
 	{
 		; debug( wavFiles[A_Index] )
@@ -98,7 +98,7 @@ toOggCue( cueFile, targetDir ) {
 
 	cueName    := FileUtil.getFileName( cueFile, false )
 	workDir    := FileUtil.getDir( cueFile )
-	trackFiles := FileUtil.getFiles( workDir, ".*-.*\.(ogg|iso)$" )
+	trackFiles := FileUtil.findFiles( workDir, ".*-.*\.(ogg|iso)$" )
 	targetFile := targetDir "\" cueName ".cue"
 	trackIndex := 0
 	newCuesheet := ""

@@ -343,7 +343,7 @@ installFont(fontDir, properties) {
 	winDir  := properties["windir"] "\Fonts"
 	userDir := EnvGet("LOCALAPPDATA") "\Microsoft\Windows\Fonts"
 	regKey  := "HKCU\Software\Microsoft\Windows NT\CurrentVersion\Fonts"
-	fonts   := FileUtil.getFiles(fontDir, "i)\.(ttf|ttc|otf|fon)$")
+	fonts   := FileUtil.findFiles(fontDir, "i)\.(ttf|ttc|otf|fon)$")
 	for i, path in fonts {
 		installed := getFontInstallPath(path, userDir)
 		needInstall := !isFontRegistered(path, winDir, userDir)

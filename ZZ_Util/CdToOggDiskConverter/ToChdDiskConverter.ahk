@@ -4,7 +4,7 @@
 pathRoot := %0%
 pathRoot := "\\NAS\emul\image\PS2\_HDL"
 
-files := FileUtil.getFiles( pathRoot, "i).*\.(cue|iso)$", false, true )
+files := FileUtil.findFiles( pathRoot, "i).*\.(cue|iso)$", false, true )
 total := files.MaxIndex()
 
 for i, file in files {

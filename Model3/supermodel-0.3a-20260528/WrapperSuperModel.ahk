@@ -84,11 +84,11 @@ getExecutableRom(imageDir) {
 	romName := ""
 	option := getOption(imageDir)
 	if (option.has("run") && option.run.has("rom"))
-		romName := FileUtil.getFile(imageDir, option.run.rom ".*")
+		romName := FileUtil.findFile(imageDir, option.run.rom ".*")
 	if(romName != "")
 		return romName
 	else
-		return FileUtil.getFile(imageDir, ".*\.(zip|7z)$")
+		return FileUtil.findFile(imageDir, ".*\.(zip|7z)$")
 }
 
 getOption(imageDir) {

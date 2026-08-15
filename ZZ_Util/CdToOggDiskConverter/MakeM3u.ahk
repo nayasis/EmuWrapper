@@ -5,7 +5,7 @@ pathRoot := "\\NAS\emul\image\PC98"
 
 debug(">> start")
 
-files := FileUtil.getFiles(pathRoot, "i).*\.(d88|fdd|fdi)$", false, -1)
+files := FileUtil.findFiles(pathRoot, "i).*\.(d88|fdd|fdi)$", false, -1)
 srcDirs := Map()
 
 debug(">> read files")

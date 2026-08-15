@@ -172,7 +172,7 @@ getConfig(imageDir, fddContainer) {
 	config .= " " option.core.model
 
 	; fdd 3.5
-	fdd_3_5 := FileUtil.getFiles(imageDir, "i).*\.(2mg|woz)$")
+	fdd_3_5 := FileUtil.findFiles(imageDir, "i).*\.(2mg|woz)$")
 	fddIdx := [3, 4]
 	for i, disk in fdd_3_5 {
 		config .= " -flop" fddIdx[i] " " wrap(disk)
@@ -181,7 +181,7 @@ getConfig(imageDir, fddContainer) {
 	}
 
 	; fdd 5.25
-	fdd_5_25 := FileUtil.getFiles(imageDir, "i).*\.(dsk)$")
+	fdd_5_25 := FileUtil.findFiles(imageDir, "i).*\.(dsk)$")
 	fddIdx := [1, 2]
 	for i, disk in fdd_5_25 {
 		config .= " -flop" fddIdx[i] " " wrap(disk)
@@ -190,7 +190,7 @@ getConfig(imageDir, fddContainer) {
 	}
 
 	; hdd
-	hdds := FileUtil.getFiles(imageDir, "i).*\.(po)$")
+	hdds := FileUtil.findFiles(imageDir, "i).*\.(po)$")
 	if (hdds.Length >= 1)
 		config .= " -sl7 cffa2"
 	for i, disk in hdds {

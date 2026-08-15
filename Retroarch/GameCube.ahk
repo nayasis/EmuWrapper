@@ -16,8 +16,19 @@ imageFile := getRomPath(imageDir, option, "m3u|chd|gcz|cue|iso|wad|wbfs|rvz")
 ;config.rewind_enable        := "false"
 
 writeConfig(config, imageFile)
+
+applyPatch(imageDir)
+
 runEmulator(imageFile, config)
 
 ExitApp
+
+applyPatch(imageDir) {
+	src := FileUtil.findFile(imageDir "\_EL_CONFIG\title", ".*", true)
+	if(FileUtil.isDir(src)) {
+		trg := DIR_SAVE "\Wii\title\00010000\" . FileUtil.getName(src)
+		FileUtil.makeLink(src, trg, true)
+	}
+}
 
 #Include %A_ScriptDir%\script\AbstractHotkey.ahk

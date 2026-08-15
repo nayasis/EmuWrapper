@@ -12,7 +12,7 @@ class FileUtil {
 		throw Error("FileUtil is a static class, dont instantiate it!", -1)
 	}
 
-	static getDir( path ) {
+	static getDir(path) {
 		path := RegExReplace( path, "^(.*?)\\$", "$1" )
 		if( ! this.exist(path) )
 		  return ""
@@ -66,7 +66,7 @@ class FileUtil {
 		return fileNameWithoutExtension
 	}
 	
-	static getFiles(path, pattern := ".*", includeDir := false, depth := 0) {
+	static findFiles(path, pattern := ".*", includeDir := false, depth := 0) {
 		files := []
 		if (!this.exist(path) && this._hasPathExpression(path)) {
 			baseDir := this._getExistingBaseDir(path)
@@ -179,22 +179,38 @@ class FileUtil {
 		return pattern "$"
 	}
 
-	static getFile(pathDirOrFile, pattern := ".*", includeDir := false, depth := 0) {
+	static findFile(pathDirOrFile, pattern := ".*", includeDir := false, depth := 0) {
 		if (!this.exist(pathDirOrFile) && includeDir == false && !this._hasPathExpression(pathDirOrFile)) {
 			return ""
 		}
 		if (this.isFile(pathDirOrFile)) {
 			return pathDirOrFile
 		}
-		files := this.getFiles(pathDirOrFile, pattern, includeDir, depth)
+		files := this.findFiles(pathDirOrFile, pattern, includeDir, depth)
 		if (files.Length > 0) {
 			return files[1]
 		} else {
 			return ""
 		}
 	}
+
+	static findDirs(path, pattern := ".*", depth := 0) {
+		dirs := []
+		for _, item in this.findFiles(path, pattern, true, depth) {
+			if (this.isDir(item))
+				dirs.Push(item)
+		}
+		return dirs
+	}
+
+	static findDir(path, pattern := ".*", depth := 0) {
+		dirs := this.findDirs(path, pattern, depth)
+		return dirs.Length > 0 ? dirs[1] : ""
+	}
 	
 	static isDir(path) {
+		if(path == "")
+			return false
 		if (!this.exist(path))
 			return false
 		attr := FileGetAttrib(path)
@@ -277,11 +293,7 @@ class FileUtil {
 	}
 
 	static makeParentDir(path, forDirectory := true) {
-		if (forDirectory == true) {
-			parentDir := this.getParentDir(path)
-		} else {
-			parentDir := this.getDir(path)
-		}
+		parentDir := this.getParentDir(path)
 		DirCreate(parentDir)
 	}
 
@@ -323,6 +335,20 @@ class FileUtil {
 		} else {
 			FileAppend(content, path, charset)
 		}
+	}
+
+	static isEqual(srcFile, trgFile, checksum := false) {
+		if (!this.isFile(srcFile) || !this.isFile(trgFile))
+			return false
+		if (this.getName(srcFile) != this.getName(trgFile))
+			return false
+		if (this.getSize(srcFile) != this.getSize(trgFile))
+			return false
+		if (!checksum)
+			return true
+		srcHash := this.hashMD5(srcFile)
+		trgHash := this.hashMD5(trgFile)
+		return (srcHash != "" && trgHash != "" && srcHash == trgHash)
 	}
 
 	static hashMD5(path) {

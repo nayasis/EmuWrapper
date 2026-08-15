@@ -21,7 +21,7 @@ if ( diskContainer.hasDisk() ) {
 	diskContainer.initSlot(1)
 	command := "demul.exe -run=" runType " -image=" wrap(diskContainer.getFileInSlot(1))
 } else {
-	romPath := FileUtil.getFile( imageDir, "i).*\.(zip|7z)$" )
+	romPath := FileUtil.findFile( imageDir, "i).*\.(zip|7z)$" )
 	if ( romPath != "" ) {
     setRomPath( romPath )
     romName := FileUtil.getName( romPath, false )

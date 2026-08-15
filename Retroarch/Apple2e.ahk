@@ -21,7 +21,7 @@ ExitApp
 setBezel(config, imageDir) {
 	if(config.input_overlay == "")
 		return
-	bezel := FileUtil.getFile( imageDir "\_EL_CONFIG\bezel", "i).*\.(cfg)$" )
+	bezel := FileUtil.findFile( imageDir "\_EL_CONFIG\bezel", "i).*\.(cfg)$" )
 	debug("target : " imageDir "\_EL_CONFIG\bezel" )
 	debug("bezel  : " bezel)
 	if(bezel != "") {
@@ -58,7 +58,7 @@ makeCmd(imageDir, config) {
   cmd .= addOption("-rp", wrap( EMUL_ROOT "\system\mame\console\apple"))
   ;cmd .= addOption("-rp", wrap( EMUL_ROOT "\system\mame\bios"))
 
-  disks   := FileUtil.getFiles(imageDir, "i).*\.(dsk|woz|a2r|nib)$")
+  disks   := FileUtil.findFiles(imageDir, "i).*\.(dsk|woz|a2r|nib)$")
   diskCnt := disks.Length
   fddCnt  := config.fdd_cnt == "" ? diskCnt : min(config.fdd_cnt * 1, diskCnt)
   fddIdx := [1,2,3,4]
@@ -71,7 +71,7 @@ makeCmd(imageDir, config) {
     	break
   }
 
-  hdds  := FileUtil.getFiles(imageDir, "i).*\.(po|2mg|hdv)$")
+  hdds  := FileUtil.findFiles(imageDir, "i).*\.(po|2mg|hdv)$")
   for i, hdd in hdds {
   	cmd .= addOption("-hard" i, wrap(hdd))
     if(i >= 2)

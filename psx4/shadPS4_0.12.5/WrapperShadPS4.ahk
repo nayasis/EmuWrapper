@@ -31,7 +31,7 @@ ExitApp
 findRom(imageDir) {
 	if(imageDir == "0" || ! FileUtil.exist(imageDir))
 		return
-	return FileUtil.getFile(imageDir, "\\eboot.bin", false, 3)
+	return FileUtil.findFile(imageDir, "\\eboot.bin", false, 3)
 }
 
 waitEmulator() {

@@ -28,7 +28,7 @@ deleteTempFile()
 ExitApp
 
 deleteTempFile() {
-  tempFiles := FileUtil.getFiles( A_ScriptDir, ".*" )
+  tempFiles := FileUtil.findFiles( A_ScriptDir, ".*" )
   for i, file in tempFiles {
     size := FileUtil.getSize(file)
     if( size != 6 )
@@ -39,7 +39,7 @@ deleteTempFile() {
 
 applyCustomFont( imageDir, config ) {
 
-  fontPath := FileUtil.getFile( imageDir "\_EL_CONFIG\font\" )
+  fontPath := FileUtil.findFile( imageDir "\_EL_CONFIG\font\" )
   if( config.core == "np2kai_libretro" ) {
   	fontPath := nvl( fontPath, EMUL_ROOT "\system\np2kai\font.rom" )
   } else if( config.core == "nekop2_libretro" ) {
@@ -128,8 +128,8 @@ getCfg(config) {
 
 makeCmd(imageDir) {
 
-  files := FileUtil.getFiles( imageDir, "i).*\.(d88|d98|fdi|fdd|hdm|nfd|xdf|tfd)$" )
-  hdd   := FileUtil.getFile( imageDir, "i).*\.(hdi|hdd)$" )
+  files := FileUtil.findFiles( imageDir, "i).*\.(d88|d98|fdi|fdd|hdm|nfd|xdf|tfd)$" )
+  hdd   := FileUtil.findFile( imageDir, "i).*\.(hdi|hdd)$" )
   cdrom := getCdrom( imageDir )
   if( hdd != "" )
     files.push( hdd )
@@ -150,11 +150,11 @@ makeCmd(imageDir) {
 
 getCdrom(imageDir) {
   dir := imageDir "\_EL_CONFIG\cdrom"
-  cdRom := FileUtil.getFile( dir, "i).*\.(cue)$" )
+  cdRom := FileUtil.findFile( dir, "i).*\.(cue)$" )
   if( cdRom == "" )
-    cdRom := FileUtil.getFile( dir, "i).*\.(ccd)$" )
+    cdRom := FileUtil.findFile( dir, "i).*\.(ccd)$" )
   if( cdRom == "" )
-    cdRom := FileUtil.getFile( dir, "i).*\.(iso|bin|img)$" )  
+    cdRom := FileUtil.findFile( dir, "i).*\.(iso|bin|img)$" )
   return cdRom
 }
 
@@ -170,13 +170,13 @@ setCdRom(imageDir, config) {
 
 setHdd( imageDir, config ) {
  	cfg := getCfg( config )
-	hdd := FileUtil.getFile( imageDir, "i).*\.(hdi|hdd)$" )
+	hdd := FileUtil.findFile( imageDir, "i).*\.(hdi|hdd)$" )
   IniWrite(hdd, cfg.path, cfg.section, "HDD1FILE")
 }
 
 setFdd( imageDir, config ) {
 	cfg := getCfg( config ) 
-	files := FileUtil.getFiles( imageDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
+	files := FileUtil.findFiles( imageDir, "i).*\.(d88|fdi|fdd|hdm|nfd|xdf|tfd)$" )
 	Loop 2
 	{
 		if( A_Index > 2 )
