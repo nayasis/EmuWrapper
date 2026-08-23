@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <apps-cache cache_version="1" sys_lang="9">
 	<sources>
-		<source title_id="PCSG00786" param_sfo_write_time="1785219054" icon_write_time="1785219054" />
+		<source title_id="PCSG00986" param_sfo_write_time="1787339932" icon_write_time="1787337132" />
 	</sources>
 	<apps>
-		<app app_ver="1.00" category="gd" content_id="JP0745-PCSG00786_00-GOCHIUSAXMASPTY1" addcont="PCSG00786" savedata="PCSG00786" parental_level="3" stitle="ご注文はうさぎですか？？" title="ご注文はうさぎですか？？ Wonderful party！" title_id="PCSG00786" path="PCSG00786" />
+		<app app_ver="1.02" category="gp" content_id="JP0106-PCSG00986_00-NIGHTSOFAZURE000" addcont="PCSG00986" savedata="PCSG00986" parental_level="7" stitle="よるのないくに２" title="よるのないくに２ ～新月の花嫁～" title_id="PCSG00986" path="PCSG00986" />
 	</apps>
 </apps-cache>
