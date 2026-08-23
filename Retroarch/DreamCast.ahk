@@ -2,7 +2,7 @@
 #Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := A_Args.Length ? A_Args[1] : ""
-;imageDir := "\\NAS2\emul\image\DreamCast\Sakura Taisen 4 - Koi Seyo Otome (T-ko 0.3)"
+imageDir := "\\NAS2\emul\image\Naomi\Cannon Spike (en)"
 
 option    := getOption(imageDir)
 config    := setConfig("flycast_libretro", option, true)

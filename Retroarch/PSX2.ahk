@@ -1,13 +1,13 @@
 #Requires AutoHotkey >=2.0
 #Include %A_ScriptDir%\script\AbstractFunction.ahk
 
-; EMUL_ROOT := A_ScriptDir "\1.8.4"
+;EMUL_ROOT := A_ScriptDir "\1.8.4"
 
 imageDir := A_Args.Length ? A_Args[1] : ""
-;imageDir := "\\NAS2\emul\image\PSX2\Wizardry - Tale of the Forsaken Land (atlus)(en)"
+;imageDir := "\\NAS2\emul\image\psx2\Grim Grimoire (vanillaware)(T-ko 0.9 by 9claw)"
 
-option := getOption( imageDir )
-config := setConfig( "pcsx2_libretro", option, true )
+option := getOption(imageDir)
+config := setConfig("pcsx2_libretro", option, true)
 imageFile := getRomPath(imageDir, option, "m3u|cso|bin|iso|chd")
 
 linkSaveFolder(imageDir)
@@ -17,8 +17,8 @@ linkSaveFolder(imageDir)
 ; config.driver_switch_enable := "true"
 ; config.video_driver := "glcore"
 
-writeConfig( config, imageFile )
-runEmulator( imageFile, config )
+writeConfig(config, imageFile)
+runEmulator(imageFile, config)
 
 ExitApp
 
