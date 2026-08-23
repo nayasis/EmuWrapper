@@ -4,13 +4,12 @@ global emulatorPid := ""
 global hackPid := ""
 
 imageDir := A_Args.Length > 0 ? A_Args[1] : ""
-;imageDir := "\\NAS2\emul\image\psx3\Super Robot Taisen OG - Dark Prison (bb studio)(T-ko 20240826 by Doukyusen)"
-;imageDir := "\\NAS2\emul\image\psx3\Shin Gundam Musou (omega force)(ja)"
-;imageDir := "\\NAS2\emul\image\psx3\Super Robot Taisen OG Saga - Masou Kishin F - Coffin of the End (winky soft)(T-ko)"
+;imageDir := "\\NAS2\emul\image\psx3\Siren - New Translation (sce)(T-ko 2.0 fix by SCPH1000)"
 
 mountDir(imageDir)
 
 option    := getOption(imageDir)
+setSystemConfig(option)
 imagePath := getImagePath(imageDir)
 
 debug("imagePath:" imagePath)
@@ -60,6 +59,41 @@ getImagePath(imageDir) {
 		imagePath := FileUtil.findFile(imageDir "\hdd\.*\USRDIR", "i).*\.(bin)$")
 	}
   return imagePath
+}
+
+setSystemConfig(option) {
+	if (option.Has("settings") && option.settings.Has("system"))
+		system := option.settings.system
+	else if option.Has("system")
+		system := option.system
+	else
+		return
+	if (!system.Has("language") && !system.Has("region"))
+		return
+
+	file := A_ScriptDir "\config\config.yml"
+	config := FileRead(file)
+	if (system.Has("language") && system.language != "")
+		config := RegExReplace(config, "m)^  Language: .*$", "  Language: " system.language)
+	if (system.Has("region") && system.region != "")
+		config := RegExReplace(config, "m)^  License Area: .*$", "  License Area: " getLicenseArea(system.region))
+
+	FileUtil.write(file, config)
+}
+
+getLicenseArea(region) {
+	regionCode := Map(
+		"Japan", "SCEJ",
+		"USA", "SCEA",
+		"United States", "SCEA",
+		"Europe", "SCEE",
+		"Australia", "SCEE",
+		"Korea", "SCEK",
+		"Taiwan", "SCEH",
+		"Hong Kong", "SCEH",
+		"China", "SCH"
+	)
+	return regionCode.Has(region) ? regionCode[region] : region
 }
 
 waitEmulator() {
