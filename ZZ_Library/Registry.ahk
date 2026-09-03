@@ -149,11 +149,11 @@ class Registry {
 			} else if (regType == "REG_QWORD") {
 				regVal := "0x" . Registry._toNumberFromHex(regVal)
 			} else if (regType == "REG_MULTI_SZ") {
-				regVal := Registry._toStringFromHex(regVal)
+				regVal := Registry._toMultiStringFromHex(regVal)
 			} else if (regType == "REG_EXPAND_SZ") {
 				regVal := Registry._toStringFromHex(regVal)
 			} else if (regType == "REG_BINARY") {
-				regVal := StrReplace(regVal, ",", "", "All")
+				regVal := StrReplace(regVal, ",", "")
 			}
 			
 			regName := Registry._bindValue( regName, properties )
@@ -213,6 +213,29 @@ class Registry {
 	  }
 
 	  return result
+	}
+
+	static _toMultiStringFromHex(hexValue) {
+
+		if !hexValue
+			return ""
+
+		array := StrSplit(hexValue, ",")
+		if (Mod(array.Length, 2) != 0)
+			array.Push("00")
+
+		result := ""
+		for i, element in array {
+			if (Mod(i, 2) == 0)
+				continue
+
+			if (array[i] == "00" && array[i + 1] == "00")
+				result .= "`n"
+			else
+				result .= Chr("0x" array[i + 1] array[i])
+		}
+
+		return RTrim(result, "`n")
 	}
 
 	static _toNumberFromHex( hexValue ) {
