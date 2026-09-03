@@ -276,12 +276,12 @@ EucEncode( p_data, p_reserved:=true, p_encode:=true ) {
    if (p_encode) {
       loop (StrLen(unsafe) // 2) {
          token := SubStr(unsafe, A_Index * 2 - 1, 2)
-         p_data := StrReplace(p_data, Chr(Integer("0x" token)), "%" token "%", "All")
+         p_data := StrReplace(p_data, Chr(Integer("0x" token)), "%" token "%")
       }
    } else {
       loop (StrLen(unsafe) // 2) {
          token := SubStr(unsafe, A_Index * 2 - 1, 2)
-         p_data := StrReplace(p_data, "%" token "%", Chr(Integer("0x" token)), "All")
+         p_data := StrReplace(p_data, "%" token "%", Chr(Integer("0x" token)))
       }
    }
 
