@@ -1,143 +1,84 @@
-#NoEnv
-#include %A_ScriptDir%\..\..\ZZ_Library\Include.ahk
+#Requires AutoHotkey >=2.0
+#Include "%A_ScriptDir%\..\..\ZZ_Library\Include.ahk"
 
-global emulatorPid  := ""
-global isFullScreen := true
+emulatorPid  := ""
+isFullScreen := true
 
-imageFilePath := %0%
-; imageFilePath := "\\NAS\emul\image\PSP\Toukiden (en)"
-; imageFilePath := "\\NAS\emul\image\PSP\ToraDora Portable (ko)"
-; imageFilePath := "\\NAS\emul\image\PSP\Katekyoo Hitman Reborn - Battle Arena 2 - Spirits Burst (ja)"
+imageDir := A_Args.Length > 0 ? A_Args[1] : ""
+;imageDir := "\\NAS2\emul\image\PSP\DJ Max Portable 2 - Collector's Edition (pentavision)(ko)(H-1.2)"
 
-cdContainer := new DiskContainer( imageFilePath, "i).*\.(iso|cso)$" )
-if ( cdContainer.size() == 0 ) {
-	ExitApp
-}
-cdContainer.initSlot( 1 )
+imageFile := FileUtil.findFile(imageDir, "i).*\.(chd|cso|iso)$")
 
-if ( cdContainer.size() >= 1 ) {
-
-	setConfig( imageFilepath )
-
-	Run, % "PPSSPPWindows64.exe " """" cdContainer.getFileInSlot(1) """",,,emulatorPid
+if(imageFile != "") {
+	setConfig(imageDir)
+	command := "PPSSPPWindows64.exe " wrap(imageFile)
+	Run(command, , , &emulatorPid)
 	waitEmulator()
-	IfWinExist
-		Process, WaitClose, %emulatorPid%
-
+	if WinExist("ahk_class PPSSPPWnd")
+		ProcessWaitClose(emulatorPid)
 } else {
-	RunWait, % "PPSSPPWindows64.exe",,,emulatorPid	
+	RunWait("PPSSPPWindows64.exe", , , &emulatorPid)
 }
 
-ExitApp
-
-^+PGUP:: ; Change CD rom
-	if( cdContainer.size() > 1 )
-		cdContainer.insertDisk( "1", "changeCdRom" )
-	return
-
-^+End:: ; Cancel Disk Change
-	if( cdContainer.size() > 1 )
-		cdContainer.cancel()
-	return
-
-!Enter:: ; Toggle Fullscreen
-  isFullScreen := ! isFullScreen
-  activateEmulator()
-  Send !{Enter}
-  return
-
-^+Del:: ; Reset
-	activateEmulator()
-	Send ^b
-	return
-
-^+Insert:: ; Toggle Speed
-	Tray.showMessage( "Toggle speed" )
-	activateEmulator()
-	Send {``}
-	return
+ExitApp()
 
 waitEmulator() {
-	WinWait, ahk_class PPSSPPWnd,, 10
-	IfWinExist
-	  activateEmulator()
+	WinWait("ahk_class PPSSPPWnd", , 10)
+	if WinExist("ahk_class PPSSPPWnd")
+		activateEmulator()
 }
 
 activateEmulator() {
-	WinActivate, ahk_class PPSSPPWnd	
+	WinActivate("ahk_class PPSSPPWnd")
 }
 
-changeCdRom( slotNo, file ) {
-	Tray.showMessage( "Change UMD" file )
-  activateEmulator()
-  if( isFullScreen == true )
-  {
-    	Send !{Enter}
-    	Sleep, 500
-  }
-  Send {Alt}{E}{Down}{Down}{Down}{Enter}
-  Clipboard := file
-  Sleep, 500
-  Send ^v
-  Send {Enter}
-  Sleep, 500
-  if ( isFullScreen == true ) {
-    	Send !{Enter}
-    	Sleep, 500
-  }
-	return
-}
-
-setConfig( imageFilePath ) {
-
-	dirConf   := FileUtil.getDir( imageFilepath ) . "\_EL_CONFIG"
-	FileUtil.makeDir( dirConf )
+setConfig(imageDir) {
+	dirConf := FileUtil.getDir(imageDir) . "\_EL_CONFIG"
+	FileUtil.makeDir(dirConf)
 
 	; set custom font
-  fontCustom   := dirConf "\font\jpn0.pgf"
+	fontCustom   := dirConf "\font\jpn0.pgf"
 	fontCurr     := A_ScriptDir "\assets\flash0\font\jpn0.pgf"
 	fontOriginal := A_ScriptDir "\assets\flash0\font\jpn0.pgf.src"
 
-	if ( FileUtil.exist(fontCustom) ) {
-		if ( ! isEqualAttr(fontCustom,fontCurr) )
-			FileUtil.copyFile( fontCustom, fontCurr )
-	} else {
-		if ( ! isEqualAttr(fontOriginal,fontCurr) )
-			FileUtil.copyFile( fontOriginal, fontCurr )
+	if (FileUtil.exist(fontCustom)) {
+		if (!FileUtil.exist(fontCurr) || !isEqualAttr(fontCustom, fontCurr))
+			FileUtil.copyFile(fontCustom, fontCurr)
+	} else if (FileUtil.exist(fontOriginal)) {
+		if (!FileUtil.exist(fontCurr) || !isEqualAttr(fontOriginal, fontCurr))
+			FileUtil.copyFile(fontOriginal, fontCurr)
 	}
 
-  ; copy custom save data
-  dirCustomSave := dirConf "\save"
-  dirEmulSave   := A_ScriptDir "\memstick\PSP\SAVEDATA"
-  if ( FileUtil.exist(dirCustomSave) ) {
-	zipFiles := FileUtil.findFiles(dirCustomSave,"i).*\.(zip|7z)$")
-  	Loop, % zipFiles.MaxIndex()
-  	{
-  		zipFile := zipFiles[ A_Index ]
-  		pureName := FileUtil.getFileName( zipFile, false )
-  		if( FileUtil.exist(dirEmulSave "\" pureName) )
-  			continue
+	; copy custom save data
+	dirCustomSave := dirConf "\save"
+	dirEmulSave   := A_ScriptDir "\memstick\PSP\SAVEDATA"
+	if (FileUtil.exist(dirCustomSave)) {
+		zipFiles := FileUtil.findFiles(dirCustomSave, "i).*\.(zip|7z)$")
+		Loop zipFiles.Length {
+			zipFile := zipFiles[A_Index]
+			pureName := FileUtil.getFileName(zipFile, false)
+			if (FileUtil.exist(dirEmulSave "\" pureName))
+				continue
 
-  		zipHandler := new SevenZip( zipFile )
-  		zipHandler.extract( dirEmulSave )
-  		zipHandler.close()
+			zipHandler := SevenZip(zipFile)
+			zipHandler.extract(dirEmulSave)
+			zipHandler.close()
 
-  		debug( zipFile " -> " dirEmulSave )
-  	}
+			debug(zipFile " -> " dirEmulSave)
+		}
 
-  	; FileUtil.copyDir( dirCustomSave "\*", )
-  }
+		; FileUtil.copyDir(dirCustomSave "\*", )
+	}
 
 	; set full screen
 	iniFile := A_ScriptDir "\memstick\PSP\System\ppsspp.ini"
-	IniWrite, True, % iniFile, Graphics, FullScreen
-
+	IniWrite(true, iniFile, "Graphics", "FullScreen")
 }
 
-isEqualAttr( src, trg ) {
-	if( FileUtil.getSize(src) != FileUtil.getSize(trg) )
-	 return false
-	if( FileUtil.getTime(src) != FileUtil.getTime(trg) )
-	 return false
+isEqualAttr(src, trg) {
+	if (FileUtil.getSize(src) != FileUtil.getSize(trg))
+		return false
+	if (FileUtil.getTime(src) != FileUtil.getTime(trg))
+		return false
 	return true
 }
