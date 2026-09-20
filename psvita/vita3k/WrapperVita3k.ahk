@@ -4,7 +4,7 @@
 emulatorPid := ""
 
 imageDir := A_Args.Length > 0 ? A_Args[1] : ""
-;imageDir := "\\NAS2\emul\image\vita\Saenai Heroine no Sodatekata - Blessing Flowers (5pb)(T-ko 1.01 by team hkhk)"
+imageDir := "\\NAS2\emul\image\vita\Super Robot Taisen OG Saga - Masoukishin III - Pride of Justice (T-ko)"
 
 option  := getOption(imageDir)
 titleId := getTitleId(imageDir)

@@ -12,7 +12,7 @@ apps-list-grid: true
 stretch_the_display_area: false
 fullscreen_hd_res_pixel_perfect: false
 archive-log: false
-backend-renderer: OpenGL
+backend-renderer: Vulkan
 custom-driver-name: ""
 turbo-mode: false
 gpu-idx: 0

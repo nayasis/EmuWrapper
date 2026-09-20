@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <apps-cache cache_version="1" sys_lang="9">
-	<sources>
-		<source title_id="PCSG00986" param_sfo_write_time="1787339932" icon_write_time="1787337132" />
-	</sources>
-	<apps>
-		<app app_ver="1.02" category="gp" content_id="JP0106-PCSG00986_00-NIGHTSOFAZURE000" addcont="PCSG00986" savedata="PCSG00986" parental_level="7" stitle="よるのないくに２" title="よるのないくに２ ～新月の花嫁～" title_id="PCSG00986" path="PCSG00986" />
-	</apps>
+	<sources />
+	<apps />
 </apps-cache>
