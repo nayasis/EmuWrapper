@@ -2,7 +2,7 @@
 #Include %A_ScriptDir%\script\AbstractFunction.ahk
 
 imageDir := A_Args.Length ? A_Args[1] : ""
-; imageDir := "\\NAS2\emul\image\FBA\Zip & Zap"
+;imageDir := "\\NAS2\emul\image\CPS1\Warriors of Fate 2 (capcom)(T-ko 1.2 by dsno)"
 
 ; EMUL_ROOT := A_ScriptDir "\1.9.0"
 

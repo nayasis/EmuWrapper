@@ -4,7 +4,7 @@
 imageDir := A_Args.Length ? A_Args[1] : ""
 ;imageDir := "\\NAS2\emul\image\3DS\Meitantei Conan - Phantom Rhapsody (spike chunsoft)(T-ko 0.0.4 by mark83)"
 ;imageDir := "\\NAS2\emul\image\3DS\Dragon Quest XI (square enix)(T-ko 1.5 by view5199)"
-imageDir := "\\NAS2\emul\image\3DS\Dragon Quest VII - Fragments of the Forgotten Past (square enix)(T-ko 260815 by honguh)"
+;imageDir := "\\NAS2\emul\image\3DS\Dragon Quest VII - Fragments of the Forgotten Past (square enix)(T-ko 260815 by honguh)"
 
 option    := getOption(imageDir)
 config    := setConfig("citra_libretro", option)
