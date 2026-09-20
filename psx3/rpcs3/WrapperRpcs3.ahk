@@ -129,7 +129,7 @@ getOption( imageDir ) {
 		jsonText := FileRead(optionFile)
 		option := JSON.parse( jsonText )
 	} else {
-		option := {}
+		option := JSON.parse("{}")
 	}
 	return option
 }
